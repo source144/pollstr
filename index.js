@@ -9,6 +9,9 @@ const morgan = require('morgan');
 const path = require('path');
 const { errorObject } = require('./shared/util');
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
 // Environment config
 dotenv.config();
 
@@ -27,6 +30,25 @@ const app		= express();
 const server	= http.createServer(app);
 const io		= socketio(server);
 app.io			= io;
+
+const swaggerOptions = {
+	swaggerDefinition: {
+		info: {
+			title: 'Pollstr API',
+			description: 'Pollstr API Information',
+			contact: {
+				name: "Gonen Matias"
+			},
+			servers: ["https://www.pollstr.app"]
+		}
+	},
+	apis: ["app.js", "routes/*.js"]
+}
+
+const swaggerDocs = swaggerJsDocs(swaggerOptions);
+
+app.use('/api-docs', swaggerUI.serve, swaggerui.setup(swaggerDocs));
+
 
 if (NODE_ENV === 'prod')
 	app.set('port', PORT);
