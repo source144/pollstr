@@ -1,4 +1,4 @@
-const { User, validate } = require('../models/User');
+const { User, validate, validatePassword } = require('../models/User');
 const Verification = require('../models/Verification');
 const { errorObject } = require('../shared/util');
 const express = require('express');
@@ -174,6 +174,31 @@ router.get('/', enforceCredentials, (req, res) => {
 router.put('/', (req, res) => {
 
 });
+
+// TODO : update user password provided a token or error
+router.put('/password', enforceCredentials, (req, res) => {
+	if (!req.body.oldPassword) return res.status(400).send(errorObject('Missing old password'));
+	if (!req.body.password) return res.status(400).send(errorObject('Missing password (new)'));
+	if (req.body.password === req.body.oldPassword) return res.status(400).send(errorObject('Nothing to update'));
+
+	User.findOne({ email: req.user.email }, function (err, user) {
+		if (err) return res.status(500).send(errorObject(err.message));
+		if (!user) return res.status(401).send(errorObject('User not found'));
+		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+
+		// test a matching password
+		user.comparePassword(req.body.oldPassword, function (err, isMatch) {
+			if (err || !isMatch)
+				return res.status(401).send(errorObject('Password is incorrect'));
+
+			user.password = req.body.password;
+			user.save(function (err) {
+				if (err) return res.status(500).send(errorObject(err.message));
+			});
+		});
+	});
+});
+
 
 // TODO : verify user by email
 router.post('/verify', (req, res) => {

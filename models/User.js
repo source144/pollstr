@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const SALT_WORK_FACTOR = 10;
 
+const pwSchema = Joi.string().min(8).max(24);
+
 
 var validateEmail = function (email) {
 	var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -75,29 +77,22 @@ UserSchema.methods.fullName = function () {
 
 UserSchema.plugin(uniqueValidator, { message: 'User {PATH} already exists!' });
 
-function validateUser(user, password=true) {
-	const pwVerif = Joi.string().min(8).max(24);
+function validateUser(user, password = true) {
 	const schema = Joi.object({
 		email: Joi.string().min(5).required().email(),
-		password: password ? pwVerif.required() : pwVerif,
+		password: password ? pwSchema.required() : pwSchema,
 		firstName: Joi.string().trim(),
 		lastName: Joi.string().trim()
 	});
 	return schema.validate(user);
 }
 
-function validateEmail(user) {
-	const schema = Joi.object({
-		email: Joi.string().min(5).required().email(),
-		password: Joi.string().min(8).max(24).required(),
-		firstName: Joi.string().trim(),
-		lastName: Joi.string().trim()
-	});
-	return schema.validate(user);
+function validatePassword(password) {
+	return Joi.object({ password: pwSchema.required() }).validate(password);
 }
 
 
 exports.User = mongoose.model('User', UserSchema);
 exports.validate = validateUser;
-exports.validateEmail = validateUser;
+exports.validatePassword = validatePassword;
 // module.exports = [mongoose.model('User', UserSchema), validateUser];
