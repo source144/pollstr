@@ -195,7 +195,8 @@ router.put('/password', enforceCredentials, (req, res) => {
 			user.password = req.body.password;
 			user.save(function (err) {
 				if (err) return res.status(500).send(errorObject(err.message));
-				return res.status(204);
+				console.log("should return");
+				return res.status(204).send();
 			});
 		});
 	});

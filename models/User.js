@@ -88,7 +88,7 @@ function validateUser(user, password = true) {
 }
 
 function validatePassword(password) {
-	return Joi.object({ password: pwSchema.required() }).validate(password);
+	return Joi.object({ password: pwSchema.required() }).unknown().validate(password);
 }
 
 
