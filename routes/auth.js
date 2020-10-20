@@ -14,7 +14,7 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN || "SECRET_REFRESH_KEY";
 const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || '30m';
 const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'pollstr.app.io@gmail.com';
 const DOMAIN = process.env.DOMAIN || 'pollstr.app';
-const NODE_ENV = process.env.NODE_ENV || 'dev'
+const NODE_ENV = process.env.NODE_ENV || 'development'
 
 
 // ********************** //
@@ -236,8 +236,8 @@ router.post('/signup', (req, res) => {
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { abort(); return res.status(500).send(err); }
-				if (NODE_ENV === 'prod') return res.status(201).send(verification);
-				else if (NODE_ENV === 'dev') return res.status(201).send(verification);
+				if (NODE_ENV === 'production') return res.status(201).send(verification);
+				else if (NODE_ENV === 'development') return res.status(201).send(verification);
 				else return res.status(201).send(user);
 			});
 		});
@@ -512,8 +512,8 @@ router.post('/verify/resend', (req, res) => {
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) return res.status(500).send(err);
-				if (NODE_ENV === 'prod') return res.status(201).send(verification);
-				else if (NODE_ENV === 'dev') return res.status(201).send(verification);
+				if (NODE_ENV === 'production') return res.status(201).send(verification);
+				else if (NODE_ENV === 'development') return res.status(201).send(verification);
 				else return res.status(201).send(user);
 			});
 		});
@@ -579,8 +579,8 @@ router.post('/password/forgot', (req, res) => {
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) return res.status(500).send(err);
-				if (NODE_ENV === 'prod') return res.status(201).send(passwordReset);
-				else if (NODE_ENV === 'dev') return res.status(201).send(passwordReset);
+				if (NODE_ENV === 'production') return res.status(201).send(passwordReset);
+				else if (NODE_ENV === 'development') return res.status(201).send(passwordReset);
 				else return res.status(201).send(user);
 			});
 		});

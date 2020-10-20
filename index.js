@@ -117,7 +117,7 @@ const authRoutes = require('./routes/auth');
 const pollRoutes = require('./routes/poll');
 
 // Constants
-const NODE_ENV = process.env.NODE_ENV || 'dev';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 5000;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY"
 const MONGO = process.env.MONGO_URI
@@ -155,7 +155,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-if (NODE_ENV === 'prod')
+if (NODE_ENV === 'production')
 	app.set('port', PORT);
 
 mongoose.set('useCreateIndex', true)
@@ -241,7 +241,7 @@ app.use('/api', function (req, res, next) {
 		});
 });
 
-if (process.env.NODE_ENV === 'prod') {
+if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'))
 
 	app.get('*', function (req, res) {
