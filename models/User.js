@@ -75,7 +75,18 @@ UserSchema.methods.fullName = function () {
 
 UserSchema.plugin(uniqueValidator, { message: 'User {PATH} already exists!' });
 
-function validateUser(user) {
+function validateUser(user, password=true) {
+	const pwVerif = Joi.string().min(8).max(24);
+	const schema = Joi.object({
+		email: Joi.string().min(5).required().email(),
+		password: password ? pwVerif.required() : pwVerif,
+		firstName: Joi.string().trim(),
+		lastName: Joi.string().trim()
+	});
+	return schema.validate(user);
+}
+
+function validateEmail(user) {
 	const schema = Joi.object({
 		email: Joi.string().min(5).required().email(),
 		password: Joi.string().min(8).max(24).required(),
@@ -86,7 +97,7 @@ function validateUser(user) {
 }
 
 
-
 exports.User = mongoose.model('User', UserSchema);
 exports.validate = validateUser;
+exports.validateEmail = validateUser;
 // module.exports = [mongoose.model('User', UserSchema), validateUser];

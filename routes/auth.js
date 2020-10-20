@@ -9,8 +9,8 @@ const router = express.Router();
 const { refreshTokens } = require('../shared/jwt');
 const { notify } = require('../router');
 
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN ||  "SECRET_ACCESS_KEY";
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN ||  "SECRET_REFRESH_KEY";
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY";
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN || "SECRET_REFRESH_KEY";
 const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || '30m';
 const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'pollstr.app.io@gmail.com';
 const DOMAIN = process.env.DOMAIN || 'pollstr.app';
@@ -177,6 +177,10 @@ router.put('/', (req, res) => {
 
 // TODO : verify user by email
 router.post('/verify', (req, res) => {
+	if (!req.body.token) return res.status(400).send(errorObject('Missing verification token'));
+	if (!req.body.id) return res.status(400).send(errorObject('Missing verification id'));
+
+
 	Verification.findOne({ token: req.body.token, _id: req.body.id }, function (err, verification) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!verification) return res.status(400).send(errorObject('Verification either expired or is invalid'));
@@ -188,6 +192,44 @@ router.post('/verify', (req, res) => {
 			verification.remove(function (err, removed) {
 				if (err) return res.status(500).send(err);
 				return res.status(200).send({ notify: `User has been verified, you may now log in` });
+			});
+		});
+	});
+});
+
+// TODO : verify user by email
+router.post('/verify/resend', (req, res) => {
+	const { error } = validate(req.body, password=false);
+	if (error) return res.status(400).send(errorObject(error.details[0].message));
+
+	User.findOne({ email: req.body.email, verified: false }, function (err, user) {
+		if (err) return res.status(500).send(errorObject(err.message));
+		if (!user) return res.status(400).send(errorObject('User already verified or does not exist'));
+
+		// Get rid of old verifications (shouldn't be more than one)
+		Verification.deleteMany({ _userId: user._id }, function (err) {
+			if (err) console.log("DELETE VERIFICATION", err);
+		});
+
+		// Create and send new verification
+		const verification = new Verification({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
+		verification.save(function (err) {
+			if (err) { abort(); return res.status(500).send(err); }
+			const FULL_NAME = user.fullName();
+
+			// Send the email
+			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+			var mailOptions = {
+				from: NO_REPLY_EMAIL,
+				to: user.email,
+				subject: 'Confirm your Pollstr account',
+				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify?id=${verification._id}&token=${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
+			};
+			transporter.sendMail(mailOptions, function (err) {
+				if (err) { abort(); return res.status(500).send(err); }
+				if (NODE_ENV === 'prod') return res.status(201).send(verification);
+				else if (NODE_ENV === 'dev') return res.status(201).send(verification);
+				else return res.status(201).send(user);
 			});
 		});
 	});

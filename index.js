@@ -22,14 +22,14 @@ const PORT	= process.env.PORT || 5000;
 const ACCESS_TOKEN	= process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY"
 const MONGO = process.env.MONGO_URI
 
-if (NODE_ENV === 'prod')
-	app.set('port', PORT);
-
 // Create Server
 const app		= express();
 const server	= http.createServer(app);
 const io		= socketio(server);
 app.io			= io;
+
+if (NODE_ENV === 'prod')
+	app.set('port', PORT);
 
 mongoose.set('useCreateIndex', true)
 mongoose.connect(MONGO, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
