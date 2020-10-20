@@ -1,5 +1,5 @@
 const { User, validate, validatePassword } = require('../models/User');
-const Verification = require('../models/Verification');
+const { Verification, PasswordReset } = require('../models/Verification');
 const { errorObject } = require('../shared/util');
 const express = require('express');
 const nodemailer = require('nodemailer');
@@ -171,13 +171,46 @@ router.get('/', enforceCredentials, (req, res) => {
 });
 
 // TODO : update user data provided a token or error
-router.put('/', (req, res) => {
+router.put('/', enforceCredentials, (req, res) => {
+	const { error } = validatePassword({ ...req.body, email: req.user.email }, password = false);
+	if (error) return res.status(400).send(errorObject(error.details[0].message));
 
+	User.findOne({ email: req.user.email }, function (err, user) {
+		if (err) return res.status(500).send(errorObject(err.message));
+		if (!user) return res.status(401).send(errorObject('User not found'));
+
+		// Readability
+		const newFN = req.body.firstName;
+		const newLN = req.body.lastName;
+		const oldFN = user.firstName;
+		const oldLN = user.lastName;
+
+		// Check if nothing was updated
+		// (AS READABLE AS IT GETS??)
+		if (((oldFN == null && newFN == null)
+			|| (newFN != null && newFN.toLowerCase().capitalize() == oldFN))
+			&& ((oldLN == null && newLN == null)
+				|| (newLN != null && newLN.toLowerCase().capitalize() == oldLN)))
+			return res.status(200).send(errorObject('Nothing to update'));
+
+		// Update first name (or remove field)
+		if (newFN) user.firstName = newFN
+		else user.firstName = undefined;
+
+		// Update last name (or remove field)
+		if (newLN) user.lastName = newLN
+		else user.lastName = undefined;
+
+		user.save(function (err) {
+			if (err) return res.status(500).send(errorObject(err.message));
+			return res.status(204).send();
+		});
+	});
 });
 
 // TODO : update user password provided a token or error
 router.put('/password', enforceCredentials, (req, res) => {
-	const { error } = validatePassword(req.body, password=false);
+	const { error } = validatePassword(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
 	if (!req.body.oldPassword) return res.status(400).send(errorObject('Missing old password'));
 	if (req.body.password === req.body.oldPassword) return res.status(200).send(errorObject('Nothing to update'));
@@ -192,10 +225,12 @@ router.put('/password', enforceCredentials, (req, res) => {
 			if (err || !isMatch)
 				return res.status(401).send(errorObject('Password is incorrect'));
 
+			// Update password
 			user.password = req.body.password;
+
+			// Comit changes
 			user.save(function (err) {
 				if (err) return res.status(500).send(errorObject(err.message));
-				console.log("should return");
 				return res.status(204).send();
 			});
 		});
@@ -227,7 +262,8 @@ router.post('/verify', (req, res) => {
 
 // TODO : verify user by email
 router.post('/verify/resend', (req, res) => {
-	const { error } = validate(req.body, password=false);
+	delete req.body.firstName; delete req.body.lastName;
+	const { error } = validate(req.body, password = false);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
 
 	User.findOne({ email: req.body.email, verified: false }, function (err, user) {
@@ -264,21 +300,78 @@ router.post('/verify/resend', (req, res) => {
 });
 
 // TODO : send reset link to user email
-router.post('/forgot', (req, res) => {
-	// TODO : check if user exists
-	// TODO : Create token for reset
-	// TODO : store token in DB - relate to user _id
-	// TODO : send reset email
-	// TODO : link to front-end page to handle verification
-	// TODO : Front end sends request to verify
-	// TODO : http://pollstr.app/reset?id=TOKEN_GOES_HERE
+router.post('/password/forgot', (req, res) => {
+	delete req.body.firstName; delete req.body.lastName;
+	const { error } = validate(req.body, password = false);
+	if (error) return res.status(400).send(errorObject(error.details[0].message));
 
-	// TODO : Handle any errors
-	// TODO : User not found
+	User.findOne({ email: req.body.email }, function (err, user) {
+		if (err) return res.status(500).send(errorObject(err.message));
+		if (!user) return res.status(404).send(errorObject('User does not exist'));
+		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+
+		// Get rid of old verifications (shouldn't be more than one)
+		PasswordReset.deleteMany({ _userId: user._id }, function (err) {
+			if (err) console.log("DELETE PASSWORD RESET", err);
+		});
+
+		// Create and send new verification
+		const passwordReset = new PasswordReset({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
+		passwordReset.save(function (err) {
+			if (err) return res.status(500).send(err);
+			const FULL_NAME = user.fullName();
+
+			// Send the email
+			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+			var mailOptions = {
+				from: NO_REPLY_EMAIL,
+				to: user.email,
+				subject: 'Reset your Pollstr account password',
+				text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttp://${DOMAIN}/passwordreset?id=${passwordReset._id}&token=${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
+			};
+			transporter.sendMail(mailOptions, function (err) {
+				if (err) return res.status(500).send(err);
+				if (NODE_ENV === 'prod') return res.status(201).send(passwordReset);
+				else if (NODE_ENV === 'dev') return res.status(201).send(passwordReset);
+				else return res.status(201).send(user);
+			});
+		});
+	});
 });
 
 // TODO : reset password provided a reset link/token
-router.put('/reset', (req, res) => {
+router.put('/password/reset', (req, res) => {
+	const { error } = validatePassword(req.body);
+	if (error) return res.status(400).send(errorObject(error.details[0].message));
+	if (!req.body.token) return res.status(400).send(errorObject('Missing password reset token'));
+	if (!req.body.id) return res.status(400).send(errorObject('Missing password reset id'));
+
+	// Find the password reset request
+	PasswordReset.findOne({ token: req.body.token, _id: req.body.id }, function (err, passwordReset) {
+		if (err) return res.status(500).send(errorObject(err.message));
+		if (!passwordReset) return res.status(400).send(errorObject('Verification either expired or is invalid'));
+
+		// Find the user who requested the password reset
+		User.findOne({ _id: passwordReset._userId  }, function (err, user) {
+			if (err) return res.status(500).send(errorObject(err.message));
+			if (!user) return res.status(404).send(errorObject('User does not exist'));
+			if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+
+			// Update password to the one the user just set
+			user.password = req.body.password;
+
+			// Commit update
+			user.save(function (err) {
+				if (err) return res.status(500).send(err);
+
+				// Dispose password reset request
+				passwordReset.remove(function (err, removed) {
+					if (err) return res.status(500).send(err);
+					return res.status(200).send({ notify: `User password updated` });
+				});
+			});
+		});
+	});
 	// TODO : Get TOKEN from query (&id=TOKEN_GOES_HERE)
 	// TODO : Find token in DB
 	// TODO : Find user associated with token

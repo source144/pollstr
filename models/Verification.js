@@ -9,11 +9,12 @@ const verificationSchema = new mongoose.Schema({
 	createdAt: { type: Date, required: true, default: Date.now, expires: VERIFICATION_LIFE }
 });
 
-verificationSchema.plugin(uniqueValidator, { message: 'User verification was already sent!' });
+verificationSchema.plugin(uniqueValidator, { message: 'User verification/reset was already sent!' });
 
 verificationSchema.methods.toJSON = function () {
 	const obj = this.toObject()
 	return _.omit({ ...obj, id: obj._id }, ['_id', '_userId', '__v']);
 }
 
-module.exports = mongoose.model('Verification', verificationSchema);
+exports.Verification = mongoose.model('Verification', verificationSchema);
+exports.PasswordReset = mongoose.model('PasswordReset', verificationSchema)

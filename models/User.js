@@ -84,7 +84,7 @@ function validateUser(user, password = true) {
 		firstName: Joi.string().trim(),
 		lastName: Joi.string().trim()
 	});
-	return schema.validate(user);
+	return schema.unknown().validate(user);
 }
 
 function validatePassword(password) {
