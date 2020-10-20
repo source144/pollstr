@@ -206,13 +206,6 @@ router.post('/verify/resend', (req, res) => {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(400).send(errorObject('User already verified or does not exist'));
 
-		const abort = () => user.remove(function (err, removed) {
-			if (err) {
-				console.log('abort failed')
-				return res.status(500).send(err);
-			}
-		});
-
 		// Get rid of old verifications (shouldn't be more than one)
 		Verification.deleteMany({ _userId: user._id }, function (err) {
 			if (err) console.log("DELETE VERIFICATION", err);
@@ -221,7 +214,7 @@ router.post('/verify/resend', (req, res) => {
 		// Create and send new verification
 		const verification = new Verification({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
 		verification.save(function (err) {
-			if (err) { abort(); return res.status(500).send(err); }
+			if (err) return res.status(500).send(err);
 			const FULL_NAME = user.fullName();
 
 			// Send the email
@@ -233,7 +226,7 @@ router.post('/verify/resend', (req, res) => {
 				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify?id=${verification._id}&token=${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
 			};
 			transporter.sendMail(mailOptions, function (err) {
-				if (err) { abort(); return res.status(500).send(err); }
+				if (err) return res.status(500).send(err);
 				if (NODE_ENV === 'prod') return res.status(201).send(verification);
 				else if (NODE_ENV === 'dev') return res.status(201).send(verification);
 				else return res.status(201).send(user);
