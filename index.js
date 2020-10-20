@@ -20,7 +20,7 @@ const pollRoutes = require('./routes/poll');
 const NODE_ENV  = process.env.NODE_ENV || 'dev';
 const PORT	= process.env.PORT || 5000;
 const ACCESS_TOKEN	= process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY"
-const MONGO = process.env.MONGODB_URI
+const MONGO = process.env.MONGO_URI
 
 if (NODE_ENV === 'prod')
 	app.set('port', PORT);
