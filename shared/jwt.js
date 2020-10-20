@@ -1,3 +1,3 @@
-const refreshTokens 		= [];
+const refreshTokens = [];
 
-module.exports = { ACCESS_TOKEN, REFRESH_TOKEN, refreshTokens };
+module.exports = { refreshTokens };

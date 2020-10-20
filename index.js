@@ -100,7 +100,7 @@ const adminOnly = (req, res, next) => {
 	next();
 }
 
-app.use(morgan("common"));
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/poll', withCredentials, pollRoutes);
@@ -114,11 +114,11 @@ app.use(function (req, res, next) {
 		});
 });
 
-// if (process.env.NODE_ENV === 'prod')
-// {
-// 	app.use(express.static('../client/build'))
+if (process.env.NODE_ENV === 'prod')
+{
+	app.use(express.static('../client/build'))
 	
-// }
+}
 
 // Host Server
 server.listen(PORT, () => {
