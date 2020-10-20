@@ -102,11 +102,11 @@ const adminOnly = (req, res, next) => {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use('/auth', authRoutes);
-app.use('/poll', withCredentials, pollRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/poll', withCredentials, pollRoutes);
 
 // TODO : handle all errors here?
-app.use(function (req, res, next) {
+app.use('/api', function (req, res, next) {
 	return res.status(404)
 		.send({
 			error: 'Endpoint not found',
@@ -116,8 +116,11 @@ app.use(function (req, res, next) {
 
 if (process.env.NODE_ENV === 'prod')
 {
-	app.use(express.static('../client/build'))
+	app.use(express.static('client/build'))
 	
+	app.get('*', function (req, res) {
+		res.sendFile(path.resolve(__dirname, 'client','build', 'index.html'));
+	});
 }
 
 // Host Server
