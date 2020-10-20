@@ -16,6 +16,7 @@ const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'pollstr.app.io@gmail.com';
 const DOMAIN = process.env.DOMAIN || 'pollstr.app';
 const NODE_ENV = process.env.NODE_ENV || 'dev'
 
+
 // ********************** //
 // *** Authentication *** //
 // ********************** //
@@ -32,20 +33,32 @@ const enforceCredentials = (req, res, next) => {
 	});
 }
 
+
 /**
  * @swagger
- * /login:
- * 	post:
- * 		description: Authenticate user credentials
- * 		responses:
- * 			'400':
- * 				description: 'Invalid request body'
- * 			'200':
- * 				description: 'Successful login. Returns an access token'
- * 			'426':
- * 				description: 'User must verify before logging in'
- * 			'401':
- * 				description: 'Credentials don't match'
+ *  /api/auth/login:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Authenticates users credentials and generates an access token
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: credentials
+ *          description: Login Credentials
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Credentials'
+ *      responses:
+ *        200:
+ *          description: Login Successful. Returns access token(s) and user information
+ *        500:
+ *          description: Server Side Error
+ *        401:
+ *          description: Credentials don't match
+ *        426:
+ *          description: User is not verified yet.
  */
 router.post('/login', (req, res) => {
 
@@ -82,6 +95,30 @@ router.post('/login', (req, res) => {
 	});
 });
 
+/**
+ * @swagger
+ *  /api/auth/refresh:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Authenticates users credentials and generates an access token
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: Token
+ *          description: Refresh Token
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Refresh_Token'
+ *      responses:
+ *        401:
+ *          description: Missing refresh token
+ *        403:
+ *          description: Invalid refresh token
+ *        200:
+ *          description: Success. New access token generated
+ */
 router.post('/refresh', (req, res) => {
 	// const auth_header	= req.headers.authorization;
 	// const token 		= auth_header && auth_header.split(' ')[1];
@@ -102,14 +139,55 @@ router.post('/refresh', (req, res) => {
 
 });
 
+/**
+ * @swagger
+ *  /api/auth/logout:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Disposes the user's refresh token
+ *      parameters:
+ *        - name: Token
+ *          description: Refresh Token
+ *          in: body
+ *          required: false
+ *          schema:
+ *            $ref: '#/definitions/Refresh_Token'
+ *      responses:
+ *        204:
+ *          description: Success.
+ */
 router.post('/logout', (req, res) => {
 	const token = req.body.refresh_token;
 	refreshTokens = refreshTokens.filter(t => t !== token);
 
-	res.status(200);
+	res.status(204).send();
 });
 
-// TODO : Signup - return created or error
+/**
+ * @swagger
+ *  /api/auth/signup:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Creates a new user and sends out a verification email
+ *      parameters:
+ *        - name: User
+ *          description: User's registration info
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/User'
+ *      produces:
+ *        - application/json
+ *      responses:
+ *        401:
+ *          description: Missing refresh token
+ *        403:
+ *          description: Invalid refresh token
+ *        200:
+ *          description: Success. New action token generated
+ */
 router.post('/signup', (req, res) => {
 	const { error } = validate(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -166,11 +244,58 @@ router.post('/signup', (req, res) => {
 	});
 });
 
-// TODO : get user data provided a token or error
+/**
+ * @swagger
+ *  /api/auth/:
+ *    get:
+ *      tags:
+ *        - Auth
+ *      description: Retrieves User Information
+ *      security:
+ *        - BearerAuth: []
+ *      produces:
+ *        - application/json
+ *      responses:
+ *        401:
+ *          description: User not found or Missing access token
+ *        403:
+ *          description: Invalid access token
+ *        200:
+ *          description: Success. (information sent)
+ *    put:
+ *      tags:
+ *        - Auth
+ *      description: Updates user information
+ *      security:
+ *        - BearerAuth: []
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: User Info
+ *          description: User's information
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/UserInfo'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        401:
+ *          description: User not found or Missing access token
+ *        403:
+ *          description: Invalid access token
+ *        426:
+ *          description: User is not verified yet.
+ *        200:
+ *          description: Nothing to update
+ *        204:
+ *          description: Updated user information
+ */
 router.get('/', enforceCredentials, (req, res) => {
 	User.findOne({ email: req.user.email }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(401).send(errorObject('User not found'));
+		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
 
 		const resBody = {
 			email: user.email,
@@ -183,8 +308,6 @@ router.get('/', enforceCredentials, (req, res) => {
 		return res.status(200).send(resBody);
 	});
 });
-
-// TODO : update user data provided a token or error
 router.put('/', enforceCredentials, (req, res) => {
 	const { error } = validatePassword({ ...req.body, email: req.user.email }, password = false);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -222,7 +345,40 @@ router.put('/', enforceCredentials, (req, res) => {
 	});
 });
 
-// TODO : update user password provided a token or error
+/**
+ * @swagger
+ *  /api/auth/password:
+ *    put:
+ *      tags:
+ *        - Auth
+ *      description: Update user password
+ *      security:
+ *        - BearerAuth: []
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: Passwords
+ *          description: User's old and new passwords
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Passwords'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        401:
+ *          description: User not found or Missing access token
+ *        403:
+ *          description: Invalid access token
+ *        426:
+ *          description: User is not verified yet.
+ *        200:
+ *          description: Nothing to update
+ *        204:
+ *          description: Password Updated
+ */
 router.put('/password', enforceCredentials, (req, res) => {
 	const { error } = validatePassword(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -251,8 +407,34 @@ router.put('/password', enforceCredentials, (req, res) => {
 	});
 });
 
-
-// TODO : verify user by email
+/**
+ * @swagger
+ *  /api/auth/verify:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Verify User
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: Verification
+ *          description: Verification Information
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Verification'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        401:
+ *          description: Verification invalid or expired
+ *        202:
+ *          description: Already verified 
+ *        200:
+ *          description: Now verified
+ */
 router.post('/verify', (req, res) => {
 	if (!req.body.token) return res.status(400).send(errorObject('Missing verification token'));
 	if (!req.body.id) return res.status(400).send(errorObject('Missing verification id'));
@@ -260,7 +442,7 @@ router.post('/verify', (req, res) => {
 
 	Verification.findOne({ token: req.body.token, _id: req.body.id }, function (err, verification) {
 		if (err) return res.status(500).send(errorObject(err.message));
-		if (!verification) return res.status(400).send(errorObject('Verification either expired or is invalid'));
+		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
 
 		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
 			if (err) return res.status(500).send(errorObject(err.message));
@@ -274,7 +456,32 @@ router.post('/verify', (req, res) => {
 	});
 });
 
-// TODO : verify user by email
+/**
+ * @swagger
+ *  /api/auth/verify/resend:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Resend Verification Email
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: Email
+ *          description: User Email
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Email'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        401:
+ *          description: User already verified or does not exist
+ *        201:
+ *          description: New verification email sent
+ */
 router.post('/verify/resend', (req, res) => {
 	delete req.body.firstName; delete req.body.lastName;
 	const { error } = validate(req.body, password = false);
@@ -282,7 +489,7 @@ router.post('/verify/resend', (req, res) => {
 
 	User.findOne({ email: req.body.email, verified: false }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
-		if (!user) return res.status(400).send(errorObject('User already verified or does not exist'));
+		if (!user) return res.status(401).send(errorObject('User already verified or does not exist'));
 
 		// Get rid of old verifications (shouldn't be more than one)
 		Verification.deleteMany({ _userId: user._id }, function (err) {
@@ -313,7 +520,34 @@ router.post('/verify/resend', (req, res) => {
 	});
 });
 
-// TODO : send reset link to user email
+/**
+ * @swagger
+ *  /api/auth/password/forgot:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Forgot Password
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: Email
+ *          description: User Email
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Email'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        404:
+ *          description: User does not exist
+ *        426:
+ *          description: User is not verified yet.
+ *        201:
+ *          description: Reset password email sent
+ */
 router.post('/password/forgot', (req, res) => {
 	delete req.body.firstName; delete req.body.lastName;
 	const { error } = validate(req.body, password = false);
@@ -354,6 +588,36 @@ router.post('/password/forgot', (req, res) => {
 });
 
 // TODO : reset password provided a reset link/token
+/**
+ * @swagger
+ *  /api/auth/password/reset:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Password Reset
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: PasswordReset
+ *          description: New password and Password Reset Information
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/PasswordReset'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        401:
+ *          description: Password Reset Expired or Invalid
+ *        404:
+ *          description: User does not exist
+ *        426:
+ *          description: User is not verified yet.
+ *        200:
+ *          description: Password Updated
+ */
 router.put('/password/reset', (req, res) => {
 	const { error } = validatePassword(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -363,10 +627,10 @@ router.put('/password/reset', (req, res) => {
 	// Find the password reset request
 	PasswordReset.findOne({ token: req.body.token, _id: req.body.id }, function (err, passwordReset) {
 		if (err) return res.status(500).send(errorObject(err.message));
-		if (!passwordReset) return res.status(400).send(errorObject('Verification either expired or is invalid'));
+		if (!passwordReset) return res.status(401).send(errorObject('Password Reset Expired or Invalid'));
 
 		// Find the user who requested the password reset
-		User.findOne({ _id: passwordReset._userId  }, function (err, user) {
+		User.findOne({ _id: passwordReset._userId }, function (err, user) {
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(404).send(errorObject('User does not exist'));
 			if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
@@ -386,17 +650,6 @@ router.put('/password/reset', (req, res) => {
 			});
 		});
 	});
-	// TODO : Get TOKEN from query (&id=TOKEN_GOES_HERE)
-	// TODO : Find token in DB
-	// TODO : Find user associated with token
-	// TODO : Try to perform update for user password
-	// TODO : remove TOKEN from DB
-	// TODO : send success.
-
-	// TODO : Handle any errors
-	// TODO : Token invalid
-	// TODO : User not found
-	// TODO : Password not valid?
 });
 
 module.exports = router;
