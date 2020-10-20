@@ -32,7 +32,21 @@ const enforceCredentials = (req, res, next) => {
 	});
 }
 
-// TODO : Login - return token or error
+/**
+ * @swagger
+ * /login:
+ * 	post:
+ * 		description: Authenticate user credentials
+ * 		responses:
+ * 			'400':
+ * 				description: 'Invalid request body'
+ * 			'200':
+ * 				description: 'Successful login. Returns an access token'
+ * 			'426':
+ * 				description: 'User must verify before logging in'
+ * 			'401':
+ * 				description: 'Credentials don't match'
+ */
 router.post('/login', (req, res) => {
 
 	const { error } = validate(req.body);
