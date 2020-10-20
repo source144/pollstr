@@ -121,7 +121,7 @@ router.post('/signup', (req, res) => {
 				console.log('abort failed')
 				return res.status(500).send(err);
 			}
-		})
+		});
 
 		// TODO : Create token for verification
 		// TODO : store token in DB - relate to user _id
@@ -205,6 +205,13 @@ router.post('/verify/resend', (req, res) => {
 	User.findOne({ email: req.body.email, verified: false }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(400).send(errorObject('User already verified or does not exist'));
+
+		const abort = () => user.remove(function (err, removed) {
+			if (err) {
+				console.log('abort failed')
+				return res.status(500).send(err);
+			}
+		});
 
 		// Get rid of old verifications (shouldn't be more than one)
 		Verification.deleteMany({ _userId: user._id }, function (err) {
