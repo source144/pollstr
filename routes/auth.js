@@ -177,7 +177,7 @@ router.put('/', (req, res) => {
 
 // TODO : update user password provided a token or error
 router.put('/password', enforceCredentials, (req, res) => {
-	const { error } = validate(req.body, password=false);
+	const { error } = validatePassword(req.body, password=false);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
 	if (!req.body.oldPassword) return res.status(400).send(errorObject('Missing old password'));
 	if (req.body.password === req.body.oldPassword) return res.status(200).send(errorObject('Nothing to update'));
