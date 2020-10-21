@@ -238,4 +238,8 @@
   .navbar__btn {
     display: none;
   }
+
+  .fa-caret-down {
+    display: none;
+  }
 }
