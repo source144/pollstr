@@ -12,9 +12,9 @@ export function Dropdown() {
 		<>
 			<ul onClick={handleClick} className={click ? 'dropdown-menu clicked' : 'dropdown-menu'}>
 				{MenuItems.map((item, index) => (
-					<li key={index}>
+					<li className={item.li_cName} key={index} >
 						<Link to={item.path}
-							className={item.cName}
+							className={item.link_cName}
 							onClick={() => setClick(false)}>
 							{item.title}
 						</Link>

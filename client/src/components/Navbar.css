@@ -215,11 +215,7 @@
     transform: translateX(-100%);
     transition: all 0.2s ease-out;
 
-    background: linear-gradient(
-      130deg,
-      var(--color-primary-light) 0%,
-      var(--color-primary-dark) 100%
-    );
+    background: var(--gradient-primary--1);
   }
 
   .nav-item:hover::before {

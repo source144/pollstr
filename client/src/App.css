@@ -43,6 +43,30 @@
 
   --color-black--1: #1c1b1b;
   --color-black--2: #1a1717;
+
+  --gradient-primary--1: linear-gradient(
+      130deg,
+      var(--color-primary-light) 0%,
+      var(--color-primary-dark) 100%
+    );
+  --gradient-primary--2: linear-gradient(
+      130deg,
+      var(--color-primary) 0%,
+      var(--color-primary-light) 60%,
+      var(--color-primary-dark) 100%
+	);
+	
+  --gradient-secondary--1: linear-gradient(
+      130deg,
+      var(--color-secondary-light) 0%,
+      var(--color-secondary-dark) 100%
+    );
+  /* --gradient-secondary--2: linear-gradient(
+      130deg,
+      var(--color-secondary) 0%,
+      var(--color-secondary-light) 60%,
+      var(--color-secondary-dark) 100%
+    ); */
 }
 
 * {

@@ -23,6 +23,7 @@ function Navbar() {
 	const closeMobileMenu = () => setClick(false);
 
 	const onMouseEnter = () => setDropdown(window.innerWidth >= 960);
+	const onMouseLeave = () => setDropdown(false);
 
 	const signInNav = (
 		<li className="nav-item">
@@ -32,7 +33,7 @@ function Navbar() {
 		</li>
 	);
 	const profileNav = (
-		<li className="nav-item">
+		<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<Link to='/profile' className='nav-links' onClick={closeMobileMenu}>
 				Polls <i className='fas fa-caret-down' />
 			</Link>
@@ -63,7 +64,7 @@ function Navbar() {
 							Contact Us
 						</Link>
 					</li>
-					<li className="nav-item">
+					<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 						<Link to='/polls' className='nav-links' onClick={closeMobileMenu}>
 							Polls <i className='fas fa-caret-down' />
 						</Link>

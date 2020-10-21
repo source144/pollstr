@@ -2,16 +2,19 @@ export const MenuItems = [
 	{
 		title: 'Hot',
 		path: '/polls/hot',
-		cName: 'dropdown-link'
+		li_cName: 'dropdown-item dropdown-item--hot',
+		link_cName: 'dropdown-link'
 	},
 	{
 		title: 'Create',
 		path: '/polls/create',
-		cName: 'dropdown-link'
+		li_cName: 'dropdown-item',
+		link_cName: 'dropdown-link'
 	},
 	{
 		title: 'Manage',
 		path: '/polls/manage',
-		cName: 'dropdown-link'
+		li_cName: 'dropdown-item',
+		link_cName: 'dropdown-link'
 	},
 ]
