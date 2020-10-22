@@ -7,7 +7,7 @@ import './Navbar.css';
 
 // const signUpNav = (
 // 	<li className="nav-item">
-// 		<Link to='/contact-us' className='nav-links' onClick={closeMobileMenu}>
+// 		<Link to='/contact-us' className='nav-link' onClick={closeMobileMenu}>
 // 			Contact Us
 // 		</Link>
 // 	</li>
@@ -27,14 +27,14 @@ function Navbar() {
 
 	const signInNav = (
 		<li className="nav-item">
-			<Link to='/login' className='nav-links' onClick={closeMobileMenu}>
+			<Link to='/login' className='nav-link' onClick={closeMobileMenu}>
 				Sign In
 			</Link>
 		</li>
 	);
 	const profileNav = (
 		<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-			<Link to='/profile' className='nav-links' onClick={closeMobileMenu}>
+			<Link to='/profile' className='nav-link' onClick={closeMobileMenu}>
 				Polls <i className='fas fa-caret-down' />
 			</Link>
 			{dropdown && <Dropdown /> /* TODO: dropdown with item props*/}
@@ -55,29 +55,31 @@ function Navbar() {
 				</div> */}
 				<ul className={click ? 'nav-menu active' : 'nav-menu'}>
 					<li className="nav-item">
-						<Link to='/' className='nav-links' onClick={closeMobileMenu}>
+						<Link to='/' className='nav-link' onClick={closeMobileMenu}>
 							Home
 						</Link>
 					</li>
 					<li className="nav-item">
-						<Link to='/contact-us' className='nav-links' onClick={closeMobileMenu}>
+						<Link to='/contact-us' className='nav-link' onClick={closeMobileMenu}>
 							Contact Us
 						</Link>
 					</li>
 					<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-						<Link to='/polls' className='nav-links' onClick={closeMobileMenu}>
+						<Link to='/polls' className='nav-link' onClick={closeMobileMenu}>
 							Polls <i className='fas fa-caret-down' />
 						</Link>
 						{dropdown && <Dropdown />}
 					</li>
 					{AUTH ? profileNav : signInNav}
-					<li>
-						<Link to='/register' className='nav-links-mobile' onClick={closeMobileMenu}>
+					<li className="nav-item mobile-only">
+						<Link to='/signup' className='nav-link' onClick={closeMobileMenu}>
 							Sign Up
 						</Link>
 					</li>
 				</ul>
-				<div className="navbar__btn"><Button /></div>
+				<Link to='/signup' className="desktop-only">
+					<Button className="btn--primary-outline" onClick={() => console.log("clicked")}>Sign Up</Button>
+				</Link>
 			</nav>
 		</>
 	)

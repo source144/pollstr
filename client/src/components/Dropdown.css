@@ -12,7 +12,7 @@
 }
 
 .dropdown-menu .dropdown-item {
-  background: var(--color-primary-dark);
+  background: var(--color-primary);
   transition: all 150ms ease-in;
 }
 
@@ -20,9 +20,9 @@
   background: var(--color-primary-light);
 }
 
-.dropdown-menu .dropdown-item:hover .dropdown-item.dropdown-item--hot {
-	background: var(--color-primary-light);
-  }
+.dropdown-menu .dropdown-item:has(.dropdown-item--hot):hover {
+  background: var(--gradient-secondary--1);
+}
 
 /* .dropdown-menu .dropdown-item.dropdown-item--hot:hover {
   background: var(--gradient-secondary--1);

@@ -1,16 +1,12 @@
 .navbar {
-  background: linear-gradient(
-    90deg,
-    var(--color-black--1) 0%,
-    var(--color-black--2) 100%
-  );
+  background: var(--nav-gradient);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
+  height: var(--nav-height);
   font-size: 2.2rem;
-  padding: 0 30px;
-  z-index: 99;
+  padding: 0 var(--nav-x-padding);
+  z-index: 10000;
 }
 
 .navbar > *,
@@ -30,10 +26,10 @@
 }
 
 /* 
----------------------------
------------ Logo ----------
---------------------------- 
-*/
+  ---------------------------
+  ----------- Logo ----------
+  --------------------------- 
+  */
 .navbar-logo {
   font-family: "billabongregular", "Billabong";
   margin-right: auto;
@@ -50,14 +46,14 @@
 }
 
 /* 
----------------------------
----------- Items ----------
---------------------------- 
-*/
+  ---------------------------
+  ---------- Items ----------
+  --------------------------- 
+  */
 .nav-menu {
   /* display: flex;
-	list-style: none;
-	width: 40vw; */
+	  list-style: none;
+	  width: 40vw; */
 
   display: grid;
   grid-template-columns: repeat(5, auto);
@@ -74,36 +70,32 @@
 .nav-item {
   display: flex;
   align-items: center;
-  height: 80px;
+  height: var(--nav-height);
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  height: 80px;
+  height: var(--nav-height);
 }
 
-.nav-links {
+.nav-link {
   color: var(--color-white);
   text-decoration: none;
   padding: 0.5rem 1rem;
 }
 
-.nav-links-mobile {
-  display: none;
-}
-
-.nav-links:hover {
+.nav-link:hover {
   background-color: var(--color-primary-light);
   border-radius: 4px;
-  transition: all 0.2s ease-out;
+  transition: background-color 0.2s ease-out;
 }
 
 /* 
----------------------------
--------- Hamburger --------
---------------------------- 
-*/
+  ---------------------------
+  -------- Hamburger --------
+  --------------------------- 
+  */
 .navbar-expand {
   display: none;
 }
@@ -171,10 +163,16 @@
 }
 
 /* 
----------------------------
--------- Mobile --------
---------------------------- 
-*/
+  ---------------------------
+  -------- Mobile --------
+  --------------------------- 
+  */
+@media screen and (min-width: 961px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 960px) {
   /* @media screen and (max-width: 60px) { */
   .nav-menu {
@@ -184,7 +182,7 @@
     transform: translateY(calc(-100% - 2px));
     transition: all 0.2s;
     width: 100vw;
-    height: calc(100vh - 80px);
+    height: calc(100vh - var(--nav-height));
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -193,10 +191,11 @@
     z-index: -1;
 
     background: var(--color-grey-dark-4);
+    z-index: 100;
   }
 
   .nav-menu.active {
-    transform: translateY(80px);
+    transform: translateY(var(--nav-height));
   }
 
   .nav-item {
@@ -222,7 +221,7 @@
     transform: translateX(0);
   }
 
-  .nav-links:hover {
+  .nav-link:hover {
     background-color: transparent;
   }
 

@@ -1,12 +1,29 @@
 import React from 'react';
-import './Button.css';
-import { Link } from 'react-router-dom';
 
-export function Button() {
+export function Button({
+	children,
+	type,
+	onClick,
+	className,
+	onMouseEnter,
+	onMouseLeave
+}) {
+
+	let _className;
+	if (Array.isArray(className)) _className = `btn ${className.join(' ')}`.trim();
+	else if (typeof className === 'string') _className = `btn ${className}`.trim();
+	else _className = 'btn';
+
 	return (
-		<Link to='register'>
-			<button className='btn'>Sign Up</button>
-		</Link>
+		<button
+			type={type}
+			className={_className}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			onClick={onClick}
+		>
+			{children}
+		</button>
 	);
 }
 
