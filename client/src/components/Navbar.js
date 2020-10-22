@@ -45,7 +45,7 @@ function Navbar() {
 		<>
 			<nav className="navbar">
 				<Link to="/" className="navbar-logo">
-					Pollstr <i className="navbar-logo__icon fas fa-volleyball-ball" />
+					<span className='navbar-logo-text'>Pollstr</span> <i className="navbar-logo__icon fas fa-volleyball-ball" />
 				</Link>
 				<div className={click ? "navbar-expand active" : "navbar-expand"} onClick={handleClick}>
 					<span className="navbar-expand__icon" />

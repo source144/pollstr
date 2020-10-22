@@ -11,7 +11,8 @@
 
 .navbar > *,
 .navbar > * > *,
-.navbar > * > * > * {
+.navbar > * > * > *,
+.navbar > * > * > * > * {
   /* Disable text selection */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -30,8 +31,11 @@
   ----------- Logo ----------
   --------------------------- 
   */
-.navbar-logo {
+.navbar-logo,
+.navbar-logo-text {
   font-family: "billabongregular", "Billabong";
+}
+.navbar-logo {
   margin-right: auto;
   margin-top: 10px; /* Fix font margin */
   cursor: pointer;
@@ -43,6 +47,11 @@
 .navbar-logo__icon {
   margin-left: 6px;
   font-size: 3rem;
+}
+
+.navbar-logo:hover .navbar-logo-text {
+  font-family: "billabongregular", "Billabong";
+  color: var(--color-primary-light);
 }
 
 /* 
@@ -173,6 +182,11 @@
   }
 }
 
+@media screen and (max-width: 961px) {
+  .nav-menu {
+    display: none;
+  }
+}
 @media screen and (max-width: 960px) {
   /* @media screen and (max-width: 60px) { */
   .nav-menu {
