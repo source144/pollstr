@@ -12,12 +12,12 @@
 }
 
 .dropdown-menu .dropdown-item {
-  background: var(--color-primary);
+  background: var(--color-grey-dark-5);
   transition: all 150ms ease-in;
 }
 
 .dropdown-menu .dropdown-item:hover {
-  background: var(--color-primary-light);
+  background: var(--color-primary);
 }
 
 .dropdown-menu .dropdown-item:has(.dropdown-item--hot):hover {

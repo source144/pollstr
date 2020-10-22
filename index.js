@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
 const swaggerJsDoc = require('swagger-jsdoc');
@@ -227,8 +228,19 @@ const adminOnly = (req, res, next) => {
 	next();
 }
 
+
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use('/api', Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
+
+app.use('/api', function (req, res, next) {
+	console.log(req.fingerprint);
+	console.log(req.fingerprint.components.useragent.browser);
+	console.log(req.fingerprint.components.useragent.device);
+	console.log(req.fingerprint.components.useragent.os);
+	next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
 

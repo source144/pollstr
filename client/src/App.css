@@ -204,7 +204,6 @@ body {
 
 .form-item__input {
   width: 100%;
-  transition: all 350ms ease-in-out;
   padding: 1rem;
   border-radius: 4px;
   outline: none;
