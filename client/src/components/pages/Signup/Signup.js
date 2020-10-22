@@ -118,9 +118,9 @@ const Signup = () => {
 								name="firstName"
 								formNoValidate
 								onChange={handleFirstName} />
-							{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
 							<span className='form-item__input-icon'><i class="fas fa-user-graduate"></i></span>
 						</div>
+						{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
 
 					</div>
 					<div className="form-item">
@@ -133,9 +133,9 @@ const Signup = () => {
 								name="lastName"
 								formNoValidate
 								onChange={handleLasttName} />
-							{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
 							<span className='form-item__input-icon'><i class="fas fa-user-tie"></i></span>
 						</div>
+						{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
 					</div>
 					<div className="form-item">
 						<label htmlFor="email">Email</label>
@@ -147,9 +147,9 @@ const Signup = () => {
 								name="email"
 								formNoValidate
 								onChange={handleEmail} />
-							{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 							<span className='form-item__input-icon'><i class="fas fa-envelope"></i></span>
 						</div>
+						{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 					</div>
 					<div className="form-item">
 						<label htmlFor="password">Password</label>
@@ -161,9 +161,9 @@ const Signup = () => {
 								name="password"
 								formNoValidate
 								onChange={handlePassword} />
-							{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 							<span className='form-item__input-icon'><i class="fas fa-lock"></i></span>
 						</div>
+						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
 					<div className="form-item">
 						<label htmlFor="confirm">Confirm Password</label>
@@ -175,9 +175,9 @@ const Signup = () => {
 								name="confirm"
 								formNoValidate
 								onChange={handleConfirm} />
-							{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 							<span className='form-item__input-icon'><i class="fas fa-key"></i></span>
 						</div>
+						{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 					</div>
 					{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
 					<div className="form-item">
