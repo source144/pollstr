@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import './Login.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -44,11 +45,8 @@ const Login = () => {
 	});
 
 	const getPayload = () => ({
-		firstName,
-		lastName,
 		email,
-		password,
-		confirm,
+		password
 	});
 
 	const handleEmail = e => setEmail(e.target.value);
@@ -60,9 +58,9 @@ const Login = () => {
 
 		let valid = true;
 		const _errors = checkForm(getPayload());
-		Object.keys(_errors).forEach(key => valid = valid && !!_errors[key]);
+		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
-		console.log(_errors);
+		console.log('After validation', _errors);
 		console.log(valid);
 
 		if (valid) {
@@ -70,7 +68,8 @@ const Login = () => {
 			// Handle Error
 			// or Forward Home
 		}
-		else setErrors(_errors);
+
+		setErrors(_errors);
 	}
 
 	// TODO: add a span with symbol of field
@@ -78,69 +77,43 @@ const Login = () => {
 	return (
 		<div className="login">
 			<div className="form-form-wrapper">
-				<h1 className='form-title'>Create Account</h1>
+				<h1 className='form-title'>Sign In</h1>
 				<form onSubmit={handleSubmit} formNoValidate className='form-form'>
 					<div className="form-item">
-						<label htmlFor="firstName">First Name</label>
-						<input
-							className={`form-item__input ${!!errors.firstName ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. Serverus"
-							name="firstName"
-							formNoValidate
-							onChange={handleFirstName} />
-						{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
-					</div>
-					<div className="form-item">
-						<label htmlFor="lastName">Last Name</label>
-						<input
-							className={`form-item__input ${!!errors.lastName ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. Snape"
-							name="lastName"
-							formNoValidate
-							onChange={handleLasttName} />
-						{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
-					</div>
-					<div className="form-item">
 						<label htmlFor="email">Email</label>
-						<input
-							className={`form-item__input ${!!errors.email ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. serverus@hogwarts.edu"
-							name="email"
-							formNoValidate
-							onChange={handleEmail} />
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.email ? 'form-item__input--err' : ''}`}
+								type="text"
+								placeholder="e.g. serverus@hogwarts.edu"
+								name="email"
+								formNoValidate
+								onChange={handleEmail} />
+							<span className='form-item__input-icon'><i class="fas fa-envelope"></i></span>
+						</div>
 						{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 					</div>
 					<div className="form-item">
 						<label htmlFor="password">Password</label>
-						<input
-							className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="password"
-							placeholder="Something Secret! (Shhh..)"
-							name="password"
-							formNoValidate
-							onChange={handlePassword} />
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
+								type="password"
+								// placeholder="e.g. CaputDraconis420"
+								placeholder="e.g. ••••••••••••"
+								name="password"
+								formNoValidate
+								onChange={handlePassword} />
+							<span className='form-item__input-icon'><i class="fas fa-lock"></i></span>
+						</div>
 						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
 					<div className="form-item">
-						<label htmlFor="confirm">Confirm Password</label>
-						<input
-							className={`form-item__input ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="password"
-							placeholder="Same Secret!"
-							name="confirm"
-							formNoValidate
-							onChange={handleConfirm} />
-						{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
-					</div>
-					{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
-					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="submit" value="Sign Up" />
+							type="submit" value="Sign In " />
 					</div>
+					<div className="login-switch"><p>Don't have an account? <Link to='/signup' className='login-switch-action'>Sign Up</Link></p></div>
 				</form>
 			</div>
 		</div>

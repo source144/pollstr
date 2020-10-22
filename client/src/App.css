@@ -189,7 +189,6 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0.6rem;
-  position: relative;
 }
 
 .form-item label {
@@ -238,6 +237,7 @@ body {
 
 .form-item__input-icon {
   font-size: 1.5rem;
+  color: var(--color-grey-dark-1);
 }
 
 .form-item .form-item__input.form-item__input--err {

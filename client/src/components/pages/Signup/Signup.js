@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import './Signup.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -88,7 +89,7 @@ const Signup = () => {
 
 		let valid = true;
 		const _errors = checkForm(getPayload());
-		Object.keys(_errors).forEach(key => valid = valid && !!_errors[key]);
+		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 		console.log(_errors);
 		console.log(valid);
@@ -98,7 +99,8 @@ const Signup = () => {
 			// Handle Error
 			// or Forward Home
 		}
-		else setErrors(_errors);
+
+		setErrors(_errors);
 	}
 
 	// TODO: add a span with symbol of field
@@ -158,6 +160,7 @@ const Signup = () => {
 								className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
 								type="password"
 								placeholder="Something Secret! (Shhh..)"
+								// placeholder="e.g. CaputDraconis420"
 								name="password"
 								formNoValidate
 								onChange={handlePassword} />
@@ -185,6 +188,7 @@ const Signup = () => {
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
 							type="submit" value="Sign Up" />
 					</div>
+					<div className="signup-switch"><p>Already have an account? <Link to='/login' className='signup-switch-action'>Sign In</Link></p></div>
 				</form>
 			</div>
 		</div>
