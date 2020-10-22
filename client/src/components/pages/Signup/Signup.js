@@ -38,7 +38,7 @@ const checkForm = (payload) => {
 		if (payload.password.length < PW_MIN_LENGTH) pwLength = `be at least 8 letters${!!pwDetails.length ? ',' : ''} `;
 
 		if (pwDetails.length || pwLength)
-			errors.password = `Password must ${pwLength ?? pwLength}contain ${pwDetails.slice(0, -1).join(', ')}${pwDetails.length > 2 ? ` and ${pwDetails.pop()}` : ''}`;
+			errors.password = `Password must ${pwLength ?? pwLength}contain ${pwDetails.slice(0, -1).join(', ')}${pwDetails.length >= 2 ? ` and ${pwDetails.pop()}` : ''}`;
 	}
 
 	if (!errors.password && payload.password !== payload.confirm) errors.confirm = "passwords don't match";
