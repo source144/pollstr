@@ -1,0 +1,16 @@
+.login {
+	height: calc(100vh - var(--nav-height));
+	overflow: auto;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  .login > *,
+  .login > * > *,
+  .login > * > * > *,
+  .login > * > * > * > * {
+	font-family: "Montserrat", sans-serif;
+  }

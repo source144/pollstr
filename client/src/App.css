@@ -90,7 +90,13 @@
 }
 
 * {
-  font-family: "PT Sans", sans-serif;
+  /* font-family: "PT Sans", sans-serif; */
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Fix for Font Awesome */
+.fas {
+  font-family: "Font Awesome 5 Free" !important;
 }
 
 *,
@@ -183,12 +189,7 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0.6rem;
-}
-
-.form-item__input:focus {
-  border-color: #4dabf7;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
-    0 0 8px rgba(34, 139, 230, 0.5);
+  position: relative;
 }
 
 .form-item label {
@@ -203,6 +204,7 @@ body {
 }
 
 .form-item__input {
+  width: 100%;
   transition: all 350ms ease-in-out;
   padding: 1rem;
   border-radius: 4px;
@@ -210,11 +212,32 @@ body {
   border: 2px solid var(--color-input-border-1);
   font-size: 2rem;
   color: var(--color-blue-dark-1);
+  font-family: "Font Awesome 5 Free";
+  margin-right: -3.25rem;
+}
+
+.form-item__input:focus {
+  border-color: #4dabf7;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
+    0 0 8px rgba(34, 139, 230, 0.5);
+}
+
+/* Font Awesome Icon inside input */
+.form-item-wrapper .form-item__input[type="text"]:before {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-item .form-item__input::placeholder {
+  font-size: 1.5rem;
   font-weight: 400;
   color: var(--color-grey-dark-1);
+}
+
+.form-item__input-icon {
+  font-size: 1.5rem;
 }
 
 .form-item .form-item__input.form-item__input--err {

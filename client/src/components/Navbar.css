@@ -13,6 +13,7 @@
 .navbar > * > *,
 .navbar > * > * > *,
 .navbar > * > * > * > * {
+  font-family: "PT Sans", sans-serif;
   /* Disable text selection */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
