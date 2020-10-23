@@ -509,8 +509,6 @@ router.post('/verify/:id', (req, res) => {
 	if (!req.params.id) return res.status(400).send(errorObject('Missing verification id'));
 
 	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
-	if (!mongoObjectId.isValid(req.params.token)) res.status(400).send(errorObject('Invalid verification token'));
-
 
 	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
 		if (err) return res.status(500).send({err, message: err.message});
@@ -639,8 +637,6 @@ router.put('/password/reset/:id', (req, res) => {
 	if (req.params.id) return res.status(400).send(errorObject('Missing password password reset id'));
 
 	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
-	if (!mongoObjectId.isValid(req.params.token)) res.status(400).send(errorObject('Invalid verification token'));
-
 	// Find the password reset request
 	PasswordReset.findOne({ token: req.body.token, _id: req.params.id }, function (err, passwordReset) {
 		if (err) return res.status(500).send(errorObject(err.message));

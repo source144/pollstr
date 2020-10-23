@@ -10,7 +10,7 @@ const router = express.Router();
  *  /api/poll/:
  *    post:
  *      tags:
- *        - Auth
+ *        - Poll
  *      description: Creates a new poll for a user or guest
  *      security:
  *        - BearerAuth: []
@@ -68,7 +68,7 @@ router.delete('/:id', (req, res) => { });
  *  /api/poll/{id}:
  *    get:
  *      tags:
- *        - Auth
+ *        - Poll
  *      description: Fetches a poll that matches an id and the option selected by the user/guest requesting it (if they voted already)
  *      security:
  *        - BearerAuth: []
@@ -114,7 +114,7 @@ router.get('/:id', (req, res) => {
  *  /api/poll/{id}/vote/{optionId}:
  *    post:
  *      tags:
- *        - Auth
+ *        - Poll
  *      description: Vote an option for a poll
  *      security:
  *        - BearerAuth: []
