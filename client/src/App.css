@@ -205,7 +205,7 @@ body {
   /* with align-mobile class */
   .form-centered-container {
 	margin-top: calc(-1*var(--nav-height));
-	/* height: 100vh; */
+	height: 100vh;
   }
 }
 
