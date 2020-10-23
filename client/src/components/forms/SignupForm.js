@@ -39,7 +39,7 @@ const checkForm = (payload) => {
 		if (payload.password.length < PW_MIN_LENGTH) pwLength = `be at least 8 letters${!!pwDetails.length ? ',' : ''} `;
 
 		if (pwDetails.length || pwLength)
-			errors.password = `Password must ${pwLength ?? pwLength}contain ${pwDetails.slice(0, -1).join(', ')}${pwDetails.length >= 2 ? ` and ${pwDetails.pop()}` : ''}`;
+			errors.password = `Password must ${pwLength ? pwLength : ''}contain ${pwDetails.length == 1 ? pwDetails.pop() : pwDetails.slice(0, -1).join(', ')}${pwDetails.length >= 2 ? ` and ${pwDetails.pop()}` : ''}`;
 	}
 
 	if (!errors.password && payload.password !== payload.confirm) errors.confirm = "passwords don't match";
@@ -117,7 +117,7 @@ const SignUpForm = () => {
 							name="firstName"
 							formNoValidate
 							onChange={handleFirstName} />
-						<span className='form-item__input-icon'><i class="fas fa-user-graduate"></i></span>
+						<span className='form-item__input-icon'><i className="fas fa-user-graduate"></i></span>
 					</div>
 					{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
 
@@ -132,7 +132,7 @@ const SignUpForm = () => {
 							name="lastName"
 							formNoValidate
 							onChange={handleLasttName} />
-						<span className='form-item__input-icon'><i class="fas fa-user-tie"></i></span>
+						<span className='form-item__input-icon'><i className="fas fa-user-tie"></i></span>
 					</div>
 					{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
 				</div>
@@ -146,7 +146,7 @@ const SignUpForm = () => {
 							name="email"
 							formNoValidate
 							onChange={handleEmail} />
-						<span className='form-item__input-icon'><i class="fas fa-envelope"></i></span>
+						<span className='form-item__input-icon'><i className="fas fa-envelope"></i></span>
 					</div>
 					{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 				</div>
@@ -161,7 +161,7 @@ const SignUpForm = () => {
 							name="password"
 							formNoValidate
 							onChange={handlePassword} />
-						<span className='form-item__input-icon'><i class="fas fa-lock"></i></span>
+						<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
 					</div>
 					{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 				</div>
@@ -175,7 +175,7 @@ const SignUpForm = () => {
 							name="confirm"
 							formNoValidate
 							onChange={handleConfirm} />
-						<span className='form-item__input-icon'><i class="fas fa-key"></i></span>
+						<span className='form-item__input-icon'><i className="fas fa-key"></i></span>
 					</div>
 					{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 				</div>
@@ -185,7 +185,7 @@ const SignUpForm = () => {
 						className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
 						type="submit" value="Sign Up" />
 				</div>
-				<div className="signup-switch"><p>Already have an account? <Link to='/login' className='signup-switch-action'>Sign In</Link></p></div>
+				<div className="form-switch"><p>Already have an account? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
 			</form>
 		</div>
 	);

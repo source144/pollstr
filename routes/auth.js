@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const router = express.Router();
 const { refreshTokens } = require('../shared/jwt');
 const { notify } = require('../router');
+const mongoObjectId = require('mongoose').Types.ObjectId;
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN || "SECRET_REFRESH_KEY";
@@ -232,7 +233,7 @@ router.post('/signup', (req, res) => {
 				from: NO_REPLY_EMAIL,
 				to: user.email,
 				subject: 'Confirm your Pollstr account',
-				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify?id=${verification._id}&token=${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
+				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttps://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { abort(); return res.status(500).send(err); }
@@ -409,55 +410,6 @@ router.put('/password', enforceCredentials, (req, res) => {
 
 /**
  * @swagger
- *  /api/auth/verify:
- *    post:
- *      tags:
- *        - Auth
- *      description: Verify User
- *      produces:
- *        - application/json
- *      parameters:
- *        - name: Verification
- *          description: Verification Information
- *          in: body
- *          required: true
- *          schema:
- *            $ref: '#/definitions/Verification'
- *      responses:
- *        500:
- *          description: Server Error
- *        400:
- *          description: Request body error
- *        401:
- *          description: Verification invalid or expired
- *        202:
- *          description: Already verified 
- *        200:
- *          description: Now verified
- */
-router.post('/verify', (req, res) => {
-	if (!req.body.token) return res.status(400).send(errorObject('Missing verification token'));
-	if (!req.body.id) return res.status(400).send(errorObject('Missing verification id'));
-
-
-	Verification.findOne({ token: req.body.token, _id: req.body.id }, function (err, verification) {
-		if (err) return res.status(500).send(errorObject(err.message));
-		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
-
-		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
-			if (err) return res.status(500).send(errorObject(err.message));
-			if (!user) return res.status(202).send(errorObject('User is already verified'));
-
-			verification.remove(function (err, removed) {
-				if (err) return res.status(500).send(err);
-				return res.status(200).send({ notify: `User has been verified, you may now log in` });
-			});
-		});
-	});
-});
-
-/**
- * @swagger
  *  /api/auth/verify/resend:
  *    post:
  *      tags:
@@ -508,7 +460,7 @@ router.post('/verify/resend', (req, res) => {
 				from: NO_REPLY_EMAIL,
 				to: user.email,
 				subject: 'Confirm your Pollstr account',
-				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify?id=${verification._id}&token=${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
+				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) return res.status(500).send(err);
@@ -519,6 +471,64 @@ router.post('/verify/resend', (req, res) => {
 		});
 	});
 });
+
+/**
+ * @swagger
+ *  /api/auth/verify/{id}:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      description: Verify User
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: id
+ *          description: Verification Id
+ *          in: path
+ *          required: true
+ *        - name: Verification
+ *          description: Verification Information
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Verification'
+ *      responses:
+ *        500:
+ *          description: Server Error
+ *        400:
+ *          description: Request body error
+ *        401:
+ *          description: Verification invalid or expired
+ *        202:
+ *          description: Already verified 
+ *        200:
+ *          description: Now verified
+ */
+router.post('/verify/:id', (req, res) => {
+	if (!req.body.token) return res.status(400).send(errorObject('Missing verification token'));
+	if (!req.params.id) return res.status(400).send(errorObject('Missing verification id'));
+
+	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
+	if (!mongoObjectId.isValid(req.params.token)) res.status(400).send(errorObject('Invalid verification token'));
+
+
+	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
+		if (err) return res.status(500).send({err, message: err.message});
+		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
+
+		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
+			if (err) return res.status(500).send(errorObject(err.message));
+			if (!user) return res.status(202).send(errorObject('User is already verified'));
+
+			verification.remove(function (err, removed) {
+				if (err) return res.status(500).send(err);
+				return res.status(200).send({ notify: `User has been verified, you may now log in` });
+			});
+		});
+	});
+});
+
+
 
 /**
  * @swagger
@@ -575,7 +585,7 @@ router.post('/password/forgot', (req, res) => {
 				from: NO_REPLY_EMAIL,
 				to: user.email,
 				subject: 'Reset your Pollstr account password',
-				text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttp://${DOMAIN}/passwordreset?id=${passwordReset._id}&token=${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
+				text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) return res.status(500).send(err);
@@ -590,7 +600,7 @@ router.post('/password/forgot', (req, res) => {
 // TODO : reset password provided a reset link/token
 /**
  * @swagger
- *  /api/auth/password/reset:
+ *  /api/auth/password/reset/{id}:
  *    post:
  *      tags:
  *        - Auth
@@ -598,12 +608,16 @@ router.post('/password/forgot', (req, res) => {
  *      produces:
  *        - application/json
  *      parameters:
- *        - name: PasswordReset
- *          description: New password and Password Reset Information
+ *        - name: id
+ *          description: Password Reset Id
+ *          in: path
+ *          required: true
+ *        - name: Password
+ *          description: New password
  *          in: body
  *          required: true
  *          schema:
- *            $ref: '#/definitions/PasswordReset'
+ *            $ref: '#/definitions/Password'
  *      responses:
  *        500:
  *          description: Server Error
@@ -618,16 +632,19 @@ router.post('/password/forgot', (req, res) => {
  *        200:
  *          description: Password Updated
  */
-router.put('/password/reset', (req, res) => {
+router.put('/password/reset/:id', (req, res) => {
 	const { error } = validatePassword(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
 	if (!req.body.token) return res.status(400).send(errorObject('Missing password reset token'));
-	if (!req.body.id) return res.status(400).send(errorObject('Missing password reset id'));
+	if (req.params.id) return res.status(400).send(errorObject('Missing password password reset id'));
+
+	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
+	if (!mongoObjectId.isValid(req.params.token)) res.status(400).send(errorObject('Invalid verification token'));
 
 	// Find the password reset request
-	PasswordReset.findOne({ token: req.body.token, _id: req.body.id }, function (err, passwordReset) {
+	PasswordReset.findOne({ token: req.body.token, _id: req.params.id }, function (err, passwordReset) {
 		if (err) return res.status(500).send(errorObject(err.message));
-		if (!passwordReset) return res.status(401).send(errorObject('Password Reset Expired or Invalid'));
+		if (!passwordReset) return res.status(401).send(errorObject('Password reset either expired or is invalid'));
 
 		// Find the user who requested the password reset
 		User.findOne({ _id: passwordReset._userId }, function (err, user) {

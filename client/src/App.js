@@ -4,6 +4,10 @@ import Navbar from './components/Navbar';
 import './App.css';
 import Signup from './components/pages/Signup/Signup';
 import Login from './components/pages/Login/Login';
+import PasswordForgot from './components/pages/PasswordForgot/PasswordForgot';
+import PasswordReset from './components/pages/PasswordReset/PasswordReset';
+import Verify from './components/pages/Verify/Verify';
+import NotFound from './components/pages/NotFound/NotFound';
 
 function App() {
 	return (
@@ -11,8 +15,12 @@ function App() {
 			<Router>
 				<Navbar />
 				<Switch>
-					<Route path='/signup' component={Signup}></Route>
-					<Route path='/login' component={Login}></Route>
+					<Route path='/signup' component={Signup} exact></Route>
+					<Route path='/login' component={Login} exact></Route>
+					<Route path='/password/forgot' component={PasswordForgot} exact></Route>
+					<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
+					<Route path='/verify/:id-:token' component={Verify}></Route>
+					<Route path='/*' component={NotFound}></Route>
 				</Switch>
 			</Router>
 		</>

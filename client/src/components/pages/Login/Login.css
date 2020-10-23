@@ -15,18 +15,4 @@
   font-family: "Montserrat", sans-serif;
 }
 
-.login-switch {
-  width: 100%;
-  text-align: right;
-  padding-right: 0.9rem;
-}
-
-.login-switch-action {
-  text-decoration: none;
-  color: var(--color-grey-dark-1);
-  font-weight: 700;
-}
-
-.login-switch-action:hover {
-  color: var(--color-primary-light);
-}
+/* TODO : FIX Mobile not looking centered */

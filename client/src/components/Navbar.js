@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
 import './Navbar.css';
@@ -19,6 +19,13 @@ function Navbar() {
 
 	let AUTH = false;
 
+	// No parent selector (:has() only works with jQuery.. ><')
+	// Suggested in https://stackoverflow.com/a/51628934/9382757
+	// Using that until a more dynamic/modular implementation is used
+	const location = useLocation();
+	console.log(location);
+	const activeNavClass = (route) => { return location.pathname === route ? "nav-item--active" : null }
+
 	const handleClick = () => setClick(!click);
 	const closeMobileMenu = () => setClick(false);
 
@@ -26,14 +33,14 @@ function Navbar() {
 	const onMouseLeave = () => setDropdown(false);
 
 	const signInNav = (
-		<li className="nav-item">
+		<li className={["nav-item", activeNavClass('/login')].join(' ')}>
 			<Link to='/login' className='nav-link' onClick={closeMobileMenu}>
 				Sign In
 			</Link>
 		</li>
 	);
 	const profileNav = (
-		<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<li className={["nav-item", activeNavClass('/profile')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<Link to='/profile' className='nav-link' onClick={closeMobileMenu}>
 				Polls <i className='fas fa-caret-down' />
 			</Link>
@@ -54,17 +61,17 @@ function Navbar() {
 					<i className={click ? 'fas fa-times' : 'fas fa-bars'} />
 				</div> */}
 				<ul className={click ? 'nav-menu active' : 'nav-menu'}>
-					<li className="nav-item">
+					<li className={["nav-item", activeNavClass('/')].join(' ')}>
 						<Link to='/' className='nav-link' onClick={closeMobileMenu}>
 							Home
 						</Link>
 					</li>
-					<li className="nav-item">
+					<li className={["nav-item", activeNavClass('/contact-us')].join(' ')}>
 						<Link to='/contact-us' className='nav-link' onClick={closeMobileMenu}>
 							Contact Us
 						</Link>
 					</li>
-					<li className="nav-item" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+					<li className={["nav-item", activeNavClass('/polls')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 						<Link to='/polls' className='nav-link' onClick={closeMobileMenu}>
 							Polls <i className='fas fa-caret-down' />
 						</Link>

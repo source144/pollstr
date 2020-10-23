@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import './Login.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -9,8 +8,7 @@ const checkForm = (payload) => {
 	if (!payload || typeof payload !== 'object') { console.log('invalid payload'); return; }
 
 	const errors = {
-		email: '',
-		password: ''
+		email: ''
 	};
 
 
@@ -20,30 +18,22 @@ const checkForm = (payload) => {
 	if (!payload.email) errors.email = 'An email is required';
 	else if (!emailRegex.test(payload.email)) errors.email = 'Please enter a valid email';
 
-	if (!payload.password) errors.password = 'A password is required';
-
 	return errors;
 }
 
-
-const Login = () => {
-
+const PasswordForgot = () => {
 	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
 	const [responseError, setResponseError] = useState('');
 
 	const [errors, setErrors] = useState({
 		email: '',
-		password: ''
 	});
 
 	const getPayload = () => ({
-		email,
-		password
+		email
 	});
 
 	const handleEmail = e => setEmail(e.target.value);
-	const handlePassword = e => setPassword(e.target.value);
 	const handleSubmit = e => {
 		e.preventDefault();
 
@@ -64,13 +54,12 @@ const Login = () => {
 
 		setErrors(_errors);
 	}
-
-	// TODO: add a span with symbol of field
-
 	return (
 		<div className="form-centered-container">
 			<div className="form-form-wrapper">
-				<h1 className='form-title'>Sign In</h1>
+				<h1 className='form-title'>Forgot Password</h1>
+				<div className="form-description"><p>To reset your password, please enter identifying information.</p></div>
+				<div className="form-description form--mb1"><p>An email would be sent to you with the reset link.</p></div>
 				<form onSubmit={handleSubmit} formNoValidate className='form-form'>
 					<div className="form-item">
 						<label htmlFor="email">Email</label>
@@ -86,32 +75,20 @@ const Login = () => {
 						</div>
 						{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 					</div>
-					<div className="form-item">
-						<label htmlFor="password">Password</label>
-						<div className='form-item-wrapper'>
-							<input
-								className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
-								type="password"
-								// placeholder="e.g. CaputDraconis420"
-								placeholder="e.g. ••••••••••••"
-								name="password"
-								formNoValidate
-								onChange={handlePassword} />
-							<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
-						</div>
-						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
-					</div>
+					{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="submit" value="Sign In " />
+							type="submit" value="Send Reset Link " />
 					</div>
-					<div className="form-switch"><p>Forgot you password? <Link to='/password/forgot' className='form-switch-action'>Reset Here</Link></p></div>
-					<div className="form-switch"><p>Don't have an account? <Link to='/signup' className='form-switch-action'>Sign Up</Link></p></div>
+					<div className="form-switch"><p>Know your password? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
 				</form>
 			</div>
 		</div>
 	)
+
 }
 
-export default Login;
+
+export default PasswordForgot;
+

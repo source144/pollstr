@@ -53,9 +53,6 @@ const swaggerUI = require('swagger-ui-express');
  * 
  *   Verification:
  *     properties:
- *       id:
- *         type: string
- *         required: true
  *       token:
  *         type: string
  *         required: true
@@ -78,18 +75,6 @@ const swaggerUI = require('swagger-ui-express');
  *   Password:
  *     properties:
  *       password:
- *         type: string
- *         required: true
- *      
- *   PasswordReset:
- *     properties:
- *       password:
- *         type: string
- *         required: true
- *       id:
- *         type: string
- *         required: true
- *       token:
  *         type: string
  *         required: true
  * 
@@ -232,15 +217,6 @@ const adminOnly = (req, res, next) => {
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use('/api', Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
-
-app.use('/api', function (req, res, next) {
-	console.log(req.fingerprint);
-	console.log(req.fingerprint.components.useragent.browser);
-	console.log(req.fingerprint.components.useragent.device);
-	console.log(req.fingerprint.components.useragent.os);
-	next();
-});
-
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
 
