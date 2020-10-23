@@ -204,8 +204,8 @@ body {
 @media screen and (max-width: 960px) {
   /* with align-mobile class */
   .form-centered-container {
-	margin-top: calc(-1*var(--nav-height));
-	height: 100vh;
+    /* margin-top: calc(-1 * var(--nav-height));
+    height: 100vh; */
   }
 }
 
