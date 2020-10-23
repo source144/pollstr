@@ -78,6 +78,15 @@ const swaggerUI = require('swagger-ui-express');
  *         type: string
  *         required: true
  * 
+ *   Password_Verification:
+ *     properties:
+ *       password:
+ *         type: string
+ *         required: true
+ *       token:
+ *         type: string
+ *         required: true
+ * 
  *   Passwords:
  *     properties:
  *       oldPassword:

@@ -17,6 +17,9 @@ const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'pollstr.app.io@gmail.com';
 const DOMAIN = process.env.DOMAIN || 'pollstr.app';
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
+const lowerRegex = /(?=.*[a-z])/
+const upperRegex = /(?=.*[A-Z])/
+const numbrRegex = /(?=.*[0-9])/
 
 // ********************** //
 // *** Authentication *** //
@@ -435,6 +438,7 @@ router.put('/password', enforceCredentials, (req, res) => {
  *          description: New verification email sent
  */
 router.post('/verify/resend', (req, res) => {
+	console.log('here resend');
 	delete req.body.firstName; delete req.body.lastName;
 	const { error } = validate(req.body, password = false);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -445,28 +449,28 @@ router.post('/verify/resend', (req, res) => {
 
 		// Get rid of old verifications (shouldn't be more than one)
 		Verification.deleteMany({ _userId: user._id }, function (err) {
-			if (err) console.log("DELETE VERIFICATION", err);
-		});
-
-		// Create and send new verification
-		const verification = new Verification({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
-		verification.save(function (err) {
 			if (err) return res.status(500).send(err);
-			const FULL_NAME = user.fullName();
 
-			// Send the email
-			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-			var mailOptions = {
-				from: NO_REPLY_EMAIL,
-				to: user.email,
-				subject: 'Confirm your Pollstr account',
-				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
-			};
-			transporter.sendMail(mailOptions, function (err) {
+			// Create and send new verification
+			const verification = new Verification({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
+			verification.save(function (err) {
 				if (err) return res.status(500).send(err);
-				if (NODE_ENV === 'production') return res.status(201).send(verification);
-				else if (NODE_ENV === 'development') return res.status(201).send(verification);
-				else return res.status(201).send(user);
+				const FULL_NAME = user.fullName();
+
+				// Send the email
+				var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+				var mailOptions = {
+					from: NO_REPLY_EMAIL,
+					to: user.email,
+					subject: 'Confirm your Pollstr account',
+					text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
+				};
+				transporter.sendMail(mailOptions, function (err) {
+					if (err) return res.status(500).send(err);
+					if (NODE_ENV === 'production') return res.status(201).send(verification);
+					else if (NODE_ENV === 'development') return res.status(201).send(verification);
+					else return res.status(201).send(user);
+				});
 			});
 		});
 	});
@@ -511,9 +515,11 @@ router.post('/verify/:id', (req, res) => {
 	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
 
 	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
-		if (err) return res.status(500).send({err, message: err.message});
+		console.log(verification);
+		if (err) return res.status(500).send({ err, message: err.message });
 		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
 
+		console.log('here');
 		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(202).send(errorObject('User is already verified'));
@@ -568,30 +574,31 @@ router.post('/password/forgot', (req, res) => {
 
 		// Get rid of old verifications (shouldn't be more than one)
 		PasswordReset.deleteMany({ _userId: user._id }, function (err) {
-			if (err) console.log("DELETE PASSWORD RESET", err);
-		});
-
-		// Create and send new verification
-		const passwordReset = new PasswordReset({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
-		passwordReset.save(function (err) {
 			if (err) return res.status(500).send(err);
-			const FULL_NAME = user.fullName();
 
-			// Send the email
-			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-			var mailOptions = {
-				from: NO_REPLY_EMAIL,
-				to: user.email,
-				subject: 'Reset your Pollstr account password',
-				text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
-			};
-			transporter.sendMail(mailOptions, function (err) {
+			// Create and send new verification
+			const passwordReset = new PasswordReset({ _userId: user._id, token: crypto.randomBytes(12).toString('hex') })
+			passwordReset.save(function (err) {
 				if (err) return res.status(500).send(err);
-				if (NODE_ENV === 'production') return res.status(201).send(passwordReset);
-				else if (NODE_ENV === 'development') return res.status(201).send(passwordReset);
-				else return res.status(201).send(user);
+				const FULL_NAME = user.fullName();
+
+				// Send the email
+				var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+				var mailOptions = {
+					from: NO_REPLY_EMAIL,
+					to: user.email,
+					subject: 'Reset your Pollstr account password',
+					text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
+				};
+				transporter.sendMail(mailOptions, function (err) {
+					if (err) return res.status(500).send(err);
+					if (NODE_ENV === 'production') return res.status(201).send(passwordReset);
+					else if (NODE_ENV === 'development') return res.status(201).send(passwordReset);
+					else return res.status(201).send(user);
+				});
 			});
 		});
+
 	});
 });
 
@@ -599,7 +606,7 @@ router.post('/password/forgot', (req, res) => {
 /**
  * @swagger
  *  /api/auth/password/reset/{id}:
- *    post:
+ *    put:
  *      tags:
  *        - Auth
  *      description: Password Reset
@@ -610,12 +617,12 @@ router.post('/password/forgot', (req, res) => {
  *          description: Password Reset Id
  *          in: path
  *          required: true
- *        - name: Password
- *          description: New password
+ *        - name: Password Reset
+ *          description: New password and reset token
  *          in: body
  *          required: true
  *          schema:
- *            $ref: '#/definitions/Password'
+ *            $ref: '#/definitions/Password_Verification'
  *      responses:
  *        500:
  *          description: Server Error
@@ -631,10 +638,23 @@ router.post('/password/forgot', (req, res) => {
  *          description: Password Updated
  */
 router.put('/password/reset/:id', (req, res) => {
-	const { error } = validatePassword(req.body);
-	if (error) return res.status(400).send(errorObject(error.details[0].message));
+	// const { error } = validatePassword(req.body);
+	const pwDetails = [];
+	let pwLength;
+	// if (error) return res.status(400).send(errorObject(error.details[0].message));
+
+	if (!lowerRegex.test(req.body.password)) pwDetails.push('1 lower case letter');
+	if (!upperRegex.test(req.body.password)) pwDetails.push('1 upper case letter');
+	if (!numbrRegex.test(req.body.password)) pwDetails.push('1 number');
+
+	if (req.body.password.length < 8) pwLength = `be at least 8 letters${!!pwDetails.length ? ',' : ''} `;
+	if (req.body.password.length > 24) pwLength = `be at most 24 letters${!!pwDetails.length ? ',' : ''} `;
+
+	if (pwDetails.length || pwLength)
+		return res.status(400).send(errorObject(`Password must ${pwLength ? pwLength : ''}contain ${pwDetails.length == 1 ? pwDetails.pop() : pwDetails.slice(0, -1).join(', ')}${pwDetails.length >= 2 ? ` and ${pwDetails.pop()}` : ''}`));
+
 	if (!req.body.token) return res.status(400).send(errorObject('Missing password reset token'));
-	if (req.params.id) return res.status(400).send(errorObject('Missing password password reset id'));
+	if (!req.params.id) return res.status(400).send(errorObject('Missing password password reset id'));
 
 	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
 	// Find the password reset request

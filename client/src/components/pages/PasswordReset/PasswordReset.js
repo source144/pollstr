@@ -127,7 +127,7 @@ const PasswordReset = () => {
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="submit" value="Send Reset Link " />
+							type="submit" value="Set New Password" />
 					</div>
 					<div className="form-switch"><p>Know your password? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
 				</form>
