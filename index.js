@@ -27,6 +27,30 @@ const swaggerUI = require('swagger-ui-express');
  * 
  * definitions:
  * 
+ *   PollOptions:
+ *     properties:
+ *       id:
+ *         type: string
+ *         required: true
+ * 
+ *   Poll:
+ *     properties:
+ *       title:
+ *         type: string
+ *         required: true
+ *       description:
+ *         type: string
+ *       timeToLive:
+ *         type: integer
+ *       passcode:
+ *         type: string
+ *       usersOnly:
+ *         type: boolean
+ *       public:
+ *         type: boolean
+ *       tags:
+ *         type: string
+ * 
  *   Credentials:
  *     properties:
  *       email:
@@ -72,11 +96,17 @@ const swaggerUI = require('swagger-ui-express');
  *         type: string
  *         required: true
  * 
+ *   Passcode:
+ *     properties:
+ *       passcode:
+ *         type: string
+ *         required: false
+ * 
  *   Password:
  *     properties:
  *       password:
  *         type: string
- *         required: true
+ *         required: false
  * 
  *   Password_Verification:
  *     properties:
@@ -158,17 +188,6 @@ mongoose.connect(MONGO, { useNewUrlParser: true, useFindAndModify: false, useUni
 	.then(() => console.log('Connected to MongoDB server'))
 	.catch(err => console.error('Something went wrong', err));
 
-
-// TODO : live updates to polls
-io.on('connection', (socket) => {
-	console.log("We have a new connection!!");
-
-
-	socket.on('disconnet', () => {
-		console.log("User has left!!");
-	});
-});
-
 // Must be authenticated
 const authenticateJWT = (req, res, next) => {
 	// Gather the jwt access token from the request header
@@ -192,10 +211,16 @@ const withCredentials = (req, res, next) => {
 	const token = auth_header && auth_header.split(' ')[1];
 
 	if (token) {
-		jwt.verify(token, ACCESS_TOKEN, (e, u) => { req.user = !e ? u : null; });
+		jwt.verify(token, ACCESS_TOKEN, (e, u) => {
+			if (e) {
+				if (e instanceof jwt.TokenExpiredError) return res.status(401).send({ message: "Access token has expired", action: 'REFRESH' });
+				else return res.status(401).send({ message: e.message, action: 'LOGOUT' });
+			}
+			req.user = !e ? u : null;
+			next();
+		});
 	}
-
-	next();
+	else next();
 }
 
 // User must have valid credentials
@@ -223,9 +248,25 @@ const adminOnly = (req, res, next) => {
 }
 
 
+
+// TODO : live updates to polls
+const withSocket = (req, res, next) => { res.io = io; next(); }
+io.on('connection', (socket) => {
+	console.log("We have a new connection!!");
+
+
+	socket.on('disconnet', () => {
+		console.log("User has left!!");
+	});
+});
+function emitPollData(pollId, eventName, payload) {
+	io.in(pollId).emit(eventName, payload);
+};
+
+
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use('/api', Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
+app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
 
@@ -250,3 +291,7 @@ if (process.env.NODE_ENV === 'production') {
 server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = {
+	emitPollData: emitPollData
+};

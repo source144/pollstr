@@ -236,7 +236,7 @@ router.post('/signup', (req, res) => {
 				from: NO_REPLY_EMAIL,
 				to: user.email,
 				subject: 'Confirm your Pollstr account',
-				text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttps://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
+				text: `${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttps://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`
 			};
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { abort(); return res.status(500).send(err); }

@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const SALT_WORK_FACTOR = 10;
 
-const pwSchema = Joi.string().min(8).max(24);
+const pwSchema = Joi.string().trim().min(8).max(24).regex(/^\S+$/);
 
 
 var validateEmail = function (email) {
