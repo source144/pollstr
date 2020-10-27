@@ -1,0 +1,22 @@
+.timer-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.timer {
+  font-family: "Montserrat";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text {
+  color: #aaa;
+}
+
+.time {
+	font-size: 4rem;
+}
+.too-late {
+	font-size: 2rem;
+}

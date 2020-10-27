@@ -1,0 +1,15 @@
+.chip {
+  background: var(--color-input-border-3);
+  color: var(--color-black);
+  border-radius: 3px;
+  list-style: none;
+  padding: 4px;
+}
+
+.chip:hover {
+  color: var(--color-primary);
+}
+
+.chip:not(:first-child) {
+	margin-left: 5px;
+}

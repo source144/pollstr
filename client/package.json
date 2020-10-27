@@ -9,6 +9,7 @@
     "axios": "^0.21.0",
     "moment": "^2.29.1",
     "react": "^17.0.0",
+    "react-chips": "^0.8.0",
     "react-countdown-circle-timer": "^2.3.7",
     "react-dom": "^17.0.0",
     "react-hashtag": "^2.1.2",

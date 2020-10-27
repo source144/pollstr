@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
-// const cors = require('cors');
+const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -150,8 +150,6 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
-// app.use(cors())
-
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*'});
 // io.set('origins', `https://${process.env.DOMAIN}:*`);
@@ -287,9 +285,9 @@ function emitPollData(pollId, eventName, payload) {
 };
 
 
+app.use(cors())
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-// app.use((req, res, next) => { res.io.emit('API test'); next(); });
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
