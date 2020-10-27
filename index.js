@@ -150,6 +150,8 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
+app.use(cors())
+
 const server = http.createServer(app);
 const io = socketio(server);
 app.io = io;
@@ -280,7 +282,6 @@ function emitPollData(pollId, eventName, payload) {
 };
 
 
-app.use(cors())
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 // app.use((req, res, next) => { res.io.emit('API test'); next(); });
