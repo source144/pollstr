@@ -150,6 +150,7 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
+app.use(cors())
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
 // io.set('origins', `https://${process.env.DOMAIN}:*`);
@@ -273,7 +274,6 @@ io.on('connection', (socket) => {
 
 	socket.on('disconnet', () => {
 		console.log(`[SocketIO] User disconnected`);
-
 	});
 });
 function emitPollData(pollId, eventName, payload) {
@@ -281,7 +281,6 @@ function emitPollData(pollId, eventName, payload) {
 };
 
 
-app.use(cors({ origin: '*' }))
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
