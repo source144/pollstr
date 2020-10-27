@@ -54,7 +54,7 @@ const Poll = () => {
 
 
 		axios
-			.get(`http://pollstr.app/api/poll/${pollId}`).then(function (response) {
+			.get(`https://pollstr.app/api/poll/${pollId}`).then(function (response) {
 				console.log(response);
 				responseToPoll(response);
 			})
