@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
-const cors = require('cors');
+// const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -150,10 +150,11 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
-app.use(cors())
+// app.use(cors())
 
 const server = http.createServer(app);
 const io = socketio(server);
+io.set('origins', `https://${process.env.DOMAIN}:*`);
 app.io = io;
 
 const swaggerOptions = {
