@@ -152,10 +152,8 @@ const MONGO = process.env.MONGO_URI
 const app = express();
 app.use(cors());
 app.options('*', cors());
-// app.use(cors())
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
-// io.set('origins', `https://${process.env.DOMAIN}:*`);
 app.io = io;
 
 const swaggerOptions = {
