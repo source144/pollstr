@@ -151,7 +151,7 @@ const MONGO = process.env.MONGO_URI
 // Create Server
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server, { origins: '*:*'});
+const io = socketio(server, { origins: '*:*' });
 // io.set('origins', `https://${process.env.DOMAIN}:*`);
 app.io = io;
 
@@ -258,21 +258,21 @@ io.on('connection', (socket) => {
 
 	socket.on('join', room => {
 		// if (socket.rooms.indexOf(room) >= 0) {
-			console.log('Typeof socket.rooms ', typeof socket.rooms)
-			console.log('socket.rooms: ', socket.rooms)
-			socket.join(room);
-			socket.emit('success', `You have successfully joined '${room}'!`);
-			socket.emit('success', `You have successfully left '${room}'`);
+		console.log('Typeof socket.rooms ', typeof socket.rooms)
+		console.log('socket.rooms: ', socket.rooms)
+		socket.join(room);
+		socket.emit('success', `You have successfully joined '${room}'!`);
+		socket.emit('success', `You have successfully left '${room}'`);
 		// } else console.log(`[SocketIO] User attempted to join '${room}`);
 	});
 
 	socket.on('leave', room => {
 		// if (socket.rooms.indexOf(room) >= 0) {
-			console.log('Typeof socket.rooms ', typeof socket.rooms)
-			console.log('socket.rooms: ', socket.rooms)
-			socket.leave(room);
-			socket.emit('success', `You have successfully left '${room}'`);
-			console.log(`[SocketIO] User left '${room}'`);
+		console.log('Typeof socket.rooms ', typeof socket.rooms)
+		console.log('socket.rooms: ', socket.rooms)
+		socket.leave(room);
+		socket.emit('success', `You have successfully left '${room}'`);
+		console.log(`[SocketIO] User left '${room}'`);
 		// } else console.log(`[SocketIO] User attempted to leave '${room}`);
 	})
 
@@ -285,7 +285,7 @@ function emitPollData(pollId, eventName, payload) {
 };
 
 
-app.use(cors())
+app.use(cors({ origin: '*' }))
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
