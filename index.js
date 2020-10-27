@@ -280,6 +280,9 @@ function emitPollData(pollId, eventName, payload) {
 	io.in(pollId).emit(eventName, payload);
 };
 
+
+app.use(cors());
+app.options('*', cors());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
@@ -300,14 +303,6 @@ app.use(bodyParser.json());
 
 // 	next();
 // })
-//enables cors
-app.use(cors({
-	'allowedHeaders': ['sessionId', 'Content-Type'],
-	'exposedHeaders': ['sessionId'],
-	'origin': '*',
-	'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-	'preflightContinue': false
-}));
 
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
