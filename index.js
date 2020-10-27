@@ -286,6 +286,8 @@ app.use(bodyParser.json());
 // CORS
 app.use((req, res, next) => {
 	console.log('**** Reached CORS ****')
+	console.log(req.header.origin);
+	console.log(req.method);
 	const allowedOrigins = ['http://localhost:3000', "https://pollstr.app", "http://pollstr.app", "https://pollstr-app.herokuapp.com/", "https://pollstr-app.herokuapp.com/"];
 	const origin = req.headers.origin;
 	if (allowedOrigins.includes(origin)) {

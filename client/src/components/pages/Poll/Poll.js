@@ -8,7 +8,8 @@ import ReactHashtag from "react-hashtag";
 import CountdownTimer from '../../CountdownTimer';
 import './Poll.css';
 
-
+axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
+axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
 
 const Poll = () => {
 	const errors = { confirm: false };
