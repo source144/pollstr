@@ -24,7 +24,7 @@ const Poll = () => {
 		if (optionId == null)
 			return;
 
-		axios.post(`https://pollstr.app/api/poll/${pollId}/vote/${pollId}`)
+		axios.post(`https://www.pollstr.app/api/poll/${pollId}/vote/${pollId}`, { withCredentials: true })
 			.then(function (response) { console.log(response) })
 			.catch(function (error) { console.log(error); setError(error); })
 	};
