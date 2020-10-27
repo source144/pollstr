@@ -15,15 +15,17 @@ function App() {
 		<>
 			<Router>
 				<Navbar />
-				<Switch>
-					<Route path='/signup' component={Signup} exact></Route>
-					<Route path='/login' component={Login} exact></Route>
-					<Route path='/password/forgot' component={PasswordForgot} exact></Route>
-					<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
-					<Route path='/verify/:id-:token' component={Verify}></Route>
-					<Route path='/' component={Poll}></Route>
-					<Route path='/*' component={NotFound}></Route>
-				</Switch>
+				<div className="app">
+					<Switch>
+						<Route path='/signup' component={Signup} exact></Route>
+						<Route path='/login' component={Login} exact></Route>
+						<Route path='/password/forgot' component={PasswordForgot} exact></Route>
+						<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
+						<Route path='/verify/:id-:token' component={Verify}></Route>
+						<Route path='/' exact component={Poll}></Route>
+						<Route path='/*' component={NotFound}></Route>
+					</Switch>
+				</div>
 			</Router>
 		</>
 	);

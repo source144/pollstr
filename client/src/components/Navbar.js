@@ -29,7 +29,7 @@ function Navbar() {
 	const handleClick = () => setClick(!click);
 	const closeMobileMenu = () => setClick(false);
 
-	const onMouseEnter = () => setDropdown(window.innerWidth >= 960);
+	const onMouseEnter = () => setDropdown(window.innerWidth > 960);
 	const onMouseLeave = () => setDropdown(false);
 
 	const signInNav = (

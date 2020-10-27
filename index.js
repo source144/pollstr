@@ -254,6 +254,21 @@ const withSocket = (req, res, next) => { res.io = io; next(); }
 io.on('connection', (socket) => {
 	console.log("We have a new connection!!");
 
+	socket.on('join', room => {
+		if (socket.rooms.indexOf(room) >= 0) {
+			socket.join(room);
+			socket.emit('success', `You have successfully joined '${room}'!`);
+			socket.emit('success', `You have successfully left '${room}'`);
+		} else console.log(`[SocketIO] User attempted to join '${room}`);
+	});
+
+	sockets.on('leave', room => {
+		if (socket.rooms.indexOf(room) >= 0) {
+			socket.leave(room);
+			socket.emit('success', `You have successfully left '${room}'`);
+			console.log(`[SocketIO] User left '${room}'`);
+		} else console.log(`[SocketIO] User attempted to leave '${room}`);
+	})
 
 	socket.on('disconnet', () => {
 		console.log("User has left!!");
@@ -266,6 +281,7 @@ function emitPollData(pollId, eventName, payload) {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use((req, res, next) => { res.io.emit('API test'); next(); });
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
