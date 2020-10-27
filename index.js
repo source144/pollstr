@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
-const cors = require('cors');
+// const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -150,7 +150,7 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
-app.use(cors())
+// app.use(cors())
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
 // io.set('origins', `https://${process.env.DOMAIN}:*`);
@@ -280,9 +280,21 @@ function emitPollData(pollId, eventName, payload) {
 	io.in(pollId).emit(eventName, payload);
 };
 
-
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+
+// CORS
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', '*');
+
+	if (req.method === 'OPTIONS') {
+		res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+		return res.status(200).json({});
+	}
+	next();
+})
+
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
