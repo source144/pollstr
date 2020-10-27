@@ -266,7 +266,7 @@ io.on('connection', (socket) => {
 		} else console.log(`[SocketIO] User attempted to join '${room}`);
 	});
 
-	sockets.on('leave', room => {
+	socket.on('leave', room => {
 		if (socket.rooms.indexOf(room) >= 0) {
 			socket.leave(room);
 			socket.emit('success', `You have successfully left '${room}'`);
