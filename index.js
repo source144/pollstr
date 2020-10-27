@@ -254,30 +254,26 @@ const adminOnly = (req, res, next) => {
 // TODO : live updates to polls
 const withSocket = (req, res, next) => { res.io = io; next(); }
 io.on('connection', (socket) => {
-	console.log("We have a new connection!!");
-
+	console.log(`[SocketIO] New connection`);
 	socket.on('join', room => {
 		// if (socket.rooms.indexOf(room) >= 0) {
-		console.log('Typeof socket.rooms ', typeof socket.rooms)
-		console.log('socket.rooms: ', socket.rooms)
 		socket.join(room);
 		socket.emit('success', `You have successfully joined '${room}'!`);
-		socket.emit('success', `You have successfully left '${room}'`);
+		console.log(`[SocketIO] User has joined ${room}`);
 		// } else console.log(`[SocketIO] User attempted to join '${room}`);
 	});
 
 	socket.on('leave', room => {
 		// if (socket.rooms.indexOf(room) >= 0) {
-		console.log('Typeof socket.rooms ', typeof socket.rooms)
-		console.log('socket.rooms: ', socket.rooms)
 		socket.leave(room);
 		socket.emit('success', `You have successfully left '${room}'`);
-		console.log(`[SocketIO] User left '${room}'`);
+		console.log(`[SocketIO] User has left ${room}`);
 		// } else console.log(`[SocketIO] User attempted to leave '${room}`);
 	})
 
 	socket.on('disconnet', () => {
-		console.log("User has left!!");
+		console.log(`[SocketIO] User disconnected`);
+
 	});
 });
 function emitPollData(pollId, eventName, payload) {
