@@ -90,13 +90,15 @@ const Poll = () => {
 	useEffect(() => {
 		const _currentPollId = pollId;
 		console.log(`useEffect - ${pollId}`);
+		if (socket) {
 
-		// Subscribe to this poll
-		socket.emit('join', `${_currentPollId}`);
-		// Listen to this poll's updates
-		socket.on(`update_${_currentPollId}`, updatedPoll => {
-			console.log('received updated poll from SocketIO', updatedPoll);
-		});
+			// Subscribe to this poll
+			socket.emit('join', `${_currentPollId}`);
+			// Listen to this poll's updates
+			socket.on(`update_${_currentPollId}`, updatedPoll => {
+				console.log('received updated poll from SocketIO', updatedPoll);
+			});
+		}
 
 		return () => socket.emit("leave", `update_${_currentPollId}`);
 	});

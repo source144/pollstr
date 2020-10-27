@@ -281,7 +281,7 @@ function emitPollData(pollId, eventName, payload) {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use((req, res, next) => { res.io.emit('API test'); next(); });
+// app.use((req, res, next) => { res.io.emit('API test'); next(); });
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);

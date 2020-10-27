@@ -471,7 +471,8 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 
 							if (Math.abs(_postUpdatePercent - _preUpdatePercent) >= PERCENT_CHANGE_TRIGGER) {
 								console.log(`[${poll._id}] emitting `, { total_votes: poll.total_votes, options: poll.toJSON().options });
-								res.io.in(req.params.id).emit(`update_${poll._id}`, { total_votes: poll.total_votes, options: poll.toJSON().options })
+								if (res.io.in(req.params.id)) res.io.in(req.params.id).emit(`update_${poll._id}`, { total_votes: poll.total_votes, options: poll.toJSON().options })
+								else console.log('failed to emit!')
 							}
 						}
 						return res.status(201).send({ message: "Vote submitted" });
