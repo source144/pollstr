@@ -259,19 +259,23 @@ io.on('connection', (socket) => {
 	console.log("We have a new connection!!");
 
 	socket.on('join', room => {
-		if (socket.rooms.indexOf(room) >= 0) {
+		// if (socket.rooms.indexOf(room) >= 0) {
+			console.log('Typeof socket.rooms ', typeof socket.rooms)
+			console.log('socket.rooms: ', socket.rooms)
 			socket.join(room);
 			socket.emit('success', `You have successfully joined '${room}'!`);
 			socket.emit('success', `You have successfully left '${room}'`);
-		} else console.log(`[SocketIO] User attempted to join '${room}`);
+		// } else console.log(`[SocketIO] User attempted to join '${room}`);
 	});
 
 	socket.on('leave', room => {
-		if (socket.rooms.indexOf(room) >= 0) {
+		// if (socket.rooms.indexOf(room) >= 0) {
+			console.log('Typeof socket.rooms ', typeof socket.rooms)
+			console.log('socket.rooms: ', socket.rooms)
 			socket.leave(room);
 			socket.emit('success', `You have successfully left '${room}'`);
 			console.log(`[SocketIO] User left '${room}'`);
-		} else console.log(`[SocketIO] User attempted to leave '${room}`);
+		// } else console.log(`[SocketIO] User attempted to leave '${room}`);
 	})
 
 	socket.on('disconnet', () => {
