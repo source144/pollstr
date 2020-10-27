@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -279,6 +280,7 @@ function emitPollData(pollId, eventName, payload) {
 };
 
 
+app.use(cors())
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 // app.use((req, res, next) => { res.io.emit('API test'); next(); });
