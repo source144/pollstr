@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
-// const cors = require('cors');
+const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -284,22 +284,30 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 
 // CORS
-app.use((req, res, next) => {
-	console.log('**** Reached CORS ****')
-	console.log(req.headers.origin);
-	console.log(req.get('origin'));
-	console.log(req.method);
-	const allowedOrigins = ['http://localhost:3000', "https://pollstr.app", "http://pollstr.app", "https://pollstr-app.herokuapp.com/", "https://pollstr-app.herokuapp.com/"];
-	const origin = req.headers.origin;
-	if (allowedOrigins.includes(origin)) {
-		res.setHeader('Access-Control-Allow-Origin', origin);
-	} else res.setHeader('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Bearer');
-	res.header('Access-Control-Allow-Credentials', true);
+// app.use((req, res, next) => {
+// 	console.log('**** Reached CORS ****')
+// 	console.log(req.headers.origin);
+// 	console.log(req.get('origin'));
+// 	console.log(req.method);
+// 	const allowedOrigins = ['http://localhost:3000', "https://pollstr.app", "http://pollstr.app", "https://pollstr-app.herokuapp.com/", "https://pollstr-app.herokuapp.com/"];
+// 	const origin = req.headers.origin;
+// 	if (allowedOrigins.includes(origin)) {
+// 		res.setHeader('Access-Control-Allow-Origin', origin);
+// 	} else res.setHeader('Access-Control-Allow-Origin', '*');
+// 	res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Bearer');
+// 	res.header('Access-Control-Allow-Credentials', true);
 
-	next();
-})
+// 	next();
+// })
+//enables cors
+app.use(cors({
+	'allowedHeaders': ['sessionId', 'Content-Type'],
+	'exposedHeaders': ['sessionId'],
+	'origin': '*',
+	'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	'preflightContinue': false
+}));
 
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
