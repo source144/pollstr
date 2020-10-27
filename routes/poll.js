@@ -362,7 +362,7 @@ router.get('/:id', withUserId, (req, res) => {
 		Vote.findOne({ _pollId: poll._id, ..._voteQuery }, function (err, vote) {
 			if (err) return res.status(500).send({ err, message: err.message });
 
-			return res.status(200).send({ ...(poll.toJSON()), selected: vote && vote._optionId });
+			return res.status(200).send({ ...(poll.toJSON()), voted: vote && vote._optionId });
 		});
 	});
 });

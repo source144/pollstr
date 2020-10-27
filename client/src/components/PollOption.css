@@ -1,0 +1,83 @@
+.poll-option .option-percent {
+  background-color: var(--color-grey-light-3);
+  border-radius: 0.5rem;
+
+  font-size: 1.2rem;
+  outline: none;
+  border: none;
+
+  display: flex;
+  width: 100%;
+  transition: background 0.2s ease-in, box-shadow 0.2s ease-in;
+}
+
+.poll-option.poll-option--selected .option-percent {
+  transition: box-shadow 0.2s ease-in;
+}
+
+.poll-option:not(.poll-option--disabled):not(.poll-option--selected):not(.poll-option--voted)
+  .option-percent:hover
+  .option-percent-display {
+  background-color: var(--color-primary);
+}
+
+.poll-option:not(.poll-option--disabled):not(.poll-option--voted)
+  .option-percent:active
+  .option-percent-display {
+  background-color: var(--color-primary-dark);
+}
+
+.poll-option:not(.poll-option--disabled) .option-percent:active,
+.poll-option.poll-option--selected .option-percent {
+  background: var(--color-grey-light-4);
+  /* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
+    0 0 2px rgba(34, 139, 230, 0.5); */
+}
+
+.poll-option .option-percent-display {
+  background-color: var(--color-primary-light);
+
+  height: 4rem;
+  border-radius: 0.5rem;
+  transition: width 1s ease, background 0.2s ease-in;
+  /* transition-delay: 0.5s; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.poll-option.poll-option--voted .option-percent-display {
+  background-color: var(--color-tertiary); /* This color for selected */
+}
+
+.poll-option.poll-option--selected .option-percent-display {
+  background-color: var(--color-primary-dark);
+}
+
+.poll-option .option-percent-value {
+  margin-right: 4px;
+  color: var(--color-white);
+  font-weight: bold;
+  transition: color 1s ease, transform 0.5s ease;
+}
+
+.poll-option .option-percent-value.option-percent-value--center {
+	font-style: italic;
+	font-weight: 300;
+	align-self: center;
+}
+
+.poll-option .option-percent-value.option-percent-value--right {
+  transform: translateX(2.8rem);
+  color: black;
+}
+
+.poll-option .option-votes {
+  align-self: flex-end;
+}
+.poll-option .option-votes::before {
+  content: "a";
+  align-self: flex-end;
+  color: transparent;
+}

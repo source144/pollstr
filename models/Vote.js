@@ -114,10 +114,10 @@ VoteSchema.post('save', function (doc, next) {
 				abort('Failed to find poll option associated with vote');
 			}
 			console.log("option", option);
-			
+
 			poll.total_votes = poll.total_votes + 1;
 			option.votes = option.votes + 1;
-			
+
 			poll.save(function (err) {
 				if (err) return next(err.message);
 				return next();

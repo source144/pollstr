@@ -31,6 +31,8 @@
   --color-tertiary-light: #228be6;
   --color-tertiary-extra-light: #7ebbf0;
   --color-tertiary-dark: #1c7ed6;
+  --color-tertiary-dark--1: #006ec9;
+  --color-tertiary-dark--2: #3e7aeb;
 
   --color-purple-dark: #5643fa;
 
@@ -38,6 +40,8 @@
 
   --color-grey-light-1: #f7f7f7;
   --color-grey-light-2: #eee;
+  --color-grey-light-3: #e9e9e9;
+  --color-grey-light-4: #e0e0e0;
   --color-input-border-1: #dee2e6;
   --color-input-border-2: #cfcfcf;
   --color-grey-dark-1: #999;
@@ -169,6 +173,9 @@ body {
 
 .form--mb1 {
   margin-bottom: 1rem;
+}
+.form--mb0 {
+  margin-bottom: 0;
 }
 
 .form-form-wrapper {

@@ -8,6 +8,7 @@ import PasswordForgot from './components/pages/PasswordForgot/PasswordForgot';
 import PasswordReset from './components/pages/PasswordReset/PasswordReset';
 import Verify from './components/pages/Verify/Verify';
 import NotFound from './components/pages/NotFound/NotFound';
+import Poll from './components/pages/Poll/Poll';
 
 function App() {
 	return (
@@ -20,6 +21,7 @@ function App() {
 					<Route path='/password/forgot' component={PasswordForgot} exact></Route>
 					<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
 					<Route path='/verify/:id-:token' component={Verify}></Route>
+					<Route path='/' component={Poll}></Route>
 					<Route path='/*' component={NotFound}></Route>
 				</Switch>
 			</Router>

@@ -33,6 +33,7 @@ const PollSchema = new mongoose.Schema({
 
 	passcode: { type: String },
 
+	hideResults: { type: Boolean, required: true, default: true },
 	usersOnly: { type: Boolean, required: true, default: false },
 	public: { type: Boolean, required: true, default: false },
 	autoTags: [String],
