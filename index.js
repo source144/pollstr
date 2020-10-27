@@ -286,14 +286,14 @@ app.use(bodyParser.json());
 // CORS
 app.use((req, res, next) => {
 	console.log('**** Reached CORS ****')
-	console.log(req.header.origin);
+	console.log(req.headers.origin);
+	console.log(req.get('origin'));
 	console.log(req.method);
 	const allowedOrigins = ['http://localhost:3000', "https://pollstr.app", "http://pollstr.app", "https://pollstr-app.herokuapp.com/", "https://pollstr-app.herokuapp.com/"];
 	const origin = req.headers.origin;
 	if (allowedOrigins.includes(origin)) {
 		res.setHeader('Access-Control-Allow-Origin', origin);
 	} else res.setHeader('Access-Control-Allow-Origin', '*');
-	//res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:8020');
 	res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Bearer');
 	res.header('Access-Control-Allow-Credentials', true);
