@@ -134,7 +134,6 @@ const swaggerUI = require('swagger-ui-express');
  *         required: true
  */
 
-
 // Environment config
 dotenv.config();
 
@@ -152,19 +151,28 @@ const MONGO = process.env.MONGO_URI
 const app = express();
 
 const whitelist = ['http://pollstr.app/', 'https://pollstr.app/', 'https://www.pollstr.app/', 'http://www.pollstr.app/', 'http://localhost:3000', 'http://localhost:5000'];
-const corsOptions = {
-	origin: function (origin, callback) {
-		console.log('[CORS Middleware] Request from', origin);
-		if (!origin || whitelist.indexOf(origin) !== -1) {
-			console.log('[CORS Middleware] Request from', origin, 'should be accepted');
-			callback(null, true);
-		} else callback(`${origin} not allowed by CORS`, false);
-	},
-	credentials: true
+// const corsOptions = {
+// 	origin: function (origin, callback) {
+// 		console.log('[CORS Middleware] Request from', origin);
+// 		if (!origin || whitelist.indexOf(origin) !== -1) {
+// 			console.log('[CORS Middleware] Request from', origin, 'should be accepted');
+// 			callback(null, true);
+// 		} else callback(`${origin} not allowed by CORS`, false);
+// 	},
+// 	credentials: true
 
-}
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// }
+
+
+app.use(cors({
+	origin: false,
+	methods: ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'PATCH'],
+	allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+	credentials: true,
+	preflightContinue: false,
+	optionsSuccessStatus: 204
+}));
+// app.options('*', cors(corsOptions));
 
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
@@ -335,7 +343,6 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'))
 
 	app.get('*', function (req, res) {
-		console.log('GOT a request to here right now!');
 		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 	});
 }
