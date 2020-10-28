@@ -158,7 +158,7 @@ app.use(function (request, response, next) {
 	response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
 	//Handle Preflight 
-	if (reqest.method === 'OPTIONS') {
+	if (request.method === 'OPTIONS') {
 		console.log('[CORS Middleware] Replying to OPTIONS: ');
 
 		response.status(200).send();
