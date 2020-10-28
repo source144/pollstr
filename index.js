@@ -154,8 +154,9 @@ const app = express();
 const whitelist = ['http://pollstr.app/', 'https://pollstr.app/', 'https://www.pollstr.app/', 'http://www.pollstr.app/', 'http://localhost:3000', 'http://localhost:5000'];
 const corsOptions = {
 	origin: function (origin, callback) {
-		console.log('[CORS Middleware] Request from ', origin);
+		console.log('[CORS Middleware] Request from', origin);
 		if (!origin || whitelist.indexOf(origin) !== -1) {
+			console.log('[CORS Middleware] Request from', origin, 'should be accepted');
 			callback(null, true);
 		} else callback(`${origin} not allowed by CORS`, false);
 	},
@@ -222,6 +223,7 @@ const authenticateJWT = (req, res, next) => {
 // Just fill in the credentials of
 // the user, if he has any..
 const withCredentials = (req, res, next) => {
+	console.log("[withCredentials Middleware] start");
 	const auth_header = req.headers.authorization;
 	// const auth_header	= req.headers['x-access-token'] || req.headers.authorization;
 	const token = auth_header && auth_header.split(' ')[1];
@@ -253,7 +255,7 @@ const enforceCredentials = (req, res, next) => {
 		next();
 	});
 }
-12321
+
 // User's role must be administrator.
 // Stack after withCredentials
 const adminOnly = (req, res, next) => {
