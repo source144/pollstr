@@ -149,9 +149,9 @@ const MONGO = process.env.MONGO_URI
 // Create Server
 const app = express();
 app.use(function (request, response, next) {
-	console.log('[CORS Middleware] Request from HOST: ', req.get('host'));
-	console.log('[CORS Middleware] Request from ORIGIN: ', req.get('origin'));
-	console.log('[CORS Middleware] Request from IP: ', req.socket.remoteAddress);
+	console.log('[CORS Middleware] Request from HOST: ', request.get('host'));
+	console.log('[CORS Middleware] Request from ORIGIN: ', request.get('origin'));
+	console.log('[CORS Middleware] Request from IP: ', request.socket.remoteAddress);
 
 	response.header('Access-Control-Allow-Origin', '*');
 	response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
