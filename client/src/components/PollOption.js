@@ -14,7 +14,7 @@ export default ({ option }) => {
 	console.log(`(${option.id}) Selcted: ${selected} Voted: ${voted} Disabled: ${disabled}`);
 	console.log(`(${option.id}) showResult: ${showResult}`);
 	return (
-		<div className={`form-item form--mb1 poll-option ${voted ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected ? 'poll-option--selected' : ''}`}>
+		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected ? 'poll-option--selected' : ''}`}>
 			<label>{option.title}</label>
 			{option.description ? <span>{option.description}</span> : null}
 			<button className="option-percent" onClick={() => !disabled ? dispatch(selectOption) : undefined}>
