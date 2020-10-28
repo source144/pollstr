@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -148,26 +149,27 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
-app.use(function (request, response, next) {
-	console.log('[CORS Middleware] Request from HOST: ', request.get('host'));
-	console.log('[CORS Middleware] Request from ORIGIN: ', request.get('origin'));
-	console.log('[CORS Middleware] Request from IP: ', request.socket.remoteAddress);
+// app.use(function (request, response, next) {
+// 	console.log('[CORS Middleware] Request from HOST: ', request.get('host'));
+// 	console.log('[CORS Middleware] Request from ORIGIN: ', request.get('origin'));
+// 	console.log('[CORS Middleware] Request from IP: ', request.socket.remoteAddress);
+// 	console.log('[CORS Middleware] Request Path: ', request.originalUrl);
 
-	response.header('Access-Control-Allow-Origin', '*');
-	response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-	response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+// 	response.header('Access-Control-Allow-Origin', '*');
+// 	response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+// 	response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
-	//Handle Preflight 
-	if (request.method === 'OPTIONS') {
-		console.log('[CORS Middleware] Replying to OPTIONS: ');
+// 	//Handle Preflight 
+// 	if (request.method === 'OPTIONS') {
+// 		console.log('[CORS Middleware] Replying to OPTIONS: \n');
 
-		response.status(200).send();
-	}
-	else {
-		next();
-	}
-
-});
+// 		response.status(200).send();
+// 	}
+// 	else {
+// 		console.log();
+// 		next();
+// 	}
+// });
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
 app.io = io;
@@ -224,7 +226,6 @@ const authenticateJWT = (req, res, next) => {
 // Just fill in the credentials of
 // the user, if he has any..
 const withCredentials = (req, res, next) => {
-	console.log("[withCredentials Middleware] start");
 	const auth_header = req.headers.authorization;
 	// const auth_header	= req.headers['x-access-token'] || req.headers.authorization;
 	const token = auth_header && auth_header.split(' ')[1];
@@ -300,25 +301,8 @@ function emitPollData(pollId, eventName, payload) {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-// CORS
-// app.use((req, res, next) => {
-// 	console.log('**** Reached CORS ****')
-// 	console.log(req.headers.origin);
-// 	console.log(req.get('origin'));
-// 	console.log(req.method);
-// 	const allowedOrigins = ['http://localhost:3000', "https://pollstr.app", "http://pollstr.app", "https://pollstr-app.herokuapp.com/", "https://pollstr-app.herokuapp.com/"];
-// 	const origin = req.headers.origin;
-// 	if (allowedOrigins.includes(origin)) {
-// 		res.setHeader('Access-Control-Allow-Origin', origin);
-// 	} else res.setHeader('Access-Control-Allow-Origin', '*');
-// 	res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-// 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Bearer');
-// 	res.header('Access-Control-Allow-Credentials', true);
-
-// 	next();
-// })
-
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);

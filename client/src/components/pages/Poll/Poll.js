@@ -6,14 +6,12 @@ import { socket } from '../../../store/socket';
 import Chip from '../../Chip';
 import ReactHashtag from "react-hashtag";
 import CountdownTimer from '../../CountdownTimer';
+import _ from 'lodash';
 import './Poll.css';
 
-// axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
-// axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
-
-axios.defaults.baseURL = 'https://pollstr.app/api/';
+axios.defaults.baseURL = 'http://pollstr-app.herokuapp.com/api/';
+// axios.defaults.baseURL = 'https://pollstr.app/api/';
 // axios.defaults.baseURL = 'http://localhost:5000/api/';
-axios.defaults.withCredentials = true;
 
 
 const Poll = () => {
@@ -52,7 +50,7 @@ const Poll = () => {
 	};
 	const disableVote = () => setPoll({ ...poll, expired: true })
 	const responseToPoll = res => {
-		return { ...res, tags: [...(res.autoTags || []), ...(res.tags || [])], options: res.options.map(option => ({ ...option, percent: parseInt((option.votes / res.total_votes) * 100) })) };
+		return { ...res, tags: _.uniq([...(res.autoTags || []), ...(res.tags || [])]), options: res.options.map(option => ({ ...option, percent: parseInt((option.votes / res.total_votes) * 100) })) };
 	};
 
 
@@ -76,53 +74,15 @@ const Poll = () => {
 			})
 			.catch(function (error) {
 				console.log('Caught error', error);
-				responseToPoll({
-					"timeToLive": 0,
-					"hideResults": true,
-					"usersOnly": false,
-					"public": true,
-					"autoTags": [
-						"Beautiful",
-						"2020",
-						"amazinggf"
-					],
-					"tags": [
-						""
-					],
-					"total_votes": 5,
-					"title": "Catherine #Beautiful #2020 #amazinggf",
-					"description": "She is very talented and sweet",
-					"options": [
-						{
-							"votes": 3,
-							"title": "Gorgeous",
-							"id": "5f94abf7c82e940a918f7b3d"
-						},
-						{
-							"votes": 2,
-							"title": "Gorgeous AND Sexy",
-							"id": "5f94abf7c82e940a918f7b3e"
-						}
-					],
-					"createDate": "2020-10-24T22:34:31.812Z",
-					"passcode": false,
-					"id": "5f94abf7c82e940a918f7b3c",
-					"voted": "5f94abf7c82e940a918f7b3e"
-				});
 			})
 
 		if (socket) {
 			// Subscribe to this poll
 			socket.emit('join', `${_currentPollId}`);
-			// Listen to this poll's updates
-
 		}
 
 		return () => socket.emit("leave", `update_${_currentPollId}`);
 	}, [pollId]);
-
-	console.log("selectedOption", !selectedOption)
-	console.log(poll);
 
 	return (
 		<>{poll ?
