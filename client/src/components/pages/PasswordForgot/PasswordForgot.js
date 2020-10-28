@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -22,6 +23,8 @@ const checkForm = (payload) => {
 }
 
 const PasswordForgot = () => {
+	const [redirect, setRedirect] = useState(undefined);
+	const [loading, setLoading] = useState(undefined);
 	const [email, setEmail] = useState('');
 	const [responseError, setResponseError] = useState('');
 
@@ -47,13 +50,29 @@ const PasswordForgot = () => {
 		console.log(valid);
 
 		if (valid) {
+			setLoading(true);
+			axios.post('/api/auth/password/forgot', { email })
+				.then(response => {
+					setLoading(false);
+					setTimeout(() => {
+						setRedirect(true);
+					}, 700);
+				})
+				.catch(error => {
+					const errorData = error.response ? error.response.data : {};
+					const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
+
+					setResponseError(errorMsg);
+				});
 			// Dispatch login request
 			// Handle Error
 			// or Forward Home
-		}
-
-		setErrors(_errors);
+		} else setErrors(_errors);
 	}
+
+	if (redirect)
+		return (<Redirect to="/login" />);
+
 	return (
 		<div className="form-centered-container">
 			<div className="form-form-wrapper">
@@ -75,7 +94,7 @@ const PasswordForgot = () => {
 						</div>
 						{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 					</div>
-					{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
+					{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

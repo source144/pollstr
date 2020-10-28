@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Link, useParams, useLocation } from 'react-router-dom';
-
+import { Link, useParams, Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const lowerRegex = /(?=.*[a-z])/
 const upperRegex = /(?=.*[A-Z])/
@@ -39,6 +39,8 @@ const checkForm = (payload) => {
 }
 
 const PasswordReset = () => {
+	const [redirect, setRedirect] = useState(undefined);
+	const [loading, setLoading] = useState(undefined);
 	const [password, setPassword] = useState('');
 	const [confirm, setConfirm] = useState('');
 	const [responseError, setResponseError] = useState('');
@@ -46,7 +48,7 @@ const PasswordReset = () => {
 	// Params
 	// const { id } = useParams();
 	// const token = new URLSearchParams(useLocation().search).get('token');
-	
+
 	// Params
 	const { id, token } = useParams();
 	console.log(id, token);
@@ -70,23 +72,34 @@ const PasswordReset = () => {
 		console.log('Before validation', errors);
 
 		let valid = true;
-		const _errors = checkForm(getPayload());
+		const payload = getPayload();
+		const _errors = checkForm({ ...payload, confirm });
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 		console.log('After validation', _errors);
 		console.log(valid);
 
 		if (valid) {
-			// Dispatch login request
-			// Handle Error
-			// or Forward Home
-		}
+			// /api/auth/password/reset/{id}
+			setLoading(true);
+			axios.put(`/api/auth/password/reset/${id}`, payload)
+				.then(response => {
+					setLoading(false);
+					setTimeout(() => {
+						setRedirect(true);
+					}, 700);
+				})
+				.catch(error => {
+					const errorData = error.response ? error.response.data : {};
+					const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
 
-		setErrors(_errors);
+					setResponseError(errorMsg);
+				});
+		} else setErrors(_errors);
 	}
 
-	// TODO : Check if reset password is valid, then render
-	// TODO : display error if invalid
+	if (redirect)
+		return (<Redirect to="/login" />);
 
 	return (
 		<div className="form-centered-container">
@@ -123,7 +136,7 @@ const PasswordReset = () => {
 						</div>
 						{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 					</div>
-					{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
+					{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

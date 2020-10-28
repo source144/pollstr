@@ -39,10 +39,7 @@ const Verify = () => {
 		<div className="form-centered-container">
 			<div className="form-form-wrapper">
 				<h1 className='form-title'>User Verification</h1>
-				<input
-					className={`btn btn--tertiary form-item__submit ${false ? 'form-item__input--err' : ''}`}
-					type="submit" value="Loading Modal Here" />
-				{error ? <div className="form-item__error">{error}</div> : <h1>{loading ? 'Loading...' : 'Verified!'}</h1>}
+				{error ? <div style="align-self: center;" className="form-item__error">{error}</div> : <h1>{loading ? 'Loading...' : 'Verified!'}</h1>}
 			</div>
 		</div>
 	)
