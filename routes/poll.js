@@ -453,7 +453,8 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 
 				vote.save(function (err) {
 					if (err) {
-						if (err instanceof ValidationError) return res.status(400).send({ message: err.message });
+						if (err instanceof ValidationError) { console.log('Vote - validation error\n,', vote); return res.status(400).send({ err: err, message: err.message, vote: vote.toJSON() }); }
+						// if (err instanceof ValidationError) { console.log('Vote - validation error'); return res.status(400).send({ message: err.message }); }
 						return res.status(500).send({ err, message: err.message });
 					}
 

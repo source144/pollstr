@@ -41,15 +41,14 @@
 	align-self: center;
 	display: flex;
 	width: 100%;
-	padding: .5rem;
 }
-.poll-detail-wrapper > *:not() {
-	margin-left: 10px;
+.poll-detail-wrapper > *:not(:first-child) {
+	margin-left: 1rem;
 }
 .poll-info {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-left: 1rem;	
+	/* margin-left: 1rem;	 */
 }

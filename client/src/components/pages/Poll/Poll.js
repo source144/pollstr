@@ -11,6 +11,11 @@ import './Poll.css';
 // axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
 // axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
 
+// axios.defaults.baseURL = 'https://pollstr.app/api/';
+axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.withCredentials = true;
+
+
 const Poll = () => {
 	const errors = { confirm: false };
 	const [selectedOption, setSelectedOption] = useState(undefined);
@@ -24,9 +29,24 @@ const Poll = () => {
 		if (optionId == null)
 			return;
 
-		axios.post(`https://www.pollstr.app/api/poll/${pollId}/vote/${pollId}`, { withCredentials: true })
-			.then(function (response) { console.log(response) })
-			.catch(function (error) { console.log(error); setError(error); })
+		axios.post(`poll/${pollId}/vote/${selectedOption}`)
+			.then(function (response) {
+				const _options = poll.options.map(option => ({
+					...option,
+					votes: option.id == selectedOption ? option.votes + 1 : option.votes
+				}))
+				const _poll = {
+					...poll,
+					options: _options,
+					total_votes: poll.total_votes + 1,
+					voted: selectedOption
+				};
+				responseToPoll(_poll);
+			})
+			.catch(function (error) {
+				console.log(error.response.data);
+				setError(error.response.data);
+			})
 	};
 	const disableVote = () => setPoll({ ...poll, expired: true })
 	const responseToPoll = res => {
@@ -34,7 +54,7 @@ const Poll = () => {
 			title: res.title,
 			description: res.description,
 			total_votes: res.total_votes,
-			tags: [...res.autoTags, ...res.tags],
+			tags: [...(res.autoTags || []), ...(res.tags || [])],
 			createDate: res.createDate,
 
 			options: res.options.map(option => ({ ...option, percent: parseInt((option.votes / res.total_votes) * 100) })),
@@ -55,11 +75,12 @@ const Poll = () => {
 
 
 		axios
-			.get(`https://pollstr.app/api/poll/${pollId}`).then(function (response) {
-				console.log(response);
-				responseToPoll(response);
+			.get(`poll/${pollId}`).then(function (response) {
+				console.log("Got response from Backend", response);
+				responseToPoll(response.data);
 			})
 			.catch(function (error) {
+				console.log('Caught error', error);
 				responseToPoll({
 					"timeToLive": 0,
 					"hideResults": true,
@@ -114,24 +135,33 @@ const Poll = () => {
 		<>{poll ?
 			<div className="form-centered-container">
 				<div className="form-form-wrapper poll-wrapper">
-					<h1 className='poll-title'><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
 					<div className="poll-detail-wrapper">
 						{poll.timeToLive ? <CountdownTimer startDate={poll.createDate} timeToLive={poll.timeToLive} onComplete={disableVote}></CountdownTimer> : null}
 						<div className="poll-info">
+							<h1 className='poll-title'><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
 							<div className="form-description"><p className="poll-description">{poll.description}</p></div>
-							<ul className='poll-tags'>{poll.tags.map(tag => tag ? <Chip>{tag}</Chip> : null)}</ul>
+							<ul className='poll-tags'>{poll.tags.map((tag, i) => tag ? <Chip key={i}>{tag}</Chip> : null)}</ul>
 							<span className="poll-total-votes">{`${poll.total_votes > 0 ? poll.total_votes : 'no'} voter${poll.total_votes != 1 ? 's' : ''}`}</span>
 						</div>
 					</div>
 					<div className="form--mb1"></div>
 					<div className="form--mb1"></div>
 
-					{poll.options.map((option) => <PollOption key={option.id} disabled={poll.voted != undefined} option={option} selectOption={selectOption} selected={selectedOption === option.id} voted={poll.voted === option.id}></PollOption>)}
+					{poll.options.map((option) =>
+						<PollOption
+							key={option.id}
+							disabled={poll.voted != undefined || poll.expired}
+							option={option} selectOption={selectOption}
+							selected={selectedOption === option.id}
+							voted={poll.voted === option.id}
+							showResult={!poll.hideResults || !poll.expired}>
+						</PollOption>)
+					}
 					{/* {options.map(option => <PollOption id={option.id} title={option.title} description={option.description} votes={option.votes} percent={option.percent} voted={option.voted}></PollOption>)} */}
 					{/* <PollOption title={options[0].title} description={options[0].description} percent={options[0].percent}></PollOption>
 				<PollOption title={options[1].title} description={options[1].description} percent={options[1].percent}></PollOption>
 				<PollOption title={options[2].title} description={options[2].description} percent={options[2].percent}></PollOption> */}
-					{error ? <div className="form-item__error">error.message</div> : null}
+					{error ? <div className="form-item__error">{error.message}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

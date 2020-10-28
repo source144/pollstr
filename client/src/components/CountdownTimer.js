@@ -9,19 +9,21 @@ const daySeconds = 86400;
 
 const timerProps = {
 	isPlaying: true,
-	size: 120,
-	strokeWidth: 6
+	size: 100,
+	strokeWidth: 5
 };
 
-const getTimeSeconds = time => (minuteSeconds - time / 1000) | 0;
-const getTimeMinutes = time => ((time % hourSeconds) / minuteSeconds) | 0;
-const getTimeHours = time => ((time % daySeconds) / hourSeconds) | 0;
-const getTimeDays = time => (time / daySeconds) | 0;
+const renderTime = ({ remainingTime }) => {
+	let time = remainingTime;
+	let dimension = '';
 
-const renderTime = (dimension, time) => {
-
-	if (time < 0)
+	if (time <= 0)
 		return <div className="time-wrapper"><div className='too-late'>Too late...</div></div>;
+
+	if (time > daySeconds) { time = Math.floor(time / daySeconds); dimension = `day${time > 1 ? 's' : ''}`; }
+	else if (time > hourSeconds) { time = Math.floor(time / hourSeconds); dimension = `hour${time > 1 ? 's' : ''}`; }
+	else if (time > minuteSeconds) { time = Math.floor(time / minuteSeconds); dimension = `minute${time > 1 ? 's' : ''}`; }
+	else dimension = `second${time > 1 ? 's' : ''}`
 
 	return (
 		<div className="timer">
@@ -33,24 +35,8 @@ const renderTime = (dimension, time) => {
 };
 
 const CountdownTimer = ({ startDate, timeToLive, onComplete }) => {
-	// TODO : calc unixTime as totalTime
-	// TODO : calc initial time remaining
-	const totalTime = timeToLive;
-	let timeLeft = timeToLive - (moment().unix() - moment(startDate).unix())
-	const startDateUnix = moment(startDate).unix();
-
-	const days = Math.floor(timeLeft / daySeconds);
-	const hours = Math.floor(timeLeft / hourSeconds);
-	const mins = Math.floor(timeLeft / minuteSeconds);
-
-	const daysDuration = days * daySeconds;
-
-	let renderFunction;
-	if (days) renderFunction = ({ elapsedTime }) => renderTime("days", getTimeDays(daysDuration - elapsedTime / 1000));
-	else if (hours) renderFunction = ({ elapsedTime }) => renderTime("hours", getTimeHours(daySeconds - elapsedTime / 1000));
-	else if (mins) renderFunction = ({ elapsedTime }) => renderTime("minutes", getTimeMinutes(hourSeconds - elapsedTime / 1000));
-	else renderFunction = ({ elapsedTime }) => renderTime("seconds", getTimeSeconds(elapsedTime));
-
+	const timeLeft = timeToLive - (moment().unix() - moment(startDate).unix())
+	
 	return (
 		<div className="timer-wrapper">
 			<CountdownCircleTimer
@@ -60,7 +46,7 @@ const CountdownTimer = ({ startDate, timeToLive, onComplete }) => {
 				onComplete={() => onComplete ? onComplete() : undefined}
 				colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
 			>
-				{renderFunction}
+				{renderTime}
 			</CountdownCircleTimer>
 		</div >
 	);

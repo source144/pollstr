@@ -43,7 +43,7 @@ VoteSchema.pre('validate', function (next) {
 
 			// moment().diff(moment(dt))
 			// Check if Poll expired
-			if (poll.timeToLive > 0 && moment().diff(moment(poll.createDate)) > poll.timeToLive)
+			if (poll.timeToLive > 0 && poll.timeToLive - (moment().unix() - moment(poll.createDate).unix()) < 0)
 				return next(new ValidationError('Poll has expired, voting is disabled.'))
 
 			// check if optionId exists in poll

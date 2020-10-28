@@ -8,8 +8,10 @@
 
 .chip:hover {
   color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .chip:not(:first-child) {
-	margin-left: 5px;
+  margin-left: 5px;
 }
