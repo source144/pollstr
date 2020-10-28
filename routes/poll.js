@@ -358,8 +358,10 @@ router.get('/:id', withUserId, (req, res) => {
 					]
 				};
 			}
+			else _voteQuery = { _fingerPrint: req.fingerprint.hash };
 		} else if (req.user && req.user.id) _voteQuery = { _userId: req.user.id };
-		else return res.status(500).send(errorObject("Can't submit vote. Missing guest id and user id."));
+		else return res.status(500).send(errorObject("Can't get vote. Missing guest id and user id."));
+
 		Vote.findOne({ _pollId: poll._id, ..._voteQuery }, function (err, vote) {
 			if (err) return res.status(500).send({ err, message: err.message });
 
@@ -433,7 +435,7 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 							{ _fingerPrint: req.fingerprint.hash }
 						]
 					};
-				}
+				} else _voteQuery = { _fingerPrint: req.fingerprint.hash };
 			} else if (req.user && req.user.id) _voteQuery = { _userId: req.user.id };
 			else return res.status(500).send(errorObject("Can't submit vote. Missing guest id and user id."));
 
