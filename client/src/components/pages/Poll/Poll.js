@@ -11,7 +11,7 @@ import socket from '../../../store/socket';
 import PollOption from '../../PollOption';
 import Chip from '../../Chip';
 import './Poll.css';
-import { getPoll, disableVoting, votePoll } from '../../../store/actions/pollActions';
+import { getPoll, disableVoting, votePoll, updatePoll } from '../../../store/actions/pollActions';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
@@ -29,8 +29,20 @@ const Poll = () => {
 
 	useEffect(() => {
 		dispatch(getPoll(pollId));
-		return () => socket ? socket.off(`update_${pollId}`) : undefined;
+		return () => { socket.emit("leave", `${pollId}`); }
 	}, [pollId]);
+
+	// useEffect(() => {
+	// 	if (poll && Object.keys(poll).length > 2) {
+	// 		console.log('[Poll Component] Joining SocketIO - ', pollId);
+	// 		socket.emit('join', `${pollId}`);
+	// 		socket.on(`update_${pollId}`, updatedPoll => {
+	// 			console.log('[SocketIO] Received updated for', pollId);
+	// 			dispatch(updatePoll(updatedPoll));
+	// 		});
+	// 	}
+	// 	return () => socket.emit("leave", `${pollId}`);
+	// }, [poll])
 
 	return (
 		<>{poll && Object.keys(poll).length > 2 ?

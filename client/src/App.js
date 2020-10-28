@@ -29,7 +29,7 @@ function App() {
 							<Route path='/password/forgot' component={PasswordForgot} exact></Route>
 							<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
 							<Route path='/verify/:id-:token' component={Verify}></Route>
-							<Route path='/:id/' component={Poll}></Route>
+							<Route path='/poll/:id' component={Poll}></Route>
 							<Route path='/' exact component={Poll}></Route>
 							<Route path='/*' component={NotFound}></Route>
 						</Switch>

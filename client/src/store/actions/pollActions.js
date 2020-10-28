@@ -37,6 +37,7 @@ export const getPoll = pollId => {
 				dispatch(getPollSuccess(poll));
 
 				// Listen to this poll's updates
+				socket.emit('join', `${pollId}`);
 				socket.on(`update_${pollId}`, updatedPoll => {
 					dispatch(updatePoll(updatedPoll));
 				});
