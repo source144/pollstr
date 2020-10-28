@@ -340,12 +340,13 @@ router.put('/:id', withUserId, (req, res) => {
  *          description: User is not verified yet.
  */
 router.get('/:id', withUserId, (req, res) => {
+	console.log(`Getting poll ${req.params.id} for ${req.fingerprint ? req.fingerprint.hash : req.fingerprint}`);
+	
 	// console.log(req.params.id);
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
-		console.log(`Getting poll ${req.params.id} for ${req.fingerprint ? req.fingerprint.hash : req.fingerprint}`);
 
 		// User/guest (or both) identification for query
 		let _voteQuery;

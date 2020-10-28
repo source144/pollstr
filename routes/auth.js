@@ -95,16 +95,9 @@ router.post('/login', (req, res) => {
 				lastName: user.lastName,
 				role: user.role,
 				lastLogin: user.lastLogin,
-				accessToken
+				accessToken,
+				refreshToken
 			}
-
-			res.cookie('refresh', refreshToken, {
-				maxAge: getSeconds(REFRESH_TOKEN_LIFE),
-				signed: true,
-				httpOnly: true,
-				// sameSite: true,
-				// overwrite: true
-			});
 
 			return res.status(200).send(resBody);
 		});
@@ -120,6 +113,13 @@ router.post('/login', (req, res) => {
  *      description: Authenticates users credentials and generates an access token
  *      produces:
  *        - application/json
+ *      parameters:
+ *        - name: Token
+ *          description: Refresh Token
+ *          in: body
+ *          required: true
+ *          schema:
+ *            $ref: '#/definitions/Refresh_Token'
  *      responses:
  *        401:
  *          description: Missing or invalid refresh token
@@ -131,13 +131,11 @@ router.post('/login', (req, res) => {
 router.post('/refresh', (req, res) => {
 	// const auth_header	= req.headers.authorization;
 	// const token 		= auth_header && auth_header.split(' ')[1];
-	// const token = req.body.refresh_token;
-	const token = req.signedCookies['refresh'];
+	// const token = req.signedCookies['refresh'];
+	const token = req.body.refresh_token;
 
-	if (!token) {
-		res.clearCookie('refresh');
-		return res.status(401).send({ message: 'Missing refresh token', action: 'LOGOUT' });
-	}
+	if (!token) return res.status(401).send({ message: 'Missing refresh token', action: 'LOGOUT' });
+
 	// jwt.verify(token, ACCESS_TOKEN, (err, user) => { if (err) return res.status(403).send(err);	});
 
 	// if (!refreshTokens.includes(token)) return res.status(403).send(errorObject("Invalid refresh token"));
@@ -145,7 +143,6 @@ router.post('/refresh', (req, res) => {
 
 	jwt.verify(token, REFRESH_TOKEN, (err, user) => {
 		if (err) {
-			res.clearCookie('refresh');
 			_.remove(refreshTokens, { token });
 			if (e instanceof jwt.TokenExpiredError) return res.status(403).send({ message: "Refresh token has expired", action: 'LOGOUT' });
 			else return res.status(401).send({ message: e.message, action: 'LOGOUT' });

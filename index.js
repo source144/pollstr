@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const socketio = require('socket.io');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -302,7 +301,6 @@ function emitPollData(pollId, eventName, payload) {
 
 
 app.use(morgan("dev"));
-app.use(cookieParser(COOKIE_SECRET));
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
