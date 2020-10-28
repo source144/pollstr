@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLogin } from '../store/actions/authActions';
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
+import _ from 'lodash';
 
 
 import './Navbar.css';
@@ -17,17 +18,21 @@ import './Navbar.css';
 // 	</li>
 // );
 
+
+
 function Navbar() {
+
+	const { auth } = useSelector(state => state.auth);
+	const dispatch = useDispatch();
+	const hasAuth = !_.isEmpty(auth);
+
 	const [click, setClick] = useState(false);
 	const [dropdown, setDropdown] = useState(false);
-
-	let AUTH = false;
 
 	// No parent selector (:has() only works with jQuery.. ><')
 	// Suggested in https://stackoverflow.com/a/51628934/9382757
 	// Using that until a more dynamic/modular implementation is used
 	const location = useLocation();
-	console.log(location);
 	const activeNavClass = (route) => { return location.pathname === route ? "nav-item--active" : null }
 
 	const handleClick = () => setClick(!click);
@@ -43,14 +48,16 @@ function Navbar() {
 			</Link>
 		</li>
 	);
-	const profileNav = (
-		<li className={["nav-item", activeNavClass('/profile')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+
+	const profileNav = (auth) => {
+		const DISPLAY_NAME = hasAuth ? (auth.firstName ? auth.firstName : auth.email) : "temp";
+		return <li className={["nav-item", activeNavClass('/profile')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<Link to='/profile' className='nav-link' onClick={closeMobileMenu}>
-				Polls <i className='fas fa-caret-down' />
+				{DISPLAY_NAME} <i className='fas fa-caret-down' />
 			</Link>
-			{dropdown && <Dropdown /> /* TODO: dropdown with item props*/}
+			{/* {dropdown && <Dropdown /> /* TODO: dropdown with item props*/}
 		</li>
-	);
+	};
 
 	return (
 		<>
@@ -81,15 +88,15 @@ function Navbar() {
 						</Link>
 						{dropdown && <Dropdown />}
 					</li>
-					{AUTH ? profileNav : signInNav}
+					{hasAuth ? profileNav(auth) : signInNav}
 					<li className="nav-item mobile-only">
-						<Link to='/signup' className='nav-link' onClick={closeMobileMenu}>
-							Sign Up
+						<Link to={hasAuth ? '/' : '/signup'} className='nav-link' onClick={closeMobileMenu}>
+							{hasAuth ? "Create" : "Sign Up"}
 						</Link>
 					</li>
 				</ul>
-				<Link to='/signup' className="desktop-only">
-					<Button className="btn--primary-outline" onClick={() => console.log("clicked")}>Sign Up</Button>
+				<Link to={hasAuth ? '/' : '/signup'} className="desktop-only">
+					<Button className="btn--primary-outline">{hasAuth ? "Create" : "Sign Up"}</Button>
 				</Link>
 			</nav>
 		</>

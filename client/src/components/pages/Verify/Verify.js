@@ -1,18 +1,40 @@
-import React, { useState } from 'react'
-import { Link, useParams, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { Redirect, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Verify = () => {
-	const [responseError, setResponseError] = useState('');
+	const [load, setLoad] = useState(undefined);
+	const [redirect, setRedirect] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
 
 	// Params
 	const { id, token } = useParams();
 	console.log(id, token);
 
-	// TODO : send to api to verify verification id and token
-	// TODO : spinner while processing
-	// TODO : display error if fails
-	// TODO : forward to login if succeeds
+	// Perform once
+	useEffect(() => {
+		setLoading(true);
+		axios.post(`/auth/verify/${id}`, { token })
+			.then(response => {
+				setLoading(false);
+				setTimeout(() => {
+					setRedirect(true);
+				}, 700);
+			})
+			.catch(response => {
+				const errorData = error.response ? error.response.data : {};
+				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
 
+				setError(errorMsg);
+			});
+	}, [load])
+
+
+	if (redirect)
+		return (<Redirect to="/login" />);
+
+	// TODO : spinner while processing
 	return (
 		<div className="form-centered-container">
 			<div className="form-form-wrapper">
@@ -20,7 +42,7 @@ const Verify = () => {
 				<input
 					className={`btn btn--tertiary form-item__submit ${false ? 'form-item__input--err' : ''}`}
 					type="submit" value="Loading Modal Here" />
-				<div className="form-description"><p>Will verify {id}, {token}</p></div>
+				{error ? <div className="form-item__error">{error}</div> : <h1>{loading ? 'Loading...' : 'Verified!'}</h1>}
 			</div>
 		</div>
 	)

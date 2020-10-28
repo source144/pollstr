@@ -9,6 +9,8 @@ import {
 	AUTH_REFRESH_REQUEST,
 	AUTH_REFRESH_SUCCESS,
 	AUTH_REFRESH_FAILURE,
+	AUTH_LOGOUT_REQUEST,
+	AUTH_LOGOUT_SUCCESS,
 } from '../actions/types/authTypes'
 const initialState = {};
 
@@ -28,6 +30,9 @@ const authReducer = (state = initState, action) => {
 		case AUTH_REFRESH_REQUEST: return { ...initState, global_loading: true };
 		case AUTH_REFRESH_SUCCESS: return { ...initState, auth: action.auth };
 		case AUTH_REFRESH_FAILURE: return { ...initState, global_error: action.error };
+
+		case AUTH_LOGOUT_REQUEST: return { ...initState, global_loading: true };
+		case AUTH_LOGOUT_SUCCESS: return { ...initState };
 
 		default: return state;
 	}

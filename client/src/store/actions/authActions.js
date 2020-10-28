@@ -10,6 +10,8 @@ import {
 	AUTH_REFRESH_REQUEST,
 	AUTH_REFRESH_SUCCESS,
 	AUTH_REFRESH_FAILURE,
+	AUTH_LOGOUT_REQUEST,
+	AUTH_LOGOUT_SUCCESS,
 } from './types/authTypes'
 
 const authSignupRequest = () => ({ type: AUTH_SIGNUP_REQUEST });
@@ -111,10 +113,24 @@ export const authRefresh = refresh_token => {
 			})
 	}
 };
-
+const authLogoutRequest = () => ({ type: AUTH_LOGOUT_REQUEST });
+const authLogoutSuccess = () => ({ type: AUTH_LOGOUT_SUCCESS });
 export const authLogout = auth => {
 	return (dispatch) => {
+		dispatch(authLogoutRequest())
 
+		delete axios.defaults.headers.common["Authorization"];
+		const refresh_token = localStorage.getItem('refresh');
+
+		if (refresh_token) {
+			axios.post('/auth/logout/', { refresh_token })
+				.then(response => { })
+				.catch(error => { })
+				.then(response => {
+					localStorage.removeItem('refresh');
+					dispatch(authLogoutSuccess);
+				});
+		} else dispatch(authLogoutSuccess);
 	}
 };
 
@@ -146,7 +162,7 @@ const createAuthInterceptor = refresh_token => {
 				}
 				else if (!error.response.data.action || error.response.data.action === 'LOGOUT') {
 					delete axios.defaults.headers.common["Authorization"];
-					axios.post('/auth/logout/', refresh_token)
+					axios.post('/auth/logout/', { refresh_token })
 						.then(response => { })
 						.catch(error => { })
 						.then(() => {
