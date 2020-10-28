@@ -345,6 +345,7 @@ router.get('/:id', withUserId, (req, res) => {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
+		console.log(`Getting poll ${req.params.id} for ${req.fingerprint ? req.fingerprint.hash : req.fingerprint}`);
 
 		// User/guest (or both) identification for query
 		let _voteQuery;

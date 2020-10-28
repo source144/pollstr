@@ -5,14 +5,16 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const _ = require('lodash');
 const router = express.Router();
-const { refreshTokens } = require('../shared/jwt');
+const { refreshTokens, getSeconds } = require('../shared/jwt');
 const { notify } = require('../router');
 const mongoObjectId = require('mongoose').Types.ObjectId;
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN || "SECRET_REFRESH_KEY";
 const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || '30m';
+const REFRESH_TOKEN_LIFE = process.env.REFRESH_TOKEN_LIFE || '5d';
 const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'pollstr.app.io@gmail.com';
 const DOMAIN = process.env.DOMAIN || 'pollstr.app';
 const NODE_ENV = process.env.NODE_ENV || 'development'
@@ -31,7 +33,10 @@ const enforceCredentials = (req, res, next) => {
 	if (!token) return res.status(401).send(errorObject("Missing access token"));
 
 	jwt.verify(token, ACCESS_TOKEN, (e, u) => {
-		if (e) return res.status(403).send(e);
+		if (e) {
+			if (err instanceof jwt.TokenExpiredError) return res.status(401).send({ message: "Access token has expired", action: 'REFRESH' });
+			else return res.status(401).send({ message: err.message, action: 'LOGOUT' });
+		}
 		req.user = u;
 		next();
 	});
@@ -81,8 +86,8 @@ router.post('/login', (req, res) => {
 				return res.status(401).send(errorObject('Email or password incorrect'));
 
 			const accessToken = jwt.sign({ email: user.email, role: user.role }, ACCESS_TOKEN, { expiresIn: ACCESS_TOKEN_LIFE });
-			const refreshToken = jwt.sign({ email: user.email, role: user.role }, REFRESH_TOKEN);
-			refreshTokens.push(refreshToken);
+			const refreshToken = jwt.sign({ email: user.email, role: user.role }, REFRESH_TOKEN, { expiresIn: REFRESH_TOKEN_LIFE });
+			refreshTokens.push({ token: refreshToken, hash: req.fingerprint.hash });
 
 			const resBody = {
 				email: user.email,
@@ -90,9 +95,16 @@ router.post('/login', (req, res) => {
 				lastName: user.lastName,
 				role: user.role,
 				lastLogin: user.lastLogin,
-				accessToken,
-				refreshToken
+				accessToken
 			}
+
+			res.cookie('refresh', refreshToken, {
+				maxAge: getSeconds(REFRESH_TOKEN_LIFE),
+				signed: true,
+				httpOnly: true,
+				// sameSite: true,
+				// overwrite: true
+			});
 
 			return res.status(200).send(resBody);
 		});
@@ -108,33 +120,36 @@ router.post('/login', (req, res) => {
  *      description: Authenticates users credentials and generates an access token
  *      produces:
  *        - application/json
- *      parameters:
- *        - name: Token
- *          description: Refresh Token
- *          in: body
- *          required: true
- *          schema:
- *            $ref: '#/definitions/Refresh_Token'
  *      responses:
  *        401:
- *          description: Missing refresh token
+ *          description: Missing or invalid refresh token
  *        403:
- *          description: Invalid refresh token
+ *          description: Expired refresh token
  *        200:
  *          description: Success. New access token generated
  */
 router.post('/refresh', (req, res) => {
 	// const auth_header	= req.headers.authorization;
 	// const token 		= auth_header && auth_header.split(' ')[1];
-	const token = req.body.refresh_token;
+	// const token = req.body.refresh_token;
+	const token = req.signedCookies['refresh'];
 
-	if (!token) return res.status(401).send(errorObject("Missing refresh token"));
+	if (!token) {
+		res.clearCookie('refresh');
+		return res.status(401).send({ message: 'Missing refresh token', action: 'LOGOUT' });
+	}
 	// jwt.verify(token, ACCESS_TOKEN, (err, user) => { if (err) return res.status(403).send(err);	});
 
-	if (!refreshTokens.includes(token)) return res.status(403).send(errorObject("Invalid refresh token"));
+	// if (!refreshTokens.includes(token)) return res.status(403).send(errorObject("Invalid refresh token"));
+	if (!_.find(refreshTokens, { token, hash: req.fingerprint.hash })) return res.status(403).send(errorObject("Invalid refresh token"));
 
 	jwt.verify(token, REFRESH_TOKEN, (err, user) => {
-		if (err) return res.status(403).send(err);
+		if (err) {
+			res.clearCookie('refresh');
+			_.remove(refreshTokens, { token });
+			if (e instanceof jwt.TokenExpiredError) return res.status(403).send({ message: "Refresh token has expired", action: 'LOGOUT' });
+			else return res.status(401).send({ message: e.message, action: 'LOGOUT' });
+		}
 
 		const accessToken = jwt.sign({ email: user.email, role: user.role }, ACCESS_TOKEN, { expiresIn: ACCESS_TOKEN_LIFE });
 
@@ -163,7 +178,8 @@ router.post('/refresh', (req, res) => {
  */
 router.post('/logout', (req, res) => {
 	const token = req.body.refresh_token;
-	refreshTokens = refreshTokens.filter(t => t !== token);
+	_.remove(refreshTokens, { token });
+	// refreshTokens = refreshTokens.filter(t => t !== token);
 
 	res.status(204).send();
 });

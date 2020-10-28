@@ -15,8 +15,26 @@ import Verify from './components/pages/Verify/Verify';
 import NotFound from './components/pages/NotFound/NotFound';
 import Poll from './components/pages/Poll/Poll';
 
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+// axios.defaults.baseURL = 'https://pollstr.app/api/';
+// axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
+
+	const { token } = useSelector(state => state.auth.auth)
+
+	useEffect(() => {
+		const authInterceptor = axios.interceptors.response.use(
+			response => response,
+			error => {
+
+			}
+		);
+		// Dispose interceptor
+		return () => { axios.interceptors.response.eject(authInterceptor); }
+	}, [user, refreshAccessToken])
+
 	return (
 		<>
 			<Provider store={store}>

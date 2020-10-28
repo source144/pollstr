@@ -13,11 +13,6 @@ import Chip from '../../Chip';
 import './Poll.css';
 import { getPoll, disableVoting, votePoll, updatePoll } from '../../../store/actions/pollActions';
 
-axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
-// axios.defaults.baseURL = 'https://pollstr.app/api/';
-// axios.defaults.baseURL = 'http://localhost:5000/api/';
-
-
 const Poll = () => {
 	// TODO : get ID from path
 	const [pollId, setPollId] = useState('5f94abf7c82e940a918f7b3c')

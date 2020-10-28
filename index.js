@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const socketio = require('socket.io');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -146,6 +147,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 5000;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "SECRET_ACCESS_KEY"
 const MONGO = process.env.MONGO_URI
+const COOKIE_SECRET = process.env.COOKIE_SECRET || "COOKIE_SECRET"
 
 // Create Server
 const app = express();
@@ -300,6 +302,7 @@ function emitPollData(pollId, eventName, payload) {
 
 
 app.use(morgan("dev"));
+app.use(cookieParser(COOKIE_SECRET));
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
