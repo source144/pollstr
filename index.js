@@ -164,7 +164,7 @@ const corsOptions = {
 
 }
 app.use(cors(corsOptions));
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
@@ -333,7 +333,7 @@ app.use('/api', function (req, res, next) {
 
 if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'))
-	
+
 	app.get('*', function (req, res) {
 		console.log('GOT a request to here right now!');
 		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
