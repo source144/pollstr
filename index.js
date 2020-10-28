@@ -164,14 +164,7 @@ const whitelist = ['http://pollstr.app/', 'https://pollstr.app/', 'https://www.p
 // }
 
 
-app.use(cors({
-	origin: false,
-	methods: ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'PATCH'],
-	allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-	credentials: true,
-	preflightContinue: false,
-	optionsSuccessStatus: 204
-}));
+
 // app.options('*', cors(corsOptions));
 
 const server = http.createServer(app);
@@ -203,7 +196,6 @@ const swaggerOptions = {
 }
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 if (NODE_ENV === 'production')
 	app.set('port', PORT);
@@ -307,7 +299,15 @@ function emitPollData(pollId, eventName, payload) {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-
+app.use(cors({
+	origin: false,
+	methods: ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'PATCH'],
+	allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+	credentials: true,
+	preflightContinue: false,
+	optionsSuccessStatus: 204
+}));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 // CORS
 // app.use((req, res, next) => {
 // 	console.log('**** Reached CORS ****')
