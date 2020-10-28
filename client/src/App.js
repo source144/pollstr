@@ -17,9 +17,9 @@ import NotFound from './components/pages/NotFound/NotFound';
 import Poll from './components/pages/Poll/Poll';
 import AppContext from './AppContext';
 
-// axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
-axios.defaults.baseURL = 'http://localhost:5000/api/';
+// axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
 
