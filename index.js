@@ -151,13 +151,13 @@ const MONGO = process.env.MONGO_URI
 // Create Server
 const app = express();
 
-const whitelist=['http://pollstr.app/', 'https://pollstr.app/', 'https://www.pollstr.app/', 'http://www.pollstr.app/', 'http://localhost:3000', 'http://localhost:5000'];
+const whitelist = ['http://pollstr.app/', 'https://pollstr.app/', 'https://www.pollstr.app/', 'http://www.pollstr.app/', 'http://localhost:3000', 'http://localhost:5000'];
 const corsOptions = {
-	origin: function(origin, callback) {
+	origin: function (origin, callback) {
 		console.log('[CORS Middleware] Request from ', origin);
-		if (whitelist.indexOf(origin) !== -1) {
+		if (!origin || whitelist.indexOf(origin) !== -1) {
 			callback(null, true);
-		} else callback(new Error(`${origin} not allowed by CORS`));
+		} else callback(`${origin} not allowed by CORS`, false);
 	},
 	credentials: true
 

@@ -11,8 +11,8 @@ import './Poll.css';
 // axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
 // axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
 
-// axios.defaults.baseURL = 'https://pollstr.app/api/';
-axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.baseURL = 'https://pollstr.app/api/';
+// axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.withCredentials = true;
 
 
@@ -25,6 +25,7 @@ const Poll = () => {
 
 	const handleHashTagClick = tag => console.log("TODO: redirect to search", tag);
 	const selectOption = optionId => { setSelectedOption(optionId); }
+	const handleUpdate = update => { setPoll({ ...poll, ...update }) };
 	const voteOption = optionId => {
 		if (optionId == null)
 			return;
@@ -41,32 +42,18 @@ const Poll = () => {
 					total_votes: poll.total_votes + 1,
 					voted: selectedOption
 				};
-				responseToPoll(_poll);
+				setPoll(responseToPoll(_poll));
 			})
 			.catch(function (error) {
 				console.log(error.response.data);
 				setError(error.response.data);
 			})
+
 	};
 	const disableVote = () => setPoll({ ...poll, expired: true })
 	const responseToPoll = res => {
-		setPoll({
-			title: res.title,
-			description: res.description,
-			total_votes: res.total_votes,
-			tags: [...(res.autoTags || []), ...(res.tags || [])],
-			createDate: res.createDate,
-
-			options: res.options.map(option => ({ ...option, percent: parseInt((option.votes / res.total_votes) * 100) })),
-			voted: res.voted,
-
-
-			timeToLive: res.timeToLive,
-			usersOnly: res.usersOnly,
-			hideResults: res.hideResults,
-			passcode: res.passcode,
-		})
-	}
+		return { ...res, tags: [...(res.autoTags || []), ...(res.tags || [])], options: res.options.map(option => ({ ...option, percent: parseInt((option.votes / res.total_votes) * 100) })) };
+	};
 
 
 	useEffect(() => {
@@ -77,7 +64,15 @@ const Poll = () => {
 		axios
 			.get(`poll/${pollId}`).then(function (response) {
 				console.log("Got response from Backend", response);
-				responseToPoll(response.data);
+				const _poll = responseToPoll(response.data);
+				setPoll(_poll);
+
+				// Listen to this poll's updates
+				socket.on(`update_${_currentPollId}`, updatedPoll => {
+					console.log('[SocketIO] received updated poll from SocketIO', updatedPoll);
+					console.log('[SocketIO] Poll in memory:', _poll);
+					setPoll(responseToPoll({ ..._poll, ...updatedPoll }));
+				});
 			})
 			.catch(function (error) {
 				console.log('Caught error', error);
@@ -120,9 +115,7 @@ const Poll = () => {
 			// Subscribe to this poll
 			socket.emit('join', `${_currentPollId}`);
 			// Listen to this poll's updates
-			socket.on(`update_${_currentPollId}`, updatedPoll => {
-				console.log('received updated poll from SocketIO', updatedPoll);
-			});
+
 		}
 
 		return () => socket.emit("leave", `update_${_currentPollId}`);
