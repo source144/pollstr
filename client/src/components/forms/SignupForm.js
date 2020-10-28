@@ -90,7 +90,7 @@ const SignUpForm = () => {
 
 		let valid = true;
 		const _auth = getPayload()
-		const _errors = checkForm(_auth);
+		const _errors = checkForm({ ..._auth, confirm: confirm });
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 		console.log(_errors);
