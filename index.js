@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
-const cors = require('cors');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -149,24 +148,26 @@ const MONGO = process.env.MONGO_URI
 
 // Create Server
 const app = express();
+app.use(function (request, response, next) {
+	console.log('[CORS Middleware] Request from HOST: ', req.get('host'));
+	console.log('[CORS Middleware] Request from ORIGIN: ', req.get('origin'));
+	console.log('[CORS Middleware] Request from IP: ', req.socket.remoteAddress);
 
-const whitelist = ['http://pollstr.app/', 'https://pollstr.app/', 'https://www.pollstr.app/', 'http://www.pollstr.app/', 'http://localhost:3000', 'http://localhost:5000'];
-// const corsOptions = {
-// 	origin: function (origin, callback) {
-// 		console.log('[CORS Middleware] Request from', origin);
-// 		if (!origin || whitelist.indexOf(origin) !== -1) {
-// 			console.log('[CORS Middleware] Request from', origin, 'should be accepted');
-// 			callback(null, true);
-// 		} else callback(`${origin} not allowed by CORS`, false);
-// 	},
-// 	credentials: true
+	response.header('Access-Control-Allow-Origin', '*');
+	response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
-// }
+	//Handle Preflight 
+	if (reqest.method === 'OPTIONS') {
+		console.log('[CORS Middleware] Replying to OPTIONS: ');
 
+		response.status(200).send();
+	}
+	else {
+		next();
+	}
 
-
-// app.options('*', cors(corsOptions));
-
+});
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
 app.io = io;
@@ -299,14 +300,6 @@ function emitPollData(pollId, eventName, payload) {
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(cors({
-	origin: false,
-	methods: ['GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'PATCH'],
-	allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-	credentials: true,
-	preflightContinue: false,
-	optionsSuccessStatus: 204
-}));
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 // CORS
 // app.use((req, res, next) => {
