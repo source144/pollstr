@@ -22,7 +22,7 @@
   background-color: var(--color-primary);
 }
 
-.poll-option:not(.poll-option--disabled):not(.poll-option--voted)
+.poll-option:not(.poll-option--disabled):not(.poll-option--selected):not(.poll-option--voted)
   .option-percent:active
   .option-percent-display {
   background-color: var(--color-primary-dark);

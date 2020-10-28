@@ -1,3 +1,4 @@
+import { object } from 'joi';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectOption } from '../store/actions/pollActions';
@@ -14,10 +15,10 @@ export default ({ option }) => {
 	console.log(`(${option.id}) Selcted: ${selected} Voted: ${voted} Disabled: ${disabled}`);
 	console.log(`(${option.id}) showResult: ${showResult}`);
 	return (
-		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected ? 'poll-option--selected' : ''}`}>
+		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected === option.id ? 'poll-option--selected' : ''}`}>
 			<label>{option.title}</label>
 			{option.description ? <span>{option.description}</span> : null}
-			<button className="option-percent" onClick={() => !disabled ? dispatch(selectOption) : undefined}>
+			<button className="option-percent" onClick={() => !disabled ? dispatch(selectOption(option.id)) : undefined}>
 				<div className="option-percent-display" style={{ width: disabled || showResult ? `${option.percent}%` : `${70 + Math.floor(Math.random() * 16)}%` }}>
 					{/* <span className={`option-percent-value ${(!disabled && !showResult) || option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '??'}%</span> */}
 					{disabled || showResult ? <span className={`option-percent-value ${option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '?'}%</span> : null}
