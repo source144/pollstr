@@ -81,8 +81,8 @@ function validateUser(user, password = true) {
 	const schema = Joi.object({
 		email: Joi.string().min(5).required().email(),
 		password: password ? pwSchema.required() : pwSchema,
-		firstName: Joi.string().trim(),
-		lastName: Joi.string().trim()
+		firstName: Joi.string().allow(null, '').trim(),
+		lastName: Joi.string().allow(null, '').trim()
 	});
 	return schema.unknown().validate(user);
 }

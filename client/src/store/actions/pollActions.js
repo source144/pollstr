@@ -43,8 +43,8 @@ export const getPoll = pollId => {
 				});
 			})
 			.catch(error => {
-				const errorData = error.response ? error.reponse.data : {};
-				const errorMsg = error.response ? error.response.message : error.message;
+				const errorData = error.response ? error.response.data : {};
+				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
 				dispatch(getPollFailure(errorMsg))
 			});
 	}
@@ -62,8 +62,8 @@ export const votePoll = (pollId, optionId) => {
 				dispatch(votePollSuccess(poll));
 			})
 			.catch(error => {
-				const errorData = error.response ? error.reponse.data : {};
-				const errorMsg = error.response ? error.response.message : error.message;
+				const errorData = error.response ? error.response.data : {};
+				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
 				dispatch(votePollFailure(errorMsg))
 			});
 	}

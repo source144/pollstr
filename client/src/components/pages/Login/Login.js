@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { authLogin } from '../../../store/actions/authActions';
+import _ from 'lodash'
 import './Login.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -28,9 +31,12 @@ const checkForm = (payload) => {
 
 const Login = () => {
 
+
+	const { auth, error, loading } = useSelector(state => state.auth)
+	const dispatch = useDispatch()
+
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [responseError, setResponseError] = useState('');
 
 	const [errors, setErrors] = useState({
 		email: '',
@@ -50,22 +56,21 @@ const Login = () => {
 		console.log('Before validation', errors);
 
 		let valid = true;
-		const _errors = checkForm(getPayload());
+		const auth = getPayload()
+		const _errors = checkForm(auth);
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 		console.log('After validation', _errors);
 		console.log(valid);
 
-		if (valid) {
-			// Dispatch login request
-			// Handle Error
-			// or Forward Home
-		}
+		if (valid) dispatch(authLogin(auth))
 
 		setErrors(_errors);
 	}
 
-	// TODO: add a span with symbol of field
+	console.log('[Login.js] auth:', auth);
+	console.log('[Login.js] _.isEmpty(auth):', _.isEmpty(auth));
+	if (!_.isEmpty(auth)) return <Redirect to='/' />
 
 	return (
 		<div className="form-centered-container">
@@ -101,6 +106,7 @@ const Login = () => {
 						</div>
 						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
+					{!!error ? <div className="form-item__error">{error}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

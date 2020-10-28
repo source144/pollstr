@@ -23,6 +23,18 @@ const lowerRegex = /(?=.*[a-z])/
 const upperRegex = /(?=.*[A-Z])/
 const numbrRegex = /(?=.*[0-9])/
 
+_.mixin({
+	compactObject: function (o) {
+		var clone = _.clone(o);
+		_.each(clone, function (v, k) {
+			if (!v) {
+				delete clone[k];
+			}
+		});
+		return clone;
+	}
+});
+
 // ********************** //
 // *** Authentication *** //
 // ********************** //
@@ -206,6 +218,7 @@ router.post('/logout', (req, res) => {
  *          description: Success. New action token generated
  */
 router.post('/signup', (req, res) => {
+	req.body = _.compactObject(_.pick(req.body, ['email', 'password', 'firstName', 'lastName']));
 	const { error } = validate(req.body);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
 

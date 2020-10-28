@@ -296,6 +296,7 @@ body {
   color: var(--color-blue-dark-1);
   font-family: "Font Awesome 5 Free";
   margin-right: -3.25rem;
+  padding-right: 3.25rem;
 }
 
 .form-item__input:focus {

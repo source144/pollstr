@@ -303,6 +303,15 @@ function emitPollData(pollId, eventName, payload) {
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(withCredentials, (req, res, next) => {
+	if (req.user) {
+		console.log(`[Temp Middleware] Request from ${req.user.email} (${req.user.role})`);
+	}
+
+	next();
+})
+
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);

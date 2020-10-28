@@ -29,7 +29,6 @@ const transform = poll => ({
 })
 
 const pollReducer = (state = initState, action) => {
-	console.log('[pollReducer] action', action);
 
 	switch (action.type) {
 		case CREATE_POLL_REQUEST:

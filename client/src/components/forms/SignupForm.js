@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSignup } from '../../store/actions/authActions';
 import './SignupForm.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -49,12 +51,14 @@ const checkForm = (payload) => {
 
 const SignUpForm = () => {
 
+	const { signup_complete, signup_loading, signup_error } = useSelector(state => state.auth)
+	const dispatch = useDispatch()
+
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLasttName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirm, setConfirm] = useState('');
-	const [responseError, setResponseError] = useState('');
 
 	const [errors, setErrors] = useState({
 		firstName: '',
@@ -71,8 +75,7 @@ const SignUpForm = () => {
 		firstName,
 		lastName,
 		email,
-		password,
-		confirm,
+		password
 	});
 
 	const handleFirstName = e => setFirstName(e.target.value);
@@ -86,22 +89,20 @@ const SignUpForm = () => {
 		console.log('Before validation', errors);
 
 		let valid = true;
-		const _errors = checkForm(getPayload());
+		const _auth = getPayload()
+		const _errors = checkForm(_auth);
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 		console.log(_errors);
 		console.log(valid);
 
-		if (valid) {
-			// Dispatch signup request
-			// Handle Error
-			// or Forward Home
-		}
+		if (valid) dispatch(authSignup(_auth));
 
 		setErrors(_errors);
 	}
 
-	// TODO: add a span with symbol of field
+	// TODO : change route to home
+	if (signup_complete) return <Redirect to='/' />
 
 	return (
 		<div className="form-form-wrapper">
@@ -179,7 +180,7 @@ const SignUpForm = () => {
 					</div>
 					{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 				</div>
-				{!!responseError ? <div className="form-item__error">{/* API error */}</div> : null}
+				{!!signup_error ? <div className="form-item__error">{signup_error}</div> : null}
 				<div className="form-item">
 					<input
 						className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

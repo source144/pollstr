@@ -1,10 +1,34 @@
-import * as actionTypes from '../actions/actionTypes';
-
+import _ from 'lodash';
+import {
+	AUTH_SIGNUP_REQUEST,
+	AUTH_SIGNUP_SUCCESS,
+	AUTH_SIGNUP_FAILURE,
+	AUTH_LOGIN_REQUEST,
+	AUTH_LOGIN_SUCCESS,
+	AUTH_LOGIN_FAILURE,
+	AUTH_REFRESH_REQUEST,
+	AUTH_REFRESH_SUCCESS,
+	AUTH_REFRESH_FAILURE,
+} from '../actions/types/authTypes'
 const initialState = {};
 
-const authReducer = (state = initialState, action) => {
+const initState = { auth: {}, loading: undefined, error: undefined, signup_complete: undefined, signup_loading: undefined, signup_error: undefined, global_loading: undefined, global_error: undefined };
+const authReducer = (state = initState, action) => {
+	console.log(action.error);
 
 	switch (action.type) {
+		case AUTH_SIGNUP_REQUEST: return { ...initState, signup_loading: true };
+		case AUTH_SIGNUP_SUCCESS: return { ...initState, signup_complete: true };
+		case AUTH_SIGNUP_FAILURE: return { ...initState, signup_error: action.error };
+
+		case AUTH_LOGIN_REQUEST: return { ...initState, loading: true };
+		case AUTH_LOGIN_SUCCESS: return { ...initState, auth: action.auth };
+		case AUTH_LOGIN_FAILURE: return { ...initState, error: action.error };
+
+		case AUTH_REFRESH_REQUEST: return { ...initState, global_loading: true };
+		case AUTH_REFRESH_SUCCESS: return { ...initState, auth: action.auth };
+		case AUTH_REFRESH_FAILURE: return { ...initState, global_error: action.error };
+
 		default: return state;
 	}
 }
