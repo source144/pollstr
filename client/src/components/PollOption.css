@@ -1,3 +1,4 @@
+
 .poll-option .option-percent {
   background-color: var(--color-grey-light-3);
   border-radius: 0.5rem;
@@ -63,9 +64,9 @@
 }
 
 .poll-option .option-percent-value.option-percent-value--center {
-	font-style: italic;
-	font-weight: 300;
-	align-self: center;
+  font-style: italic;
+  font-weight: 300;
+  align-self: center;
 }
 
 .poll-option .option-percent-value.option-percent-value--right {
