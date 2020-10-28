@@ -476,7 +476,7 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 								else console.log('failed to emit!')
 							}
 						}
-						return res.status(201).send({ message: "Vote submitted" });
+						return res.status(201).send({ ...(poll.toJSON()), voted: req.params.optionId });
 					});
 				});
 			});

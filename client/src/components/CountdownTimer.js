@@ -43,7 +43,7 @@ const CountdownTimer = ({ startDate, timeToLive, onComplete }) => {
 				{...timerProps}
 				duration={timeToLive}
 				initialRemainingTime={timeLeft > 0 ? timeLeft : 0}
-				onComplete={() => onComplete ? onComplete() : undefined}
+				onComplete={onComplete}
 				colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
 			>
 				{renderTime}
