@@ -43,3 +43,7 @@
   width: 100%;
   margin-left: -0.6rem;
 }
+
+.neg-margin {
+	margin-top: -1rem;
+}

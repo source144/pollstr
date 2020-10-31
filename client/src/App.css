@@ -327,19 +327,42 @@ body {
   align-items: center;
 }
 
+.form-item .form-item__multiline-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.form-item .form-item__multiline-label .form-item__multiline-label-description {
+  font-size: 1rem;
+}
+
 .form-item label {
+  display: flex;
+  /* justify-content: center; */
+  justify-content: space-between;
+  align-items: center;
+  /* flex-direction: column; */
+
   font-size: 1.8rem;
   font-weight: 500;
   color: var(--color-blue-dark-1);
 }
 .form-item label.optional::after {
+  align-self: flex-end;
   margin-left: 5px;
   font-style: italic;
   content: "(optional)";
   font-size: 1rem;
   color: var(--color-secondary-dark);
 }
-
+.form-item label.required::after {
+  align-self: flex-end;
+  margin-left: 5px;
+  font-style: italic;
+  content: "(required)";
+  font-size: 1rem;
+  color: var(--color-secondary-dark);
+}
 .form-item__submit {
   height: 5.5rem;
   margin-top: 1rem;

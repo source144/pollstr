@@ -7,18 +7,53 @@ import _ from 'lodash';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Switch from 'react-ios-switch';
+import axios from 'axios';
+import moment from 'moment'
 import { v4 as uuid } from 'uuid'
 
-const Container = ({ children }) => {
-	return <div>{children}</div>
+const pwRegex = /^\S+$/;
+const validate = (payload) => {
+
+	const errors = {
+		title: "",
+		description: "",
+		passcode: "",
+		optionErrors: false,
+		hasErrors: false
+	}
+
+	// Title:
+	if (!payload.title || !(payload.title = payload.title.trim())) errors.title = 'Title is required';
+	else if (payload.title.trim().length > 50) errors.title = "Title too long. (50 chars max)";
+
+
+	if (payload.description && payload.description.trim().length > 50) errors.description = "Description too long. (50 chars max)";
+
+	errors.options = _.map(payload.options, (option, idx) => {
+		if (option.value && option.value.trim().length > 50) {
+			errors.optionErrors = true;
+			return "Option is too long. (50 chars max)";
+		} else return '';
+	});
+
+
+	if (payload.passcode) {
+		if (payload.passcode.length > 24) errors.passcode = 'Passcode too long. (50 chars max)';
+		else if (!pwRegex.test(payload.passcode)) errors.passcode = 'Passcode must not contain whitespaces';
+	}
+
+	errors.hasErrors = errors.title || errors.description || errors.passcode || errors.optionErrors
+
+	return errors;
 }
 
 const CreatePoll = () => {
 	const [responseError, setResponseError] = useState('');
 	const [resultsHidden, setResultsHidden] = useState(true);
-	const [privatePoll, setPrivatePoll] = useState(false);
-	const [usersOnly, setUsersOnly] = useState(false);
+	const [publicPoll, setPublicPoll] = useState(false);
+	const [allowGuests, setAllowGuests] = useState(false);
 	const [expireDate, setExpireDate] = useState('');
+	const [createdId, setCreatedId] = useState(undefined);
 
 	const [options, setOptions] = useState(
 		[
@@ -32,15 +67,13 @@ const CreatePoll = () => {
 	const [passcode, setPasscode] = useState('');
 	const [description, setDescription] = useState('');
 	const [tags, setTags] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirm, setConfirm] = useState('');
 
 	const [errors, setErrors] = useState({
-		firstName: '',
-		lastName: '',
-		tags: '',
-		password: '',
-		confirm: '',
+		title: "",
+		description: "",
+		passcode: "",
+		optionErrors: false,
+		hasErrors: false
 	});
 
 
@@ -73,7 +106,43 @@ const CreatePoll = () => {
 		setOptions([..._options]);
 	}
 
-	const handleSubmit = (e) => { console.log("In submit") };
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		const _payloadOptions = _.map(
+			_.filter(options, option => option.value && !!option.value.trim()),
+			option => ({ title: option.value })
+		);
+		const _timeToLive = !!expireDate ? moment(expireDate).unix() - moment().unix() : 0
+		const payload = {
+			title: title || undefined,
+			description: description || undefined,
+			timeToLive: _timeToLive >= 0 ? _timeToLive : 0,
+			options: _payloadOptions,
+			passcode: passcode.trim() || undefined,
+			tags: tags,
+			usersOnly: !allowGuests,
+			public: publicPoll,
+			hideResults: resultsHidden
+		}
+
+		const _errors = { ...errors, ...validate(payload) };
+		if (_errors.hasErrors) {
+			setErrors(_errors);
+			return;
+		}
+
+
+		axios.post('/poll/', payload)
+			.then(response => console.log(response.data))
+			.catch(error => {
+				console.log(error);
+				console.log(error.response.data);
+				// setResponseError(error.response.data.error);
+			})
+
+		console.log("In submit")
+	};
 	const handlePasscode = e => { setPasscode(e.target.value) };
 	const handleTitle = value => {
 		setTitle(value)
@@ -90,39 +159,40 @@ const CreatePoll = () => {
 	useEffect(() => { console.log('Title: ', title); console.log('Desciption: ', description) }, [description, title]);
 
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
 
-			<div className="form-centered-container">
-				<div className="form-form-wrapper">
-					<h1 className='form-title'>Create Poll</h1>
-					<form onSubmit={handleSubmit} formNoValidate className='form-form'>
-						<div className="form-item">
-							<label htmlFor="title">Poll Title</label>
-							<div className='form-item-wrapper'>
-								<HashtagTextArea
-									className={`form-item__input${!!errors.title ? 'form-item__input--err' : ''}`}
-									placeholder="e.g. Apples or Bananas? #Fruit"
-									tagClass="form-item__input--hashtag"
-									onChange={handleTitle}
-								/>
-							</div>
-							{!!errors.title ? <span className='form-item__error'>{errors.title}</span> : null}
+		<div className="form-centered-container">
+			<div className="form-form-wrapper">
+				<h1 className='form-title'>Create Poll</h1>
+				<div className="form-description form-item__error form--mb1 neg-margin"><p>Please enter required information</p></div>
+				<form onSubmit={handleSubmit} formNoValidate className='form-form'>
+					<div className="form-item">
+						<label htmlFor="title" className="required">Poll Title</label>
+						<div className='form-item-wrapper'>
+							<HashtagTextArea
+								className={`form-item__input ${!!errors.title ? 'form-item__input--err' : ''}`}
+								placeholder="e.g. Apples or Bananas? #Fruit"
+								tagClass="form-item__input--hashtag"
+								onChange={handleTitle}
+							/>
 						</div>
-						<div className="form-item">
-							<label htmlFor="description">Description</label>
-							<div className='form-item-wrapper'>
-								<HashtagTextArea
-									className={`form-item__input form-item__input--textarea${!!errors.description ? 'form-item__input--err' : ''}`}
-									placeholder="e.g. Let's settle this once and for all! Which #fruit is better? Apples or Bananas?"
-									tagClass="form-item__input--hashtag"
-									newlines={true}
-									onChange={handleDescription}
-								/>
-							</div>
-							{!!errors.description ? <span className='form-item__error'>{errors.description}</span> : null}
+						{!!errors.title ? <span className='form-item__error'>{errors.title}</span> : null}
+					</div>
+					<div className="form-item">
+						<label htmlFor="description">Description</label>
+						<div className='form-item-wrapper'>
+							<HashtagTextArea
+								className={`form-item__input form-item__input--textarea ${!!errors.description ? 'form-item__input--err' : ''}`}
+								placeholder="e.g. Let's settle this once and for all! Which #fruit is better? Apples or Bananas?"
+								tagClass="form-item__input--hashtag"
+								newlines={true}
+								onChange={handleDescription}
+							/>
 						</div>
-						<div className="form-item">
-							<label >Options</label>
+						{!!errors.description ? <span className='form-item__error'>{errors.description}</span> : null}
+					</div>
+					<div className="form-item">
+						<label className="required">Options</label>
+						<DragDropContext onDragEnd={onDragEnd}>
 							<Droppable droppableId={"droppable-0"}>
 								{(provided) => (
 									<div
@@ -160,97 +230,106 @@ const CreatePoll = () => {
 									</div>
 								)}
 							</Droppable>
-						</div>
-						<div className="poll__add-option">
-							<button className="btn btn--primary" onClick={onOptionAdd}><i className="fas fa-plus-circle"></i></button>
-						</div>
-						<div className="form-item">
-							<label htmlFor="expire" className='optional'>Expire Date</label>
-							<DatePicker
-								selected={expireDate}
-								onChange={date => setExpireDate(date)}
-								className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
-								isClearable
-								showTimeSelect
-								timeFormat="HH:mm"
-								timeIntervals={15}
-								timeCaption="time"
-								dateFormat="MMMM d, yyyy h:mm aa"
-								placeholderText="No Exipiry Set"
-							/>
-						</div>
+						</DragDropContext >
+					</div>
+					<div className="poll__add-option">
+						<button className="btn btn--primary" onClick={onOptionAdd}><i className="fas fa-plus-circle"></i></button>
+					</div>
+					<div className="form-item">
+						<label htmlFor="expire">Expire Date</label>
+						<DatePicker
+							selected={expireDate}
+							onChange={date => setExpireDate(date)}
+							className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
+							isClearable
+							showTimeSelect
+							timeFormat="HH:mm"
+							timeIntervals={15}
+							timeCaption="time"
+							dateFormat="MMMM d, yyyy h:mm aa"
+							placeholderText="No Exipiry Set"
+						/>
+					</div>
 
 
-						<div className="form-item">
-							<label htmlFor="passcode" className='optional'>Passcode</label>
-							<div className='form-item-wrapper'>
-								<input
-									className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
-									type="password"
-									placeholder="e.g. #Food #Health"
-									name="passcode"
-									formNoValidate
-									onChange={handlePasscode} />
-								<span className='form-item__input-icon'><i className="fas fa-passcode"></i></span>
-							</div>
-							{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
-						</div>
-
-						<div className="form-item">
-							<label htmlFor="tags" className='optional'>Tags</label>
-							<div className='form-item-wrapper'>
-								<input
-									className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
-									type="text"
-									placeholder="e.g. #Food #Health"
-									name="tags"
-									formNoValidate
-									onChange={handleTags} />
-								<span className='form-item__input-icon'><i className="fas fa-tags"></i></span>
-							</div>
-							{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
-						</div>
-
-
-
-						<div className="form-item form-item--row">
-							<label htmlFor="resultsHidden" onClick={() => setResultsHidden(!resultsHidden)}>Hidden Results</label>
-							<Switch
-								checked={resultsHidden}
-								onChange={() => setResultsHidden(!resultsHidden)}
-								name="resultsHidden"
-							/>
-						</div>
-
-						<div className="form-item form-item--row">
-							<label htmlFor="usersOnly" onClick={() => setResultsHidden(!usersOnly)}>Users Only</label>
-							<Switch
-								checked={usersOnly}
-								onChange={() => setUsersOnly(!usersOnly)}
-								name="usersOnly"
-							/>
-						</div>
-
-						<div className="form-item form-item--row">
-							<label htmlFor="privatePoll" onClick={() => setResultsHidden(!privatePoll)}>Private Poll</label>
-							<Switch
-								checked={privatePoll}
-								onChange={() => setPrivatePoll(!privatePoll)}
-								name="privatePoll"
-							/>
-						</div>
-
-						{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
-						<div className="form-item">
+					<div className="form-item">
+						<label htmlFor="passcode">Passcode</label>
+						<div className='form-item-wrapper'>
 							<input
-								className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-								type="submit" value="Create!" />
+								className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
+								type="password"
+								placeholder="e.g. #Food #Health"
+								name="passcode"
+								formNoValidate
+								onChange={handlePasscode} />
+							<span className='form-item__input-icon'><i className="fas fa-passcode"></i></span>
 						</div>
+						{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
+					</div>
 
-					</form>
-				</div>
+					<div className="form-item">
+						<label htmlFor="tags">Tags</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
+								type="text"
+								placeholder="e.g. #Food #Health"
+								name="tags"
+								formNoValidate
+								onChange={handleTags} />
+							<span className='form-item__input-icon'><i className="fas fa-tags"></i></span>
+						</div>
+						{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
+					</div>
+
+					<br />
+
+					<div className="form-item form-item--row">
+						<label className="form-item__multiline-label" htmlFor="resultsHidden" onClick={() => setResultsHidden(!resultsHidden)}>
+							<span className="form-item__multiline-label-title">Hidden Results</span>
+							<span className="form-item__multiline-label-description">Visible only after voting?</span>
+						</label>
+						<Switch
+							checked={resultsHidden}
+							onChange={() => setResultsHidden(!resultsHidden)}
+							name="resultsHidden"
+						/>
+					</div>
+
+					<div className="form-item form-item--row">
+						<label className="form-item__multiline-label" htmlFor="allowGuests" onClick={() => setResultsHidden(!allowGuests)}>
+							<span className="form-item__multiline-label-title">Guest Votes</span>
+							<span className="form-item__multiline-label-description">Can guests vote?</span>
+						</label>
+						<Switch
+							checked={allowGuests}
+							onChange={() => setAllowGuests(!allowGuests)}
+							name="allowGuests"
+						/>
+					</div>
+
+					<div className="form-item form-item--row">
+						<label className="form-item__multiline-label" htmlFor="publicPoll" onClick={() => setResultsHidden(!publicPoll)}>
+							<span className="form-item__multiline-label-title">Public Poll</span>
+							<span className="form-item__multiline-label-description">Should the poll be featured?</span>
+						</label>
+						<Switch
+							checked={publicPoll}
+							onChange={() => setPublicPoll(!publicPoll)}
+							name="publicPoll"
+						/>
+					</div>
+
+					{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
+					<div className="form-item">
+						<input
+							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+							type="submit" value="Create!" />
+					</div>
+
+				</form>
 			</div>
-		</DragDropContext >
+		</div>
 	)
 }
 

@@ -7,6 +7,9 @@ const SALT_WORK_FACTOR = 10;
 const pcSchema = Joi.string().trim().min(1).max(24).regex(/^\S+$/);
 
 const hash_tags = searchText => {
+	if (!searchText)
+		return;
+
 	var regexp = /(\s|^)\#\w\w+\b/gm
 	result = searchText.match(regexp);
 	if (result) return result.map(function (s) { return s.trim().replace(/#/gi, ''); });
@@ -81,7 +84,7 @@ PollSchema.pre('save', function (next) {
 	var poll = this;
 
 	console.log('PollSchema.pre-Save started');
-	
+
 	// only hash the password if it has been modified (or is new)
 	if (poll.isModified('passcode') && poll.passcode) {
 		console.log('passcode was modified');
@@ -131,6 +134,7 @@ function validatePoll(poll, passcode) {
 		description: Joi.string().trim().min(1).max(50),
 		timeToLive: Joi.number().integer().min(0),
 		passcode: pcSchema,
+		hideResults: Joi.bool(),
 		usersOnly: Joi.bool(),
 		public: Joi.bool(),
 		tag: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
