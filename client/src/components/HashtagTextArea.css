@@ -8,3 +8,7 @@
 .__HashtagTextAreaComponent__ {
   word-break: break-word;
 }
+
+.__HashtagTextAreaComponent-overflow-hidden__ {
+  overflow: hidden;
+}

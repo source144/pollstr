@@ -57,7 +57,7 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 			const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
 			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
 		}
-		
+
 		console.log(_content);
 		onChange(editable.current.innerText);
 	}
@@ -73,7 +73,7 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 				background='red'
 				width='200px'
 				minHeight='200px'
-				className={`__HashtagTextAreaComponent__ __HashtagTextAreaComponent--placeholder__ ${className}`}
+				className={`__HashtagTextAreaComponent__ __HashtagTextAreaComponent--placeholder__ ${className} ${singleline ? "__HashtagTextAreaComponent-overflow-hidden__" : ""}`}
 				placeholder={placeholder}
 			>
 			</div>
