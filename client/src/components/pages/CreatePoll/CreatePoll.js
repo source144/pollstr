@@ -168,7 +168,7 @@ const CreatePoll = () => {
 						<form onSubmit={(e) => { e.preventDefault() }} formNoValidate className='form-form'>
 							<div className="form-switch poll-created-description">Use this QR Code to Acces Poll</div>
 							<div className="poll-created-qr">
-								<QRCode value={`${window.location.host}/poll/${createdId}`} size={200} />
+								<QRCode value={`${window.location.protocol}//${window.location.host}/poll/${createdId}`} size={200} />
 							</div>
 							<div className="form-switch poll-created-description">You can also use <Link to={`/poll/${createdId}`} className='form-switch-action'>This Link</Link></div>
 							<div className="form-item">
