@@ -72,7 +72,6 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 				onInput={handleEdit}
 				background='red'
 				width='200px'
-				minHeight='200px'
 				className={`__HashtagTextAreaComponent__ __HashtagTextAreaComponent--placeholder__ ${className} ${singleline ? "__HashtagTextAreaComponent-overflow-hidden__" : ""}`}
 				placeholder={placeholder}
 			>

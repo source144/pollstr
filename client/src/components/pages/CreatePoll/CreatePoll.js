@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import './CreatePoll.css';
 import HashtagTextArea from '../../HashtagTextArea';
@@ -50,13 +51,15 @@ const validate = (payload) => {
 }
 
 const CreatePoll = () => {
+	const { auth } = useSelector(state => state.auth);
+	const isLoggedIn = !_.isEmpty(auth);
+
 	const [responseError, setResponseError] = useState('');
 	const [resultsHidden, setResultsHidden] = useState(true);
 	const [publicPoll, setPublicPoll] = useState(false);
-	const [allowGuests, setAllowGuests] = useState(false);
+	const [allowGuests, setAllowGuests] = useState(true);
 	const [expireDate, setExpireDate] = useState('');
 	const [createdId, setCreatedId] = useState(undefined);
-
 	const [options, setOptions] = useState(
 		[
 			{ id: uuid(), value: "One" },
@@ -131,6 +134,7 @@ const CreatePoll = () => {
 		const _errors = { ...errors, ...validate(payload) };
 		if (_errors.hasErrors) {
 			setErrors(_errors);
+			setResponseError('Make sure all fields are entered correctly!')
 			return;
 		}
 
@@ -140,7 +144,7 @@ const CreatePoll = () => {
 			.catch(error => {
 				console.log(error);
 				console.log(error.response.data);
-				// setResponseError(error.response.data.error);
+				setResponseError(error.response.data.message);
 			})
 	};
 	const handlePasscode = e => { setPasscode(e.target.value) };
@@ -182,163 +186,178 @@ const CreatePoll = () => {
 					:
 					<>
 						<h1 className='form-title'>Create Poll</h1>
-						<div className="form-description form-item__error form--mb1 neg-margin"><p>Please enter required information</p></div>
 						<form onSubmit={handleSubmit} formNoValidate className='form-form'>
-							<div className="form-item">
-								<label htmlFor="title" className="required">Poll Title</label>
-								<div className='form-item-wrapper'>
-									<HashtagTextArea
-										className={`form-item__input ${!!errors.title ? 'form-item__input--err' : ''}`}
-										placeholder="e.g. Apples or Bananas? #Fruit"
-										tagClass="form-item__input--hashtag"
-										onChange={handleTitle}
-										singleline={true}
-									/>
+							<div className='form-section'>
+								<div className="form-section-item w-60">
+									<div className="form-item">
+										<label htmlFor="title" className="required">Poll Title</label>
+										<div className='form-item-wrapper'>
+											<HashtagTextArea
+												className={`form-item__input ${!!errors.title ? 'form-item__input--err' : ''}`}
+												placeholder="e.g. Apples or Bananas? #Fruit"
+												tagClass="form-item__input--hashtag"
+												onChange={handleTitle}
+												singleline={true}
+											/>
+										</div>
+										{!!errors.title ? <span className='form-item__error'>{errors.title}</span> : null}
+									</div>
+									<div className="form-item">
+										<label htmlFor="description">Description</label>
+										<div className='form-item-wrapper'>
+											<HashtagTextArea
+												className={`form-item__input form-item__input--textarea ${!!errors.description ? 'form-item__input--err' : ''}`}
+												placeholder="e.g. Let's settle this once and for all! Which #fruit is better? Apples or Bananas?"
+												tagClass="form-item__input--hashtag"
+												newlines={true}
+												onChange={handleDescription}
+											/>
+										</div>
+										{!!errors.description ? <span className='form-item__error'>{errors.description}</span> : null}
+									</div>
+									<div className="form-item">
+										<label htmlFor="tags">Tags</label>
+										<div className='form-item-wrapper'>
+											<input
+												className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
+												type="text"
+												placeholder="e.g. #Food #Health"
+												name="tags"
+												formNoValidate
+												onChange={handleTags} />
+											<span className='form-item__input-icon'><i className="fas fa-tags"></i></span>
+										</div>
+										{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
+									</div>
+
 								</div>
-								{!!errors.title ? <span className='form-item__error'>{errors.title}</span> : null}
-							</div>
-							<div className="form-item">
-								<label htmlFor="description">Description</label>
-								<div className='form-item-wrapper'>
-									<HashtagTextArea
-										className={`form-item__input form-item__input--textarea ${!!errors.description ? 'form-item__input--err' : ''}`}
-										placeholder="e.g. Let's settle this once and for all! Which #fruit is better? Apples or Bananas?"
-										tagClass="form-item__input--hashtag"
-										newlines={true}
-										onChange={handleDescription}
-									/>
+
+
+								<div className="form-section-item w-40">
+									<div className="form-item">
+										<label htmlFor="passcode">Passcode</label>
+										<div className='form-item-wrapper'>
+											<input
+												className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
+												type="password"
+												placeholder="e.g. #Food #Health"
+												name="passcode"
+												formNoValidate
+												onChange={handlePasscode} />
+											<span className='form-item__input-icon'><i className="fas fa-passcode"></i></span>
+										</div>
+										{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
+									</div>
+									<div className="form-item">
+										<label htmlFor="expire">Expire Date</label>
+										<DatePicker
+											selected={expireDate}
+											onChange={date => setExpireDate(date)}
+											className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
+											isClearable
+											showTimeSelect
+											timeFormat="HH:mm"
+											timeIntervals={15}
+											timeCaption="time"
+											dateFormat="MMMM d, yyyy h:mm aa"
+											placeholderText="No Exipiry Set"
+										/>
+									</div>
+									<div className="form-item form-item--row">
+										<label className="form-item__multiline-label" htmlFor="resultsHidden" onClick={() => setResultsHidden(!resultsHidden)}>
+											<span className="form-item__multiline-label-title">Hidden Results</span>
+											<span className="form-item__multiline-label-description">Visible only after voting?</span>
+										</label>
+										<Switch
+											checked={resultsHidden}
+											onChange={() => setResultsHidden(!resultsHidden)}
+											name="resultsHidden"
+										/>
+									</div>
+									<div className="form-item form-item--row">
+										<label className="form-item__multiline-label" htmlFor="allowGuests" onClick={() => !isLoggedIn ? setResultsHidden(!allowGuests) : undefined}>
+											<span className="form-item__multiline-label-title">Guest Votes</span>
+											<span className="form-item__multiline-label-description">Can guests vote?</span>
+										</label>
+										<Switch
+											checked={allowGuests}
+											onChange={() => setAllowGuests(!allowGuests)}
+											name="allowGuests"
+											disabled={!isLoggedIn}
+										/>
+									</div>
+									<div className="form-item form-item--row">
+										<label className="form-item__multiline-label" htmlFor="publicPoll" onClick={() => setPublicPoll(!publicPoll)}>
+											<span className="form-item__multiline-label-title">Public Poll</span>
+											<span className="form-item__multiline-label-description">Should the poll be featured?</span>
+										</label>
+										<Switch
+											checked={publicPoll}
+											onChange={() => setPublicPoll(!publicPoll)}
+											name="publicPoll"
+										/>
+									</div>
 								</div>
-								{!!errors.description ? <span className='form-item__error'>{errors.description}</span> : null}
-							</div>
-							<div className="form-item">
-								<label className="required">Options</label>
-								<DragDropContext onDragEnd={onDragEnd}>
-									<Droppable droppableId={"droppable-0"}>
-										{(provided) => (
-											<div
-												className="droppable"
-												ref={provided.innerRef}
-												{...provided.droppableProps}>
-												{options.map((option, index) => {
-													return <Draggable
-														draggableId={option.id}
-														key={option.id}
-														index={index}>
-
-														{(provided) => (
-															<div
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																{...provided.dragHandleProps}
-															>
-																<Option
-																	id={option.id}
-																	index={index}
-																	hasError={option.error}
-																	deleteable={options.length > 2}
-																	onChange={onOptionChange}
-																	onDelete={onOptionDelete}
-																	value={option.value}
-																/>
-															</div>
-														)}
-
-
-													</Draggable>
-												})}
-												{provided.placeholder}
-											</div>
-										)}
-									</Droppable>
-								</DragDropContext >
-							</div>
-							<div className="poll__add-option">
-								<button className="btn btn--primary" onClick={onOptionAdd}><i className="fas fa-plus-circle"></i></button>
-							</div>
-							<div className="form-item">
-								<label htmlFor="expire">Expire Date</label>
-								<DatePicker
-									selected={expireDate}
-									onChange={date => setExpireDate(date)}
-									className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
-									isClearable
-									showTimeSelect
-									timeFormat="HH:mm"
-									timeIntervals={15}
-									timeCaption="time"
-									dateFormat="MMMM d, yyyy h:mm aa"
-									placeholderText="No Exipiry Set"
-								/>
 							</div>
 
+							<div className='form-section form-section--centered'>
 
-							<div className="form-item">
-								<label htmlFor="passcode">Passcode</label>
-								<div className='form-item-wrapper'>
-									<input
-										className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
-										type="password"
-										placeholder="e.g. #Food #Health"
-										name="passcode"
-										formNoValidate
-										onChange={handlePasscode} />
-									<span className='form-item__input-icon'><i className="fas fa-passcode"></i></span>
+								<div className="form-section-item w-100 center-self">
+									<DragDropContext onDragEnd={onDragEnd}>
+										<div className="form-item">
+											<label className="required">Options</label>
+											<Droppable droppableId={"droppable-0"}>
+												{(provided) => (
+													<div
+														className="droppable"
+														ref={provided.innerRef}
+														{...provided.droppableProps}>
+														{options.map((option, index) => {
+															return <Draggable
+																draggableId={option.id}
+																key={option.id}
+																index={index}>
+
+																{(provided) => (
+																	<div
+																		ref={provided.innerRef}
+																		{...provided.draggableProps}
+																		{...{ ...provided.dragHandleProps, tabIndex: -1 }}
+																	>
+																		<Option
+																			id={option.id}
+																			index={index}
+																			hasError={option.error}
+																			deleteable={options.length > 2}
+																			onChange={onOptionChange}
+																			onDelete={onOptionDelete}
+																			value={option.value}
+																		/>
+																	</div>
+																)}
+
+
+															</Draggable>
+														})}
+														{provided.placeholder}
+													</div>
+												)}
+											</Droppable>
+										</div>
+										<div className="poll__add-option">
+											<button className="btn btn--primary" onClick={onOptionAdd}><i className="fas fa-plus-circle"></i></button>
+										</div>
+									</DragDropContext >
 								</div>
-								{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
 							</div>
 
-							<div className="form-item">
-								<label htmlFor="tags">Tags</label>
-								<div className='form-item-wrapper'>
-									<input
-										className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
-										type="text"
-										placeholder="e.g. #Food #Health"
-										name="tags"
-										formNoValidate
-										onChange={handleTags} />
-									<span className='form-item__input-icon'><i className="fas fa-tags"></i></span>
-								</div>
-								{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
-							</div>
+
+
+
+
+
 
 							<br />
-
-							<div className="form-item form-item--row">
-								<label className="form-item__multiline-label" htmlFor="resultsHidden" onClick={() => setResultsHidden(!resultsHidden)}>
-									<span className="form-item__multiline-label-title">Hidden Results</span>
-									<span className="form-item__multiline-label-description">Visible only after voting?</span>
-								</label>
-								<Switch
-									checked={resultsHidden}
-									onChange={() => setResultsHidden(!resultsHidden)}
-									name="resultsHidden"
-								/>
-							</div>
-
-							<div className="form-item form-item--row">
-								<label className="form-item__multiline-label" htmlFor="allowGuests" onClick={() => setResultsHidden(!allowGuests)}>
-									<span className="form-item__multiline-label-title">Guest Votes</span>
-									<span className="form-item__multiline-label-description">Can guests vote?</span>
-								</label>
-								<Switch
-									checked={allowGuests}
-									onChange={() => setAllowGuests(!allowGuests)}
-									name="allowGuests"
-								/>
-							</div>
-
-							<div className="form-item form-item--row">
-								<label className="form-item__multiline-label" htmlFor="publicPoll" onClick={() => setResultsHidden(!publicPoll)}>
-									<span className="form-item__multiline-label-title">Public Poll</span>
-									<span className="form-item__multiline-label-description">Should the poll be featured?</span>
-								</label>
-								<Switch
-									checked={publicPoll}
-									onChange={() => setPublicPoll(!publicPoll)}
-									name="publicPoll"
-								/>
-							</div>
 
 							{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
 							<div className="form-item">
