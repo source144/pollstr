@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 import _ from 'lodash';
 import {
 	CREATE_POLL_REQUEST,
@@ -22,11 +23,18 @@ import {
 } from '../actions/types/pollTypes'
 
 const initState = { poll: {}, loading: undefined, error: undefined, selected: undefined };
-const transform = poll => ({
-	...poll,
-	tags: _.uniq([...(poll.autoTags || []), ...(poll.tags || [])]),
-	options: poll.options.map(option => ({ ...option, percent: parseInt((option.votes / poll.total_votes) * 100) }))
-})
+const transform = poll => {
+	const expired = poll.timeToLive != 0 || poll.timeToLive - (moment().unix() - moment(poll.startDate).unix()) > 0;
+	return {
+		...poll,
+		tags: _.uniq([...(poll.autoTags || []), ...(poll.tags || [])]),
+		options: poll.options.map(option => ({
+			...option,
+			percent: poll.total_votes > 0 ? parseInt((option.votes / poll.total_votes) * 100) : 0,
+			// expired
+		}))
+	}
+}
 
 const pollReducer = (state = initState, action) => {
 

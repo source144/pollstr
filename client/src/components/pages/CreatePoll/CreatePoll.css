@@ -45,5 +45,17 @@
 }
 
 .neg-margin {
-	margin-top: -1rem;
+  margin-top: -1rem;
+}
+
+.poll-created-qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.poll-created-description {
+  text-align: center;
+  padding: 4px;
 }

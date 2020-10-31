@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { createStor } from 'redux';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -45,6 +45,7 @@ function App() {
 						<Navbar />
 						<div className="app">
 							<Switch>
+								<Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route>
 								<Route path='/signup' component={Signup} exact></Route>
 								<Route path='/login' component={Login} exact></Route>
 								<Route path='/password/forgot' component={PasswordForgot} exact></Route>
@@ -52,7 +53,6 @@ function App() {
 								<Route path='/verify/:id-:token' component={Verify}></Route>
 								<Route path='/polls/create' exact component={CreatePoll}></Route>
 								<Route path='/poll/:id' component={Poll}></Route>
-								<Route path='/' exact component={Poll}></Route>
 								<Route path='/*' component={NotFound}></Route>
 							</Switch>
 						</div>

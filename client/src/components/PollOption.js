@@ -10,7 +10,7 @@ export default ({ option }) => {
 	const dispatch = useDispatch();
 
 	const disabled = voted != undefined || expired;
-	const showResult = !hideResults || !expired;
+	const showResult = !hideResults || expired;
 
 	console.log(`(${option.id}) Selcted: ${selected} Voted: ${voted} Disabled: ${disabled}`);
 	console.log(`(${option.id}) showResult: ${showResult}`);

@@ -9,6 +9,7 @@
     "axios": "^0.21.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "qrcode.react": "^1.0.0",
     "react": "^17.0.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-chips": "^0.8.0",

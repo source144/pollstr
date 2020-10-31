@@ -51,6 +51,13 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 		editable.current.innerHTML = styled;
 		CaretPositioning.restoreSelection(editable.current, savedCaretPosition);
 
+		// Grow text box if needed
+		if (!singleline) {
+			editable.current.style.height = "1px";
+			const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
+			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
+		}
+		
 		console.log(_content);
 		onChange(editable.current.innerText);
 	}
@@ -65,7 +72,7 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 				onInput={handleEdit}
 				background='red'
 				width='200px'
-				height='200px'
+				minHeight='200px'
 				className={`__HashtagTextAreaComponent__ __HashtagTextAreaComponent--placeholder__ ${className}`}
 				placeholder={placeholder}
 			>

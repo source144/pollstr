@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import CountdownTimer from '../../CountdownTimer';
 import ReactHashtag from "react-hashtag";
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,9 +14,12 @@ import Chip from '../../Chip';
 import './Poll.css';
 import { getPoll, disableVoting, votePoll, updatePoll } from '../../../store/actions/pollActions';
 
+const _defaultId = '5f94abf7c82e940a918f7b3c';
+
 const Poll = () => {
 	// TODO : get ID from path
-	const [pollId, setPollId] = useState('5f94abf7c82e940a918f7b3c')
+	const { id } = useParams();
+	const [loaded, setLoaded] = useState(undefined);
 
 	const { poll, loading, error, selected } = useSelector(state => state.poll);
 	const dispatch = useDispatch();
@@ -23,20 +27,20 @@ const Poll = () => {
 	const handleHashTagClick = tag => console.log("TODO: redirect to search", tag);
 
 	useEffect(() => {
-		dispatch(getPoll(pollId));
-		return () => { socket.emit("leave", `${pollId}`); }
-	}, [pollId]);
+		dispatch(getPoll(id));
+		return () => { socket.emit("leave", `${id}`); }
+	}, [loaded]);
 
 	// useEffect(() => {
 	// 	if (poll && Object.keys(poll).length > 2) {
-	// 		console.log('[Poll Component] Joining SocketIO - ', pollId);
-	// 		socket.emit('join', `${pollId}`);
-	// 		socket.on(`update_${pollId}`, updatedPoll => {
-	// 			console.log('[SocketIO] Received updated for', pollId);
+	// 		console.log('[Poll Component] Joining SocketIO - ', id);
+	// 		socket.emit('join', `${id}`);
+	// 		socket.on(`update_${id}`, updatedPoll => {
+	// 			console.log('[SocketIO] Received updated for', id);
 	// 			dispatch(updatePoll(updatedPoll));
 	// 		});
 	// 	}
-	// 	return () => socket.emit("leave", `${pollId}`);
+	// 	return () => socket.emit("leave", `${id}`);
 	// }, [poll])
 
 	return (
@@ -69,7 +73,7 @@ const Poll = () => {
 					<div className="form-item">
 						<input
 							className="btn btn--tertiary form-item__submit"
-							type="submit" value="Vote" onClick={() => dispatch(votePoll(pollId, selected))}
+							type="submit" value="Vote" onClick={() => dispatch(votePoll(id, selected))}
 							disabled={selected == null || poll.voted != null || poll.expired} />
 					</div>
 				</div>
