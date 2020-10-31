@@ -98,13 +98,18 @@
 .nav-link {
   color: var(--color-white);
   text-decoration: none;
+  transition: background-color 0.2s ease-out;
+  border-radius: 4px;
   padding: 0.5rem 1rem;
 }
 
 .nav-link:hover {
-  background-color: var(--color-primary);
-  border-radius: 4px;
-  transition: background-color 0.2s ease-out;
+  background: var(--color-primary);
+}
+
+.nav-link:active {
+  background: var(--color-primary-damp);
+  background: #3bac60;
 }
 
 /* 
@@ -216,7 +221,7 @@
     flex-direction: column;
     align-items: center;
 
-	z-index: 9999;
+    z-index: 9999;
     grid-gap: 0;
 
     background: var(--color-grey-dark-4);

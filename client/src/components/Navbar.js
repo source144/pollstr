@@ -19,7 +19,140 @@ import './Navbar.css';
 // 	</li>
 // );
 
+// TODO : Modular Nav items
+/*
+const guestNav = [
+	{
+		text: "Home",
+		path: "/",
+		onClick: undefined,
+		style: "normal",
+		dropdown: undefined,
+	},
+	{
+		text: "Contact Us",
+		path: "/contact-us",
+		onClick: undefined,
+		style: "normal",
+		dropdown: undefined,
+	},
+	{
+		text: "Polls",
+		path: "/polls",
+		onClick: undefined,
+		style: "normal",
+		dropdown: [
+			{
+				text: "hot",
+				path: "/polls/hot",
+				onClick: undefined,
+				style: "normal"
+			},
+			{
+				text: "manage",
+				path: "/polls/manage",
+				onClick: undefined,
+				style: "normal"
+			},
+			{
+				text: "hot",
+				path: "/polls/create",
+				onClick: undefined,
+				style: "normal"
+			}
+		],
+	},
+	{
+		text: "Sign In",
+		path: "/login",
+		onClick: undefined,
+		style: "normal",
+		dropdown: undefined,
+	}
+]
 
+const userNav = [
+	{
+		text: "Home",
+		path: "/",
+		onClick: undefined,
+		style: "normal",
+		dropdown: undefined,
+	},
+	{
+		text: "Contact Us",
+		path: "/contact-us",
+		onClick: undefined,
+		style: "normal",
+		dropdown: undefined,
+	},
+	{
+		text: "Polls",
+		path: "/polls",
+		onClick: undefined,
+		style: "normal",
+		dropdown: [
+			{
+				text: "hot",
+				path: "/polls/hot",
+				onClick: undefined,
+				style: "normal"
+			},
+			{
+				text: "manage",
+				path: "/polls/manage",
+				onClick: undefined,
+				style: "normal"
+			},
+			{
+				text: "hot",
+				path: "/polls/create",
+				onClick: undefined,
+				style: "normal"
+			}
+		],
+	}
+]
+
+const userDropdown = [
+	{
+		text: "Inbox", // TODO : have a badge with number of messages
+		path: "/user/inbox",
+		onClick: undefined,
+		style: "normal"
+	},
+	{
+		text: "Groups",
+		path: "/user/groups",
+		onClick: undefined,
+		style: "normal"
+	},
+	{
+		text: "Polls",
+		path: "/polls/manage",
+		onClick: undefined,
+		style: "normal"
+	},
+	{
+		text: "Profile",
+		path: "/user/profile",
+		onClick: undefined,
+		style: "normal"
+	},
+	{
+		text: "Settings",
+		path: "/user/settings",
+		onClick: undefined,
+		style: "normal"
+	},
+	{
+		text: "logout",
+		path: undefined,
+		onClick: undefined, // TODO : logout
+		style: "normal"
+	}
+]
+*/
 
 function Navbar() {
 
@@ -66,7 +199,6 @@ function Navbar() {
 						Sign Out
 				</Link>
 				</li>
-
 			</>
 		)
 	};

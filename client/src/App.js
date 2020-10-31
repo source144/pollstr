@@ -15,6 +15,7 @@ import PasswordReset from './components/pages/PasswordReset/PasswordReset';
 import Verify from './components/pages/Verify/Verify';
 import NotFound from './components/pages/NotFound/NotFound';
 import Poll from './components/pages/Poll/Poll';
+import CreatePoll from './components/pages/CreatePoll/CreatePoll';
 import AppContext from './AppContext';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
@@ -49,6 +50,7 @@ function App() {
 								<Route path='/password/forgot' component={PasswordForgot} exact></Route>
 								<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
 								<Route path='/verify/:id-:token' component={Verify}></Route>
+								<Route path='/polls/create' exact component={CreatePoll}></Route>
 								<Route path='/poll/:id' component={Poll}></Route>
 								<Route path='/' exact component={Poll}></Route>
 								<Route path='/*' component={NotFound}></Route>

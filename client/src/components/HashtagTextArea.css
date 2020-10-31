@@ -1,0 +1,10 @@
+.__HashtagTextAreaComponent--placeholder__:empty::before {
+  content: attr(placeholder);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-grey-dark-1);
+}
+
+.__HashtagTextAreaComponent__ {
+  word-break: break-word;
+}

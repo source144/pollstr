@@ -40,6 +40,11 @@
   cursor: pointer;
 }
 
+.poll-title > span::selection {
+  background: var(--color-primary-light);
+  color: white;
+}
+
 .poll-tags {
   display: flex;
   width: 100%;

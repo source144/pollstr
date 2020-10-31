@@ -23,6 +23,7 @@
 :root {
   --color-primary: #55c57a;
   --color-primary-light: #7ed56f;
+  --color-primary-damp: #3bac60;
   --color-primary-dark: #28b485;
 
   --color-secondary-light: #ffb900;
@@ -45,6 +46,7 @@
   --color-input-border-1: #dee2e6;
   --color-input-border-2: #cfcfcf;
   --color-input-border-3: #ccc;
+  --color-grey-dark-1-unfocused: rgb(153, 153, 153, 0.4);
   --color-grey-dark-1: #999;
   --color-grey-dark-2: #777;
   --color-grey-dark-3: #555;
@@ -58,6 +60,7 @@
   --color-black--1: #1c1b1b;
   --color-black--2: #1a1717;
 
+  --color-danger--1-unfocused: rgb(217, 83, 79, 0.4);
   --color-danger--1: #d9534f;
 
   --shadow-light-1: rgba(0, 0, 0, 0.22);
@@ -131,6 +134,35 @@ body {
   z-index: 4;
 }
 
+.react-datepicker {
+  font-size: 1.6rem !important;
+}
+
+.react-datepicker-time__header,
+.react-datepicker__current-month {
+  font-size: 1.8rem !important;
+}
+.react-datepicker-time__header {
+  padding-top: 25px !important;
+}
+
+.react-datepicker__header {
+  padding-top: 12px !important;
+}
+
+.react-datepicker__navigation {
+  top: 20px !important;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  margin: 0.8rem !important;
+}
+
+.react-datepicker__time-list {
+  height: 173px !important;
+}
+
 .btn {
   padding: 8px 20px;
   border-radius: 4px;
@@ -163,6 +195,20 @@ body {
 }
 .btn.btn--tertiary:not(.disabled):not(:disabled):active {
   background: var(--color-tertiary-dark--1);
+}
+
+.btn.btn--primary {
+  color: var(--color-white);
+  background: var(--color-primary-light);
+  transition: background-color 0.2s ease-out;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+}
+.btn.btn--primary:hover {
+  background: var(--color-primary);
+}
+.btn.btn--primary:active {
+  background: var(--color-primary-damp);
 }
 
 .btn.btn--primary-outline {
@@ -275,10 +321,23 @@ body {
   margin: 0.6rem;
 }
 
+.form-item--row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .form-item label {
   font-size: 1.8rem;
   font-weight: 500;
   color: var(--color-blue-dark-1);
+}
+.form-item label.optional::after {
+  margin-left: 5px;
+  font-style: italic;
+  content: "(optional)";
+  font-size: 1rem;
+  color: var(--color-secondary-dark);
 }
 
 .form-item__submit {
@@ -287,6 +346,7 @@ body {
 }
 
 .form-item__input {
+  height: 47px;
   width: 100%;
   padding: 1rem;
   border-radius: 4px;
@@ -303,6 +363,11 @@ body {
   border-color: #4dabf7;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
     0 0 8px rgba(34, 139, 230, 0.5);
+}
+
+.form-item__input--textarea {
+  min-height: 7rem;
+  resize: vertical;
 }
 
 /* Font Awesome Icon inside input */
@@ -322,6 +387,19 @@ body {
 .form-item__input-icon {
   font-size: 1.5rem;
   color: var(--color-grey-dark-1);
+}
+
+.form-item__input-remove {
+  font-size: 1.5rem;
+  color: var(--color-danger--1-unfocused);
+  transition: color 0.2s ease-out;
+}
+.form-item-wrapper:hover .form-item__input-remove {
+  color: var(--color-danger--1);
+}
+
+.form-item__input-remove:hover {
+  cursor: pointer;
 }
 
 .form-item .form-item__input.form-item__input--err {
