@@ -260,7 +260,6 @@ const CreatePoll = () => {
 										<label htmlFor="expire" className='rw-datepicker-label'>Expire Date</label>
 										<DateTimePicker
 											min={new Date()}
-											value={expireDate}
 											onChange={date => setExpireDate(date)}
 											step={5}
 											timeCaption="time"
