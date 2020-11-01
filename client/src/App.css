@@ -270,7 +270,7 @@ body {
 .form-centered-container {
   min-height: calc(100vh - var(--nav-height));
   overflow: auto;
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -340,18 +340,21 @@ body {
   font-size: 1rem;
 }
 
+.form-item p,
 .form-item label {
   display: flex;
-  /* justify-content: center; */
   justify-content: space-between;
   align-items: center;
-  /* flex-direction: column; */
-
-  font-size: 1.8rem;
-  font-weight: 500;
   color: var(--color-blue-dark-1);
 }
-.form-item label.optional::after {
+
+.form-item label {
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.form-item label.optional::after,
+.form-item p.optional::after {
   align-self: flex-end;
   margin-left: 5px;
   font-style: italic;
@@ -359,7 +362,8 @@ body {
   font-size: 1rem;
   color: var(--color-secondary-dark);
 }
-.form-item label.required::after {
+.form-item label.required::after,
+.form-item p.required::after {
   align-self: flex-end;
   margin-left: 5px;
   font-style: italic;

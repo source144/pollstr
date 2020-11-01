@@ -89,3 +89,18 @@
 .w-100 {
   width: 100%;
 }
+
+@media screen and (max-width: 960px) {
+  .poll-create-form {
+    width: 90%;
+  }
+  .rw-datetime-picker.rw-widget {
+    padding-right: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .poll-create-form {
+    width: 100%;
+  }
+}
