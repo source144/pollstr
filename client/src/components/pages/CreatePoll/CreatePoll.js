@@ -6,13 +6,21 @@ import './CreatePoll.css';
 import HashtagTextArea from '../../HashtagTextArea';
 import Option from './Option';
 import _ from 'lodash';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+
 import Switch from 'react-ios-switch';
 import axios from 'axios';
 import moment from 'moment'
 import QRCode from 'qrcode.react';
 import { v4 as uuid } from 'uuid'
+
+// TODO : use this date picker
+import momentLocalizer from 'react-widgets-moment';
+import DateTimePicker from 'react-widgets/lib/DateTimePicker';
+
+// For React-Widgets 
+// DateTimePicker
+moment.locale("en");
+momentLocalizer();
 
 const pwRegex = /^\S+$/;
 const validate = (payload) => {
@@ -248,19 +256,15 @@ const CreatePoll = () => {
 										</div>
 										{!!errors.tags ? <span className='form-item__error'>{errors.tags}</span> : null}
 									</div>
-									<div className="form-item">
-										<label htmlFor="expire">Expire Date</label>
-										<DatePicker
-											selected={expireDate}
+									<div className="form-item form-item--no-margin form--mb1">
+										<label htmlFor="expire" className='rw-datepicker-label'>Expire Date</label>
+										<DateTimePicker
+											min={new Date()}
+											value={expireDate}
 											onChange={date => setExpireDate(date)}
-											className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
-											isClearable
-											showTimeSelect
-											timeFormat="HH:mm"
-											timeIntervals={15}
+											step={5}
 											timeCaption="time"
-											dateFormat="MMMM d, yyyy h:mm aa"
-											placeholderText="No Exipiry Set"
+											placeholder="No Exipiry Set"
 										/>
 									</div>
 									<div className="form-item form-item--row">

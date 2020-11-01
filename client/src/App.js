@@ -18,6 +18,9 @@ import Poll from './components/pages/Poll/Poll';
 import CreatePoll from './components/pages/CreatePoll/CreatePoll';
 import AppContext from './AppContext';
 
+// React-Widgets Styling
+import 'react-widgets/dist/css/react-widgets.css';
+
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
 // axios.defaults.baseURL = 'http://localhost:5000/api/';
