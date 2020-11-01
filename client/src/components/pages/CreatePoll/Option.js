@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ id, index, value, onChange, onDelete, placeholder = "e.g. Compelling Option", deleteable = false, hasError = undefined }) => {
+export default ({ id, index, value, onChange, onDelete, placeholder = "Enter an option value", deleteable = false, hasError = undefined }) => {
 	return (
 		<div className="form-item">
 			<div className='form-item-wrapper p-rel'>

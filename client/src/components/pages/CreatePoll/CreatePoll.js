@@ -31,8 +31,12 @@ const validate = (payload) => {
 		description: "",
 		passcode: "",
 		optionErrors: false,
-		hasErrors: false
+		hasErrors: false,
+		options: ""
 	}
+
+	const _options = _.uniqBy(payload.options, 'title');
+	console.log(_options);
 
 	// Title:
 	if (!payload.title || !(payload.title = payload.title.trim())) errors.title = 'Title is required';
@@ -41,16 +45,19 @@ const validate = (payload) => {
 
 	// if (payload.description && payload.description.trim().length > 50) errors.description = "Description too long. (50 chars max)";
 
-	errors.options = _.map(payload.options, (option, idx) => {
-		if (option.value && option.value.trim().length > 50) {
-			errors.optionErrors = true;
-			return "Option is too long. (50 chars max)";
-		} else return '';
-	});
+	if (_options.length < 2) errors.options = "Must have two or more unique options";
+	// errors.options = _.map(payload.options, (option, idx) => {
+	// 	if (option.title && option.title.trim().length > 50) {
+	// 		errors.optionErrors = true;
+	// 		return "Option is too long. (50 chars max)";
+	// 	} else return '';
+	// });
 
 
+	console.log("payload.passcode", payload.passcode)
 	if (payload.passcode) {
-		if (payload.passcode.length > 24) errors.passcode = 'Passcode too long. (50 chars max)';
+		console.log('pwRegex.test(payload.passcode)', pwRegex.test(payload.passcode))
+		if (payload.passcode.length > 24) errors.passcode = 'Passcode too long. (24 chars max)';
 		else if (!pwRegex.test(payload.passcode)) errors.passcode = 'Passcode must not contain whitespaces';
 	}
 
@@ -76,9 +83,9 @@ const CreatePoll = () => {
 	const [createdId, setCreatedId] = useState(undefined);
 	const [options, setOptions] = useState(
 		[
-			{ id: uuid(), value: "One" },
-			{ id: uuid(), value: "Two" },
-			{ id: uuid(), value: "Three" },
+			{ id: uuid(), value: "" },
+			{ id: uuid(), value: "" },
+			{ id: uuid(), value: "" },
 		]
 	)
 
@@ -92,19 +99,43 @@ const CreatePoll = () => {
 		description: "",
 		passcode: "",
 		optionErrors: false,
-		hasErrors: false
+		hasErrors: false,
+		options: ""
 	});
 
 
 	const onOptionChange = (index, value) => {
-		const _options = [...options];
+		const _options = [...options].map(option => ({ ...option, error: "" }));
 		_options[index].value = value;
+
+
+		// Check for duplicates
+		const duplicates = _.omitBy(
+			_.reduce(_options, (a, v, i) => _.set(a, v.value.trim(), ((v.value.trim() && a[v.value.trim()]) || []).concat([i])), {}),
+			v => v.length <= 1
+		);
+
+		// Append error to duplicates
+		_.forEach(duplicates, duplicate => _.forEach(duplicate, idx => {
+			_options[idx].error = "duplicate"
+		}));
 
 		setOptions([..._options]);
 	}
 	const onOptionDelete = (index) => {
-		const _options = [...options];
+		const _options = [...options].map(option => ({ ...option, error: "" }));
 		_options.splice(index, 1);
+
+		// Check for duplicates
+		const duplicates = _.omitBy(
+			_.reduce(_options, (a, v, i) => _.set(a, v.value.trim(), ((v.value.trim() && a[v.value.trim()]) || []).concat([i])), {}),
+			v => v.length <= 1
+		);
+
+		// Append error to duplicates
+		_.forEach(duplicates, duplicate => _.forEach(duplicate, idx => {
+			_options[idx].error = "duplicate"
+		}));
 
 		setOptions([..._options]);
 	}
@@ -132,7 +163,7 @@ const CreatePoll = () => {
 
 		const _payloadOptions = _.map(
 			_.filter(options, option => option.value && !!option.value.trim()),
-			option => ({ title: option.value })
+			option => ({ title: option.value.trim() })
 		);
 		const _timeToLive = !!expireDate ? moment(expireDate).unix() - moment().unix() : 0
 		const payload = {
@@ -140,7 +171,7 @@ const CreatePoll = () => {
 			description: description || undefined,
 			timeToLive: _timeToLive >= 0 ? _timeToLive : 0,
 			options: _payloadOptions,
-			passcode: passcode.trim() || undefined,
+			passcode: passcode || undefined,
 			tags: tags,
 			usersOnly: !allowGuests,
 			public: publicPoll,
@@ -148,6 +179,7 @@ const CreatePoll = () => {
 		}
 
 		const _errors = { ...errors, ...validate(payload) };
+		console.log(_errors);
 		if (_errors.hasErrors) {
 			setErrors(_errors);
 			setResponseError('Make sure all fields are entered correctly!')
@@ -248,6 +280,7 @@ const CreatePoll = () => {
 									<DragDropContext onDragEnd={onDragEnd}>
 										<div className="form-item">
 											<label className="required">Options</label>
+											{!!errors.options ? <span className='form-item__error'>{errors.options}</span> : null}
 											<Droppable droppableId={"droppable-0"}>
 												{(provided) => (
 													<div
@@ -483,6 +516,7 @@ const CreatePoll = () => {
 											<DragDropContext onDragEnd={onDragEnd}>
 												<div className="form-item">
 													<label className="required">Options</label>
+													{!!errors.options ? <span className='form-item__error'>{errors.options}</span> : null}
 													<Droppable droppableId={"droppable-0"}>
 														{(provided) => (
 															<div
@@ -527,10 +561,9 @@ const CreatePoll = () => {
 											</DragDropContext >
 										</div>
 									</div>
-									<br />
-									{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
 								</>
 							}
+							{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
 							<div className="form-item">
 								<input
 									className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
