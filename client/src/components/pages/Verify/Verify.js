@@ -22,7 +22,7 @@ const Verify = () => {
 					setRedirect(true);
 				}, 700);
 			})
-			.catch(response => {
+			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
 				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
 
