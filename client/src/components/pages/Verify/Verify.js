@@ -24,8 +24,7 @@ const Verify = () => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
-
+				const errorMsg = error.response && error.response.data ? error.response.data.message : error.message;
 				setError(errorMsg);
 			});
 	}, [load])

@@ -544,15 +544,18 @@ router.post('/verify/:id', (req, res) => {
 	console.log('[POST - /verify/:id] req.params.id', req.params.id)
 
 	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
-		console.log(verification);
+		console.log("[POST - /verify/:id] verification", verification)
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
 
 		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
+			console.log("[POST - /verify/:id] user", user)
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(202).send(errorObject('User is already verified'));
 
+
 			verification.remove(function (err, removed) {
+				console.log("[POST - /verify/:id] verification removed")
 				if (err) return res.status(500).send(err);
 				return res.status(200).send({ notify: `User has been verified, you may now log in` });
 			});
