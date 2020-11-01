@@ -9,7 +9,7 @@ const verificationSchema = new mongoose.Schema({
 	createdAt: { type: Date, required: true, default: Date.now }
 });
 console.log("*\n*\n*\n*\n*\n*\n*\n")
-console.log("VERIFICATION_LIFES:", VERIFICATION_LIFES)
+console.log("VERIFICATION_LIFE:", VERIFICATION_LIFE)
 console.log("*\n*\n*\n*\n*\n*\n*\n")
 verificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: VERIFICATION_LIFE });
 verificationSchema.plugin(uniqueValidator, { message: 'User verification/reset was already sent!' });
