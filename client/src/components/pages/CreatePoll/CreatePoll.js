@@ -30,7 +30,7 @@ const validate = (payload) => {
 	else if (payload.title.trim().length > 50) errors.title = "Title too long. (50 chars max)";
 
 
-	if (payload.description && payload.description.trim().length > 50) errors.description = "Description too long. (50 chars max)";
+	// if (payload.description && payload.description.trim().length > 50) errors.description = "Description too long. (50 chars max)";
 
 	errors.options = _.map(payload.options, (option, idx) => {
 		if (option.value && option.value.trim().length > 50) {
@@ -165,7 +165,7 @@ const CreatePoll = () => {
 	return (
 
 		<div className="form-centered-container">
-			<div className="form-form-wrapper">
+			<div className="form-form-wrapper poll-create-form">
 				{createdId ?
 					<>
 						<h1 className='form-title'>Poll Created</h1>

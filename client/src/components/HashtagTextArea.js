@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import CaretPositioning from './util/EditCaretPositioning';
 import _ from 'lodash';
 
@@ -14,6 +14,7 @@ const splitTags = /\B(\#(?!_)\w+\b)(?!#)/
 
 const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singleline = false, newlines = false, tagClass = 'inputHashtag', onChange }) => {
 
+	const [loaded, setLoaded] = useState(undefined);
 	const editable = useRef();
 
 	const handlePaste = (e) => {
@@ -53,14 +54,28 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 
 		// Grow text box if needed
 		if (!singleline) {
-			editable.current.style.height = "1px";
-			const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
-			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
+			editable.current.style.height = 'auto';
+			// if (!_content) {
+			// 	editable.current.style.height = 'auto';
+			// }
+
+			// editable.current.style.height = "1px";
+			// const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
+			// editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
 		}
 
 		console.log(_content);
 		onChange(editable.current.innerText);
 	}
+
+	useEffect(() => {
+		// Grow text box if needed
+		if (!singleline) {
+			editable.current.style.height = "1px";
+			const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
+			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
+		}
+	}, [loaded])
 
 	return (
 		<>

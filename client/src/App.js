@@ -51,6 +51,7 @@ function App() {
 								<Route path='/password/forgot' component={PasswordForgot} exact></Route>
 								<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
 								<Route path='/verify/:id-:token' component={Verify}></Route>
+								<Route path='/polls' exact><Redirect to='/polls/create/' /></Route>
 								<Route path='/polls/create' exact component={CreatePoll}></Route>
 								<Route path='/poll/:id' component={Poll}></Route>
 								<Route path='/*' component={NotFound}></Route>

@@ -131,7 +131,7 @@ PollSchema.methods.comparePasscode = function (candidatePasscode, cb) {
 function validatePoll(poll, passcode) {
 	const schema = Joi.object({
 		title: Joi.string().trim().min(1).max(50).required(),
-		description: Joi.string().trim().min(1).max(50),
+		description: Joi.string().trim().min(1),
 		timeToLive: Joi.number().integer().min(0),
 		passcode: pcSchema,
 		hideResults: Joi.bool(),
