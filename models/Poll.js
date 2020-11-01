@@ -8,7 +8,7 @@ const pcSchema = Joi.string().trim().min(1).max(24).regex(/^\S+$/);
 
 const hash_tags = searchText => {
 	if (!searchText)
-		return;
+		return [];
 
 	var regexp = /(\s|^)\#\w\w+\b/gm
 	result = searchText.match(regexp);
