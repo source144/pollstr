@@ -90,7 +90,7 @@ router.post('/login', (req, res) => {
 	User.findOneAndUpdate({ email: req.body.email }, { lastLogin: Date.now() }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(401).send(errorObject('Email or password incorrect'));
-		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+		if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 
 		// test a matching password
 		user.comparePassword(req.body.password, function (err, isMatch) {
@@ -325,7 +325,7 @@ router.get('/', enforceCredentials, (req, res) => {
 	User.findOne({ email: req.user.email }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(401).send(errorObject('User not found'));
-		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+		if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 
 		const resBody = {
 			email: user.email,
@@ -418,7 +418,7 @@ router.put('/password', enforceCredentials, (req, res) => {
 	User.findOne({ email: req.user.email }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(401).send(errorObject('User not found'));
-		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+		if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 
 		// test a matching password
 		user.comparePassword(req.body.oldPassword, function (err, isMatch) {
@@ -601,7 +601,7 @@ router.post('/password/forgot', (req, res) => {
 	User.findOne({ email: req.body.email }, function (err, user) {
 		if (err) return res.status(500).send(errorObject(err.message));
 		if (!user) return res.status(404).send(errorObject('User does not exist'));
-		if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+		if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 
 		// Get rid of old verifications (shouldn't be more than one)
 		PasswordReset.deleteMany({ _userId: user._id }, function (err) {
@@ -697,7 +697,7 @@ router.put('/password/reset/:id', (req, res) => {
 		User.findOne({ _id: passwordReset._userId }, function (err, user) {
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(404).send(errorObject('User does not exist'));
-			if (!user.verified) return res.status(426).send(errorObject('Verification needed'));
+			if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 
 			// Update password to the one the user just set
 			user.password = req.body.password;

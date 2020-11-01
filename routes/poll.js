@@ -18,7 +18,7 @@ const withUserId = (req, res, next) => {
 		User.findOne({ email: req.user.email }, function (err, user) {
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(404).send(errorObject('User does not exist'));
-			if (!user.verified) return res.status(426).send(errorObject('User verification needed'));
+			if (!user.verified) return res.status(426).send(errorObject('Email verification needed'));
 			req.user.id = user._id;
 			req.user.role = user.role;
 			next();

@@ -6,9 +6,9 @@ const VERIFICATION_LIFE = process.env.VERIFICATION_LIFE || 86400
 const verificationSchema = new mongoose.Schema({
 	_userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User", index: { unique: true } },
 	token: { type: String, required: true },
-	createdAt: { type: Date, required: true, default: Date.now, expires: VERIFICATION_LIFE }
+	createdAt: { type: Date, required: true, default: Date.now }
 });
-
+verificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: VERIFICATION_LIFE });
 verificationSchema.plugin(uniqueValidator, { message: 'User verification/reset was already sent!' });
 
 verificationSchema.methods.toJSON = function () {
