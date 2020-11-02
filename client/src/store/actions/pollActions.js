@@ -44,7 +44,7 @@ export const getPoll = pollId => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
 				dispatch(getPollFailure(errorMsg))
 			});
 	}
@@ -63,7 +63,7 @@ export const votePoll = (pollId, optionId) => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
 				dispatch(votePollFailure(errorMsg))
 			});
 	}
