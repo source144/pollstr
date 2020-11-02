@@ -1,6 +1,6 @@
 .__HashtagTextAreaComponent--placeholder__:empty:not(:focus)::before {
   content: attr(placeholder);
-  font-size: 1.5rem;
+  font-size: var(--form-placeholder-size);
   font-weight: 400;
   color: var(--color-grey-dark-1);
 }

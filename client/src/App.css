@@ -21,6 +21,9 @@
 }
 
 :root {
+  --form-input-size: 1.6rem;
+  --form-placeholder-size: 1.3rem;
+
   --color-primary: #55c57a;
   --color-primary-light: #7ed56f;
   --color-primary-damp: #3bac60;
@@ -151,10 +154,18 @@ body {
   width: 100%;
   border-radius: 4px;
   outline: none;
-  border: 2px solid var(--color-input-border-1);
-  font-size: 2rem;
+  font-size: var(--form-input-size);
   color: var(--color-blue-dark-1);
-  font-family: "Font Awesome 5 Free";
+  font-family: "Montserrat", sans-serif;
+}
+
+.rw-widget-input::placeholder,
+.rw-input::placeholder,
+.rw-widget-input.rw-input::placeholder {
+  font-size: var(--form-placeholder-size);
+  font-weight: 400;
+  color: var(--color-grey-dark-1);
+  font-family: "Montserrat", sans-serif;
 }
 
 .rw-widget-container > .rw-input.rw-widget-input {
@@ -383,9 +394,9 @@ body {
   border-radius: 4px;
   outline: none;
   border: 2px solid var(--color-input-border-1);
-  font-size: 2rem;
+  font-size: var(--form-input-size);
   color: var(--color-blue-dark-1);
-  font-family: "Font Awesome 5 Free";
+  font-family: "Montserrat", sans-serif;
   margin-right: -3.25rem;
   padding-right: 3.4rem;
 }
@@ -410,7 +421,7 @@ body {
 }
 
 .form-item .form-item__input::placeholder {
-  font-size: 1.5rem;
+  font-size: var(--form-placeholder-size);
   font-weight: 400;
   color: var(--color-grey-dark-1);
 }
