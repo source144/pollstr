@@ -12,7 +12,7 @@ const PW_MIN_LENGTH = 8;
 
 
 const checkForm = (payload) => {
-	if (!payload || typeof payload !== 'object') { console.log('invalid payload'); return; }
+	if (!payload || typeof payload !== 'object') return;
 
 	const errors = {
 		firstName: '',
@@ -86,15 +86,10 @@ const SignUpForm = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		console.log('Before validation', errors);
-
 		let valid = true;
 		const _auth = getPayload()
 		const _errors = checkForm({ ..._auth, confirm: confirm });
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
-
-		console.log(_errors);
-		console.log(valid);
 
 		if (valid) dispatch(authSignup(_auth));
 

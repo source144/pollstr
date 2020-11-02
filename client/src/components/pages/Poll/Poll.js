@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import CountdownTimer from '../../CountdownTimer';
+// TODO : Create my own react-hashtag component
 import ReactHashtag from "react-hashtag";
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -30,18 +31,6 @@ const Poll = () => {
 		dispatch(getPoll(id));
 		return () => { socket.emit("leave", `${id}`); }
 	}, [loaded]);
-
-	// useEffect(() => {
-	// 	if (poll && Object.keys(poll).length > 2) {
-	// 		console.log('[Poll Component] Joining SocketIO - ', id);
-	// 		socket.emit('join', `${id}`);
-	// 		socket.on(`update_${id}`, updatedPoll => {
-	// 			console.log('[SocketIO] Received updated for', id);
-	// 			dispatch(updatePoll(updatedPoll));
-	// 		});
-	// 	}
-	// 	return () => socket.emit("leave", `${id}`);
-	// }, [poll])
 
 	return (
 		<>{poll && Object.keys(poll).length > 2 ?

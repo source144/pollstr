@@ -150,27 +150,11 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || "COOKIE_SECRET"
 
 // Create Server
 const app = express();
-// app.use(function (request, response, next) {
-// 	console.log('[CORS Middleware] Request from HOST: ', request.get('host'));
-// 	console.log('[CORS Middleware] Request from ORIGIN: ', request.get('origin'));
-// 	console.log('[CORS Middleware] Request from IP: ', request.socket.remoteAddress);
-// 	console.log('[CORS Middleware] Request Path: ', request.originalUrl);
 
 // 	response.header('Access-Control-Allow-Origin', '*');
 // 	response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
 // 	response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
-// 	//Handle Preflight 
-// 	if (request.method === 'OPTIONS') {
-// 		console.log('[CORS Middleware] Replying to OPTIONS: \n');
-
-// 		response.status(200).send();
-// 	}
-// 	else {
-// 		console.log();
-// 		next();
-// 	}
-// });
 const server = http.createServer(app);
 const io = socketio(server, { origins: '*:*' });
 app.io = io;
@@ -217,7 +201,6 @@ const authenticateJWT = (req, res, next) => {
 	if (token == null) return res.sendStatus(401) // if there isn't any token
 
 	jwt.verify(token, ACCESS_TOKEN, (err, user) => {
-		console.log(err);
 		if (err) return res.sendStatus(403);
 		req.user = user;
 		next(); // pass the execution off to whatever request the client intended

@@ -12,8 +12,6 @@ export default ({ option }) => {
 	const disabled = voted != undefined || expired;
 	const showResult = !hideResults || expired;
 
-	console.log(`(${option.id}) Selcted: ${selected} Voted: ${voted} Disabled: ${disabled}`);
-	console.log(`(${option.id}) showResult: ${showResult}`);
 	return (
 		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected === option.id ? 'poll-option--selected' : ''}`}>
 			<label>{option.title}</label>

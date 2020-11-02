@@ -36,7 +36,6 @@ const validate = (payload) => {
 	}
 
 	const _options = _.uniqBy(payload.options, 'title');
-	console.log(_options);
 
 	// Title:
 	if (!payload.title || !(payload.title = payload.title.trim())) errors.title = 'Title is required';
@@ -54,9 +53,7 @@ const validate = (payload) => {
 	// });
 
 
-	console.log("payload.passcode", payload.passcode)
 	if (payload.passcode) {
-		console.log('pwRegex.test(payload.passcode)', pwRegex.test(payload.passcode))
 		if (payload.passcode.length > 24) errors.passcode = 'Passcode too long. (24 chars max)';
 		else if (!pwRegex.test(payload.passcode)) errors.passcode = 'Passcode must not contain whitespaces';
 	}
@@ -69,8 +66,6 @@ const validate = (payload) => {
 const CreatePoll = () => {
 	const { height, width } = useWindowDimension();
 	const isMobile = width <= 960;
-
-	console.log(`Width ${width} ~ Height: ${height}\tisMobile: ${isMobile}`)
 
 	const { auth } = useSelector(state => state.auth);
 	const isLoggedIn = !_.isEmpty(auth);
@@ -179,7 +174,6 @@ const CreatePoll = () => {
 		}
 
 		const _errors = { ...errors, ...validate(payload) };
-		console.log(_errors);
 		if (_errors.hasErrors) {
 			setErrors(_errors);
 			setResponseError('Make sure all fields are entered correctly!')
@@ -210,7 +204,7 @@ const CreatePoll = () => {
 
 	const handleTags = e => { setTags(e.target.value) };
 
-	useEffect(() => { console.log('Title: ', title); console.log('Desciption: ', description) }, [description, title]);
+	useEffect(() => { }, [description, title]);
 
 	return (
 

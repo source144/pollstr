@@ -8,7 +8,7 @@ const numbrRegex = /(?=.*[0-9])/
 const PW_MIN_LENGTH = 8;
 
 const checkForm = (payload) => {
-	if (!payload || typeof payload !== 'object') { console.log('invalid payload'); return; }
+	if (!payload || typeof payload !== 'object') return;
 
 	const errors = {
 		password: '',
@@ -51,7 +51,6 @@ const PasswordReset = () => {
 
 	// Params
 	const { id, token } = useParams();
-	console.log(id, token);
 
 	const [errors, setErrors] = useState({
 		password: '',
@@ -69,15 +68,10 @@ const PasswordReset = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		console.log('Before validation', errors);
-
 		let valid = true;
 		const payload = getPayload();
 		const _errors = checkForm({ ...payload, confirm });
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
-
-		console.log('After validation', _errors);
-		console.log(valid);
 
 		if (valid) {
 			// /api/auth/password/reset/{id}
@@ -91,7 +85,7 @@ const PasswordReset = () => {
 				})
 				.catch(error => {
 					const errorData = error.response ? error.response.data : {};
-					const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
+					const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
 
 					setResponseError(errorMsg);
 				});

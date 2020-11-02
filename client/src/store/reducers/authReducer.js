@@ -16,7 +16,6 @@ const initialState = {};
 
 const initState = { auth: {}, loading: undefined, error: undefined, signup_complete: undefined, signup_loading: undefined, signup_error: undefined, global_loading: undefined, global_error: undefined };
 const authReducer = (state = initState, action) => {
-	console.log(action.error);
 
 	switch (action.type) {
 		case AUTH_SIGNUP_REQUEST: return { ...initState, signup_loading: true };

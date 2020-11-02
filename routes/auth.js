@@ -156,7 +156,7 @@ router.post('/refresh', (req, res) => {
 	jwt.verify(token, REFRESH_TOKEN, (err, user) => {
 		if (err) {
 			_.remove(refreshTokens, { token });
-			if (e instanceof jwt.TokenExpiredError) return res.status(403).send({ message: "Refresh token has expired", action: 'LOGOUT' });
+			if (err instanceof jwt.TokenExpiredError) return res.status(403).send({ message: "Refresh token has expired", action: 'LOGOUT' });
 			else return res.status(401).send({ message: e.message, action: 'LOGOUT' });
 		}
 
@@ -464,7 +464,6 @@ router.put('/password', enforceCredentials, (req, res) => {
  *          description: New verification email sent
  */
 router.post('/verify/resend', (req, res) => {
-	console.log('here resend');
 	delete req.body.firstName; delete req.body.lastName;
 	const { error } = validate(req.body, password = false);
 	if (error) return res.status(400).send(errorObject(error.details[0].message));
@@ -540,22 +539,16 @@ router.post('/verify/:id', (req, res) => {
 
 	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
 
-	console.log('[POST - /verify/:id] req.body.token', req.body.token)
-	console.log('[POST - /verify/:id] req.params.id', req.params.id)
-
 	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
-		console.log("[POST - /verify/:id] verification", verification)
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!verification) return res.status(401).send(errorObject('Verification either expired or is invalid'));
 
 		User.findOneAndUpdate({ _id: verification._userId, verified: false }, { verified: true }, function (err, user) {
-			console.log("[POST - /verify/:id] user", user)
 			if (err) return res.status(500).send(errorObject(err.message));
 			if (!user) return res.status(202).send(errorObject('User is already verified'));
 
 
 			verification.remove(function (err, removed) {
-				console.log("[POST - /verify/:id] verification removed")
 				if (err) return res.status(500).send(err);
 				return res.status(200).send({ notify: `User has been verified, you may now log in` });
 			});

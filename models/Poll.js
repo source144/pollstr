@@ -50,7 +50,6 @@ const PollSchema = new mongoose.Schema({
 				required: 'Option title is required',
 				minlength: 1,
 				set: function (val) {
-					console.log(`Setting title to ${val}\n`, this.options);
 					return val;
 				}
 			},
@@ -58,7 +57,6 @@ const PollSchema = new mongoose.Schema({
 				type: String,
 				required: false,
 				set: function (val) {
-					console.log(`Setting description to ${val}\n`, this.options);
 					return val;
 				}
 			},

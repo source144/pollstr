@@ -3,5 +3,5 @@ String.prototype.capitalize = function() {
 }
 
 exports.errorObject = (message) => {
-	return { error: message ? message.replace(/['"]+/g, '').trim() : "" };
+	return { message: message ? message.replace(/['"]+/g, '').trim() : "" };
 }

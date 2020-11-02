@@ -6,7 +6,7 @@ const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\
 
 
 const checkForm = (payload) => {
-	if (!payload || typeof payload !== 'object') { console.log('invalid payload'); return; }
+	if (!payload || typeof payload !== 'object') return;
 
 	const errors = {
 		email: ''
@@ -40,14 +40,11 @@ const PasswordForgot = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
-		console.log('Before validation', errors);
 
 		let valid = true;
 		const _errors = checkForm(getPayload());
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
-		console.log('After validation', _errors);
-		console.log(valid);
 
 		if (valid) {
 			setLoading(true);
@@ -60,8 +57,8 @@ const PasswordForgot = () => {
 				})
 				.catch(error => {
 					const errorData = error.response ? error.response.data : {};
-					const errorMsg = error.response && error.response.data ? error.response.data.error : error.message;
-
+					const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+	
 					setResponseError(errorMsg);
 				});
 			// Dispatch login request

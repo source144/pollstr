@@ -64,7 +64,6 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 			// editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
 		}
 
-		console.log(_content);
 		onChange(editable.current.innerText);
 	}
 

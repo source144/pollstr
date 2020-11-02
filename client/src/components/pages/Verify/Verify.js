@@ -10,7 +10,6 @@ const Verify = () => {
 
 	// Params
 	const { id, token } = useParams();
-	console.log(id, token);
 
 	// Perform once
 	useEffect(() => {

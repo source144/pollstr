@@ -67,14 +67,11 @@ router.post('/', withUserId, (req, res) => {
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
 
 	req.body._creator = req.user && req.user.id;
+
 	const poll = new Poll(req.body);
 	poll.save(function (err) {
-		if (err) {
-			console.log('error');
-			return res.status(500).send({ error: err, message: err.message });
-		}
-		console.log('here');
-		return res.status(201).send(poll);
+		if (err) return res.status(500).send({ error: err, message: err.message });
+		else return res.status(201).send(poll);
 	})
 });
 
@@ -177,9 +174,6 @@ router.delete('/:id/passcode', withUserId, (req, res) => {
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
-
-		console.log("Creator: ", poll._creator);
-		console.log("User: ", req.user.id);
 
 		if (poll._creator != req.user.id && req.user.role !== 'admin')
 			return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
@@ -340,8 +334,6 @@ router.put('/:id', withUserId, (req, res) => {
  *          description: User is not verified yet.
  */
 router.get('/:id', withUserId, (req, res) => {
-	console.log(`Getting poll ${req.params.id} for ${req.fingerprint ? req.fingerprint.hash : req.fingerprint}`);
-	
 	// console.log(req.params.id);
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
@@ -473,11 +465,9 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 							const option = _.find(poll.options, function (option) { return option._id && req.params.optionId && option._id.toString() == req.params.optionId });
 							const _postUpdatePercent = !poll.total_votes || !option ? 0 : (option.votes / poll.total_votes) * 100;
 
-
 							if (Math.abs(_postUpdatePercent - _preUpdatePercent) >= PERCENT_CHANGE_TRIGGER || true) {
-								console.log(`\n\n\n[${poll._id}] emitting \n\n\n`, { total_votes: poll.total_votes, options: poll.toJSON().options });
 								if (res.io.in(req.params.id)) res.io.in(req.params.id).emit(`update_${poll._id}`, { total_votes: poll.total_votes, options: poll.toJSON().options })
-								else console.log('failed to emit!')
+								else console.log(`[SocketIO] Failed to emit! (${req.params.id})`);
 							}
 						}
 						return res.status(201).send({ ...(poll.toJSON()), voted: req.params.optionId });
