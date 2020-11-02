@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { response } from 'express';
 import _ from 'lodash';
 import {
 	AUTH_SIGNUP_REQUEST,
@@ -135,54 +136,59 @@ export const authLogout = auth => {
 // const tokenInstance = axios.create({ baseURL: 'https://pollstr-app.herokuapp.com/api/' });
 // const tokenInstance = axios.create({ baseURL: 'http://localhost:5000/api/' });
 
+// TODO : think about using an instance to avoid recursive calls
 const createAuthInterceptor = refresh_token => {
 	return axios.interceptors.response.use(
 		response => response,
 		error => {
-			console.log('[Auth Interceptor] Process begins');
-			console.log('[Auth Interceptor] Original error:', error);
-			if (error.response && error.response.data)
-				console.log('[Auth Interceptor] Original error data:', error.response.data);
 
-			const originalError = error;
 			const originalRequest = error.config;
-			if (error.response.status == 403 || error.response.status == 401) {
-				if (error.response.data.action && error.response.data.action === 'REFRESH') {
-					return axios.post('/auth/refresh/', { refresh_token })
-						.then(response => {
-							console.log('[Auth Interceptor] Refreshed!')
 
-							axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
-							originalRequest.headers['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
+			switch (error.response.status) {
+				// Auth related errors
+				case 401:
+				case 403:
+					// Get new access token using the refresh token
+					if (error.response.data.action && error.response.data.action === 'REFRESH') {
+						return axios.post('/auth/refresh/', { refresh_token })
+							.then(response => {
+								// Set default Auth header
+								axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
 
-							return axios(originalRequest);
-						})
-						.catch(error => {
-							console.log('[Auth Interceptor] Denied!')
+								// Overwrite the failed request's Auth header
+								originalRequest.headers['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
 
-							delete axios.defaults.headers.common["Authorization"];
-							localStorage.removeItem('refresh');
-							return Promise.reject(error);
-						});
-				}
-				else if (!error.response.data.action || error.response.data.action === 'LOGOUT') {
-					console.log('[Auth Interceptor] Should LOGOUT');
+								// Send the result of the request again
+								return axios(originalRequest);
+							})
+							// Failed to get new access token
+							.catch(error => {
 
-					return axios.post('/auth/logout/', { refresh_token })
-						.finally(() => {
-							// TODO : dispatch authLogout()
-							console.log('[Auth Interceptor] Logged out!')
+								// Dispose bad access token and refresh token
+								delete axios.defaults.headers.common["Authorization"];
+								localStorage.removeItem('refresh');
 
-							delete axios.defaults.headers.common["Authorization"];
-							localStorage.removeItem('refresh');
+								// TODO : reject the original error?
+								return Promise.reject(error);
+							});
+					}
+					// API prompts client to logout
+					else if (!error.response.data.action || error.response.data.action === 'LOGOUT') {
+						return axios.post('/auth/logout/', { refresh_token })
+							.finally(() => {
+								// TODO : dispatch authLogout()
 
-							return Promise.reject(originalError)
-						})
-				}
-			}
-			else {
-				console.log('[Auth Interceptor] nothing to do!');
-				return Promise.reject(originalError);
+								// Dispose bad access token and refresh token
+								delete axios.defaults.headers.common["Authorization"];
+								localStorage.removeItem('refresh');
+
+								// Reject the original error?
+								return Promise.reject(error)
+							})
+					}
+					return Promise.reject(error);
+
+				default: return Promise.reject(error);
 			}
 		}
 	);
