@@ -140,6 +140,7 @@ dotenv.config();
 // Routes
 const authRoutes = require('./routes/auth');
 const pollRoutes = require('./routes/poll');
+const pollsRoutes = require('./routes/polls');
 
 // Constants
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -290,6 +291,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
+app.use('/api/polls', withCredentials, pollsRoutes);
 
 // TODO : handle all errors here?
 app.use('/api', function (req, res, next) {

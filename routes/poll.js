@@ -325,11 +325,11 @@ router.put('/:id', withUserId, (req, res) => {
  * 
  *      responses:
  *        200:
- *          description: Login Successful. Returns access token(s) and user information
+ *          description: Fetch Successful. Returns Poll
  *        500:
  *          description: Server Side Error
- *        401:
- *          description: Credentials don't match
+ *        404:
+ *          description: Poll does not exist
  *        426:
  *          description: User is not verified yet.
  */
