@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { authLogin } from '../../../store/actions/authActions';
+import { authLogin, authResendVerification } from '../../../store/actions/authActions';
 import _ from 'lodash'
 import './Login.css';
 
@@ -32,7 +32,7 @@ const checkForm = (payload) => {
 const Login = () => {
 
 
-	const { auth, error, loading } = useSelector(state => state.auth)
+	const { auth, error, loading, needsVerification } = useSelector(state => state.auth)
 	const dispatch = useDispatch()
 
 	const [email, setEmail] = useState('');
@@ -64,7 +64,18 @@ const Login = () => {
 
 		setErrors(_errors);
 	}
+	const handleResendVerification = e => {
+		e.preventDefault();
 
+		// Shouldn't be called. (Do nothing)
+		if (!needsVerification)
+			return;
+
+		// Resend Verification Email to User
+		dispatch(authResendVerification(needsVerification))
+	}
+
+	// TODO : ProtectedRoute instead of this:
 	if (!_.isEmpty(auth)) return <Redirect to='/' />
 
 	return (
@@ -101,7 +112,7 @@ const Login = () => {
 						</div>
 						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
-					{!!error ? <div className="form-item__error">{error}</div> : null}
+					{!!error ? <div className="form-item__error">{error}{needsVerification ? <span>! <Link className='form-switch-action' onClick={handleResendVerification}>Resend Here</Link></span> : undefined}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

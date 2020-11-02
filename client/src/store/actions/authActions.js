@@ -4,6 +4,9 @@ import {
 	AUTH_SIGNUP_REQUEST,
 	AUTH_SIGNUP_SUCCESS,
 	AUTH_SIGNUP_FAILURE,
+	AUTH_RESEND_VERIFICATION_REQUEST,
+	AUTH_RESEND_VERIFICATION_SUCCESS,
+	AUTH_RESEND_VERIFICATION_FAILURE,
 	AUTH_LOGIN_REQUEST,
 	AUTH_LOGIN_SUCCESS,
 	AUTH_LOGIN_FAILURE,
@@ -13,6 +16,24 @@ import {
 	AUTH_LOGOUT_REQUEST,
 	AUTH_LOGOUT_SUCCESS,
 } from './types/authTypes'
+
+const authResendVerificationRequest = () => ({ type: AUTH_RESEND_VERIFICATION_REQUEST });
+const authResendVerificationSuccess = () => ({ type: AUTH_RESEND_VERIFICATION_SUCCESS });
+const authResendVerificationFailure = error => ({ type: AUTH_RESEND_VERIFICATION_FAILURE, error });
+export const authResendVerification = email => {
+	return (dispatch) => {
+		dispatch(authResendVerificationRequest);
+		axios.post('auth/verify/resend', { email })
+			.then(response => {
+				dispatch(authResendVerificationSuccess());
+			})
+			.catch(error => {
+				const errorData = error.response ? error.response.data : {};
+				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
+				dispatch(authResendVerificationFailure(errorMsg));
+			})
+	}
+}
 
 const authSignupRequest = () => ({ type: AUTH_SIGNUP_REQUEST });
 const authSignupSuccess = () => ({ type: AUTH_SIGNUP_SUCCESS });
@@ -35,7 +56,7 @@ export const authSignup = auth => {
 let authInterceptor;
 const authLoginRequest = () => ({ type: AUTH_LOGIN_REQUEST });
 const authLoginSuccess = auth => ({ type: AUTH_LOGIN_SUCCESS, auth });
-const authLoginFailure = error => ({ type: AUTH_LOGIN_FAILURE, error });
+const authLoginFailure = (error, needsVerification) => ({ type: AUTH_LOGIN_FAILURE, error, needsVerification });
 export const authLogin = auth => {
 	return (dispatch) => {
 		dispatch(authLoginRequest());
@@ -61,7 +82,12 @@ export const authLogin = auth => {
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
 				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
-				dispatch(authLoginFailure(errorMsg));
+
+				let needsVerification;
+				if (error.response && error.response.status == 426 && error.config.data)
+					needsVerification = JSON.parse(error.config.data).email
+
+				dispatch(authLoginFailure(errorMsg, needsVerification));
 			})
 	}
 }
