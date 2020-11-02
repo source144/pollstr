@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { response } from 'express';
 import _ from 'lodash';
 import {
 	AUTH_SIGNUP_REQUEST,
