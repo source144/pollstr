@@ -25,14 +25,15 @@ import {
 const initState = { poll: {}, loading: undefined, error: undefined, selected: undefined };
 const transform = poll => {
 	const expired = poll.timeToLive != 0 || poll.timeToLive - (moment().unix() - moment(poll.startDate).unix()) > 0;
+	console.log(expired);
 	return {
 		...poll,
 		tags: _.uniq([...(poll.autoTags || []), ...(poll.tags || [])]),
 		options: poll.options.map(option => ({
 			...option,
 			percent: poll.total_votes > 0 ? parseInt((option.votes / poll.total_votes) * 100) : 0,
-			// expired
-		}))
+		})),
+		expired
 	}
 }
 
