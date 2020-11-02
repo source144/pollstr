@@ -182,11 +182,10 @@ const CreatePoll = () => {
 
 		// TODO : loading
 		axios.post('/poll/', payload)
-			.then(response => { console.log(response.data); setCreatedId(response.data.id) })
+			.then(response => { setCreatedId(response.data.id) })
 			.catch(error => {
-				console.log(error);
-				console.log(error.response.data);
-				setResponseError(error.response.data.message);
+				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+				setResponseError(errorMsg);
 			})
 	};
 	const handlePasscode = e => { setPasscode(e.target.value) };
