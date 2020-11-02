@@ -26,7 +26,7 @@ export const authSignup = auth => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				dispatch(authSignupFailure(errorMsg));
 			})
 	}
@@ -60,7 +60,7 @@ export const authLogin = auth => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				dispatch(authLoginFailure(errorMsg));
 			})
 	}
@@ -98,13 +98,13 @@ export const authRefresh = refresh_token => {
 					})
 					.catch(error => {
 						const errorData = error.response ? error.response.data : {};
-						const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+						const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 						dispatch(authRefreshFailure(error))
 					});
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				localStorage.removeItem('refresh');
 				dispatch(authRefreshFailure(error))
 			})

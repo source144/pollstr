@@ -23,7 +23,7 @@ const Verify = () => {
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
-				const errorMsg = error.response && error.response.data ? (error.response.data.error ? error.response.data.error : error.response.data.message) : error.message;
+				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				setError(errorMsg);
 			});
 	}, [load])
