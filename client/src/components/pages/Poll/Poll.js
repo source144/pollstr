@@ -58,7 +58,7 @@ const Poll = () => {
 					{/* <PollOption title={options[0].title} description={options[0].description} percent={options[0].percent}></PollOption>
 				<PollOption title={options[1].title} description={options[1].description} percent={options[1].percent}></PollOption>
 				<PollOption title={options[2].title} description={options[2].description} percent={options[2].percent}></PollOption> */}
-					{error ? <div className="form-item__error">{error.message}</div> : null}
+					{error ? <div className="form-item form-item__error">{error}</div> : null}
 					<div className="form-item">
 						<input
 							className="btn btn--tertiary form-item__submit"
@@ -66,7 +66,7 @@ const Poll = () => {
 							disabled={selected == null || poll.voted != null || poll.expired} />
 					</div>
 				</div>
-			</div> : <h1>{error ? error.message : 'Loading...'}</h1>
+			</div> : <h1>{error ? error : 'Loading...'}</h1>
 		}
 		</>
 	);
