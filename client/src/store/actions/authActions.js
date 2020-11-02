@@ -132,46 +132,58 @@ export const authLogout = auth => {
 };
 
 
+// const tokenInstance = axios.create({ baseURL: 'https://pollstr-app.herokuapp.com/api/' });
+// const tokenInstance = axios.create({ baseURL: 'http://localhost:5000/api/' });
 
 const createAuthInterceptor = refresh_token => {
 	return axios.interceptors.response.use(
 		response => response,
 		error => {
+			console.log('[Auth Interceptor] Process begins');
+			console.log('[Auth Interceptor] Original error:', error);
+			if (error.response && error.response.data)
+				console.log('[Auth Interceptor] Original error data:', error.response.data);
+
+			const originalError = error;
 			const originalRequest = error.config;
 			if (error.response.status == 403 || error.response.status == 401) {
 				if (error.response.data.action && error.response.data.action === 'REFRESH') {
-					let _error;
-					axios.post('/auth/refresh/', { refresh_token })
-						.then(response => { axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`; })
-						.catch(error => { _error = error })
-						.then(() => {
+					return axios.post('/auth/refresh/', { refresh_token })
+						.then(response => {
+							console.log('[Auth Interceptor] Refreshed!')
 
-							if (!_error) console.log('[Auth Interceptor] Refreshed!')
-							else console.log('[Auth Interceptor] Denied!')
+							axios.defaults.headers.common['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
+							originalRequest.headers['AUTHORIZATION'] = `Bearer ${response.data.accessToken}`;
 
-							if (_error) {
-								delete axios.defaults.headers.common["Authorization"];
-								localStorage.removeItem('refresh');
-								Promise.reject(_error);
-							}
-							else return axios(originalRequest);
+							return axios(originalRequest);
+						})
+						.catch(error => {
+							console.log('[Auth Interceptor] Denied!')
+
+							delete axios.defaults.headers.common["Authorization"];
+							localStorage.removeItem('refresh');
+							return Promise.reject(error);
 						});
 				}
 				else if (!error.response.data.action || error.response.data.action === 'LOGOUT') {
-					delete axios.defaults.headers.common["Authorization"];
-					axios.post('/auth/logout/', { refresh_token })
-						.then(response => { })
-						.catch(error => { })
-						.then(() => {
+					console.log('[Auth Interceptor] Should LOGOUT');
+
+					return axios.post('/auth/logout/', { refresh_token })
+						.finally(() => {
 							// TODO : dispatch authLogout()
 							console.log('[Auth Interceptor] Logged out!')
+
+							delete axios.defaults.headers.common["Authorization"];
 							localStorage.removeItem('refresh');
-							Promise.reject(error)
-						});
+
+							return Promise.reject(originalError)
+						})
 				}
 			}
-			console.log('[Auth Interceptor] nothing to do!');
-			Promise.reject(error);
+			else {
+				console.log('[Auth Interceptor] nothing to do!');
+				return Promise.reject(originalError);
+			}
 		}
 	);
 }
