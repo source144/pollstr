@@ -75,7 +75,7 @@ export const authRefresh = refresh_token => {
 		dispatch(authRefreshRequest());
 
 		// Dispose old Auth Interceptor
-		if (authInterceptor)
+		if (authInterceptor != undefined)
 			axios.interceptors.response.eject(authInterceptor);
 
 		// Refresh token
@@ -141,6 +141,7 @@ const createAuthInterceptor = refresh_token => {
 		response => response,
 		error => {
 
+			const originalError = error;
 			const originalRequest = error.config;
 
 			switch (error.response.status) {
@@ -167,8 +168,13 @@ const createAuthInterceptor = refresh_token => {
 								delete axios.defaults.headers.common["Authorization"];
 								localStorage.removeItem('refresh');
 
+								// TODO : eject the interceptor in this case!
+								// Dispose old Auth Interceptor
+								if (authInterceptor != undefined)
+									axios.interceptors.response.eject(authInterceptor);
+
 								// TODO : reject the original error?
-								return Promise.reject(error);
+								return Promise.reject(originalError);
 							});
 					}
 					// API prompts client to logout
@@ -181,13 +187,18 @@ const createAuthInterceptor = refresh_token => {
 								delete axios.defaults.headers.common["Authorization"];
 								localStorage.removeItem('refresh');
 
+								// TODO : eject the interceptor in this case!
+								// Dispose old Auth Interceptor
+								if (authInterceptor != undefined)
+									axios.interceptors.response.eject(authInterceptor);
+
 								// Reject the original error?
-								return Promise.reject(error)
+								return Promise.reject(originalError)
 							})
 					}
-					return Promise.reject(error);
+					return Promise.reject(originalError);
 
-				default: return Promise.reject(error);
+				default: return Promise.reject(originalError);
 			}
 		}
 	);
