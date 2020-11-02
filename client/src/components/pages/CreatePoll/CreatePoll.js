@@ -449,7 +449,7 @@ const CreatePoll = () => {
 													<input
 														className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
 														type="password"
-														placeholder="e.g. #Food #Health"
+														placeholder="e.g. *******"
 														name="passcode"
 														formNoValidate
 														onChange={handlePasscode} />
