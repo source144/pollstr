@@ -109,6 +109,14 @@
   font-family: "Montserrat", sans-serif;
 }
 
+/* Fix ugly buttons on iOS devices */
+input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  opacity: 1;
+}
+
 /* Fix for Font Awesome */
 .fas {
   font-family: "Font Awesome 5 Free" !important;
