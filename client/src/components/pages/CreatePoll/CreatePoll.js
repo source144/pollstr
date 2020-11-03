@@ -99,40 +99,53 @@ const CreatePoll = () => {
 	});
 
 
+	const checkForDuplicates = (_options_, mutable = true) => {
+		// Use a "clone" if options is immutable
+		if (!mutable) _options_ = [..._options_]
+
+		// Find duplicate options' indecies
+		const duplicates = {};
+		_.forEach(_options_, (option, idx) => {
+			// If can't operate on option or option can't be a duplicate
+			if (typeof option.value !== 'string' || !option.value)
+				return;
+
+			// For ease of use
+			const trimmedVal = option.value.trim();
+
+			// Add index of existing duplicate
+			if (duplicates.hasOwnProperty(trimmedVal)) duplicates[trimmedVal].push(idx);
+
+			// Add index of new duplicate
+			else if (idx != _.findLastIndex(_options_, _o => typeof _o.value === 'string' && _o.value.trim() === trimmedVal))
+				duplicates[trimmedVal] = [idx];
+		})
+
+		// Mark all duplicate options as duplicates, using indecies found above
+		_.forEach(duplicates, duplicate => { _.forEach(duplicate, idx => _options_[idx].error = "duplicate") });
+
+		// Return options with marked duplicates
+		return _options_;
+	}
+
 	const onOptionChange = (index, value) => {
 		const _options = [...options].map(option => ({ ...option, error: "" }));
 		_options[index].value = value;
 
-
-		// Check for duplicates
-		const duplicates = _.omitBy(
-			_.reduce(_options, (a, v, i) => _.set(a, v.value.trim(), ((v.value.trim() && a[v.value.trim()]) || []).concat([i])), {}),
-			v => v.length <= 1
-		);
-
-		// Append error to duplicates
-		_.forEach(duplicates, duplicate => _.forEach(duplicate, idx => {
-			_options[idx].error = "duplicate"
-		}));
-
-		setOptions([..._options]);
+		// Update the options with new 
+		// values and possible dupliates
+		setOptions([...checkForDuplicates(_options)])
 	}
 	const onOptionDelete = (index) => {
+		// Mutate options and reset all error states
 		const _options = [...options].map(option => ({ ...option, error: "" }));
+
+		// Eject the deleted option
 		_options.splice(index, 1);
 
-		// Check for duplicates
-		const duplicates = _.omitBy(
-			_.reduce(_options, (a, v, i) => _.set(a, v.value.trim(), ((v.value.trim() && a[v.value.trim()]) || []).concat([i])), {}),
-			v => v.length <= 1
-		);
-
-		// Append error to duplicates
-		_.forEach(duplicates, duplicate => _.forEach(duplicate, idx => {
-			_options[idx].error = "duplicate"
-		}));
-
-		setOptions([..._options]);
+		// Check for possible duplicates
+		// and update the options state 
+		setOptions([...checkForDuplicates(_options)])
 	}
 
 	const onOptionAdd = (e) => {
