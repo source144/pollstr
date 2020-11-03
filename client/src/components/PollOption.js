@@ -1,16 +1,20 @@
-import { object } from 'joi';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectOption } from '../store/actions/pollActions';
 import './PollOption.css';
 
+const SELECT_PERCENTAGE_INCREASE = 3;
+const NO_POLL_VOTERS_PERCENTAGE = 30;
+const HIDDEN_RESULTS_PERCENTAGE = 70;
+
 export default ({ option }) => {
-	const { voted, hideResults, expired } = useSelector(state => state.poll.poll);
+	const { voted, hideResults, expired, total_votes } = useSelector(state => state.poll.poll);
 	const { selected } = useSelector(state => state.poll);
 	const dispatch = useDispatch();
 
 	const disabled = voted != undefined || expired;
 	const showResult = !hideResults || expired;
+	const selected_this = selected === option.id;
 
 	let optionPercentDisplayWidth;
 
@@ -28,10 +32,10 @@ export default ({ option }) => {
 	} else optionPercentDisplayWidth = option.percent;
 
 	return (
-		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected === option.id ? 'poll-option--selected' : ''}`}>
+		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected_this ? 'poll-option--selected' : ''}`}>
 			<label>{option.title}</label>
 			{option.description ? <span>{option.description}</span> : null}
-			<button className="option-percent" onClick={() => !disabled ? dispatch(selectOption(option.id)) : undefined}>
+			<button className="option-percent" onClick={() => !disabled && !selected_this ? dispatch(selectOption(option.id)) : undefined}>
 				<div className="option-percent-display" style={{ width: `${optionPercentDisplayWidth}%` }}>
 					{/* <span className={`option-percent-value ${(!disabled && !showResult) || option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '??'}%</span> */}
 					{disabled || showResult ? <span className={`option-percent-value ${option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '?'}%</span> : null}
