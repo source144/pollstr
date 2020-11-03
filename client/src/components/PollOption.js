@@ -21,7 +21,8 @@ export default ({ option }) => {
 	// Calculate the percentage width
 	if (!disabled) {
 		// Base percentage width
-		if (showResult) optionPercentDisplayWidth = total_votes === 0 ? NO_POLL_VOTERS_PERCENTAGE : option.percent;
+		if (total_votes === 0) optionPercentDisplayWidth = NO_POLL_VOTERS_PERCENTAGE
+		else if (showResult) optionPercentDisplayWidth = option.percent;
 		else optionPercentDisplayWidth = HIDDEN_RESULTS_PERCENTAGE;
 
 		// Selected buffer
@@ -38,8 +39,8 @@ export default ({ option }) => {
 			<button className="option-percent" onClick={() => !disabled && !selected_this ? dispatch(selectOption(option.id)) : undefined}>
 				<div className="option-percent-display" style={{ width: `${optionPercentDisplayWidth}%` }}>
 					{/* <span className={`option-percent-value ${(!disabled && !showResult) || option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '??'}%</span> */}
-					{disabled || showResult ? <span className={`option-percent-value ${option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '?'}%</span> : null}
-					{!disabled && !showResult ? <span className={`option-percent-value option-percent-value--center`}>Vote to see result</span> : null}
+					{disabled || showResult || total_votes === 0 ? <span className={`option-percent-value ${option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult || total_votes === 0 ? option.percent : '?'}%</span> : null}
+					{!disabled && !showResult && total_votes !== 0 ? <span className={`option-percent-value option-percent-value--center`}>Vote to see result</span> : null}
 				</div>
 			</button>
 			<span className='option-votes'>{disabled || showResult ? `(${option.votes > 0 ? option.votes : 'no'} vote${option.votes != 1 ? 's' : ''})` : ''}</span>
