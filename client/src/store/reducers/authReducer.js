@@ -15,7 +15,6 @@ import {
 	AUTH_LOGOUT_REQUEST,
 	AUTH_LOGOUT_SUCCESS,
 } from '../actions/types/authTypes'
-const initialState = {};
 
 const initState = { auth: {}, loading: undefined, error: undefined, signup_complete: undefined, signup_loading: undefined, signup_error: undefined, global_loading: undefined, global_error: undefined, needsVerification: undefined };
 const authReducer = (state = initState, action) => {
