@@ -174,9 +174,9 @@ export const authLogout = auth => {
 				.catch(error => { })
 				.then(response => {
 					localStorage.removeItem('refresh');
-					dispatch(authLogoutSuccess);
+					dispatch(authLogoutSuccess());
 				});
-		} else dispatch(authLogoutSuccess);
+		} else dispatch(authLogoutSuccess());
 	}
 };
 

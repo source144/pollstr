@@ -22,7 +22,7 @@ const Poll = () => {
 	const [passcode, setPasscode] = useState(undefined);
 	const pollWrapper = useRef();
 
-	const { poll, loading, error, selected } = useSelector(state => state.poll);
+	const { poll, error, selected } = useSelector(state => state.poll);
 
 	const dispatch = useDispatch();
 	const { modalProps, open, close } = useModal({
@@ -30,7 +30,7 @@ const Poll = () => {
 		onClose: () => dispatch(modalClose()),
 		background: 'rgb(0, 0, 0, 0.6)'
 	});
-	
+
 	const handleHashTagClick = tag => console.log("TODO: redirect to search", tag);
 
 	const handleVote = (e) => {
@@ -122,7 +122,7 @@ const Poll = () => {
 						</div>
 					</div>
 				</Modal>
-			</> : <h1>{error ? error : 'Loading...'}</h1>
+			</> : <h1>{error ? error : null}</h1>
 		}
 		</>
 	);

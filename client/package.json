@@ -17,10 +17,12 @@
     "react-dom": "^17.0.0",
     "react-hashtag": "^2.1.2",
     "react-ios-switch": "^0.1.19",
+    "react-loading-overlay": "^1.0.1",
     "react-morphing-modal": "^0.2.2",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.4",
+    "react-spinners-kit": "^1.9.1",
     "react-toastify": "^6.0.9",
     "react-widgets": "^4.6.1",
     "react-widgets-moment": "^4.0.30",
@@ -51,5 +53,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }

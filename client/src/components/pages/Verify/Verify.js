@@ -11,6 +11,7 @@ const Verify = () => {
 	// Params
 	const { id, token } = useParams();
 
+	// TODO : dispatch to a gloabl loader
 	// Perform once
 	useEffect(() => {
 		setLoading(true);
@@ -37,6 +38,7 @@ const Verify = () => {
 		<div className="form-centered-container">
 			<div className="form-form-wrapper">
 				<h1 className='form-title'>User Verification</h1>
+				{/* TODO : dispatch to a gloabl loader */}
 				{error ? <div style={{ alignSelf: 'center', fontWeight: 600 }} className="form-item__error">{error}</div> : <h1>{loading ? 'Loading...' : 'Verified!'}</h1>}
 				{/* TODO : promt to resend verification to user if there was an error or a specific kind of error */}
 			</div>

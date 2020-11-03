@@ -34,7 +34,7 @@ const getPollSuccess = poll => ({ type: GET_POLL_SUCCESS, poll })
 const getPollFailure = error => ({ type: GET_POLL_FAILURE, error })
 export const getPoll = pollId => {
 	return (dispatch) => {
-		dispatch(getPollRequest);
+		dispatch(getPollRequest());
 		axios.get(`poll/${pollId}`)
 			.then(response => {
 				const poll = response.data;

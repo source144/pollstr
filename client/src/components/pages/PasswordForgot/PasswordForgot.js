@@ -46,6 +46,7 @@ const PasswordForgot = () => {
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
 
+		// TODO : dispatch to a gloabl loader
 		if (valid) {
 			setLoading(true);
 			axios.post('/api/auth/password/forgot', { email })

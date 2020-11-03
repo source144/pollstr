@@ -130,6 +130,10 @@ input {
   box-sizing: inherit;
 }
 
+._loading_overlay_content > div:first-child {
+	width: auto;
+	margin-bottom: 15px;
+}
 .RMM__close-button,
 .RMM__close-button:hover {
   background: rgb(0, 0, 0) !important;

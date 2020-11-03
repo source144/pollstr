@@ -73,6 +73,7 @@ const PasswordReset = () => {
 		const _errors = checkForm({ ...payload, confirm });
 		Object.keys(_errors).forEach(key => valid = valid && !_errors[key]);
 
+		// TODO : dispatch to a gloabl loader
 		if (valid) {
 			// /api/auth/password/reset/{id}
 			setLoading(true);
