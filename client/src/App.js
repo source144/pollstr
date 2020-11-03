@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { createStor } from 'redux';
 import { Provider, useSelector, useDispatch } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import './App.css';
 
@@ -20,6 +21,10 @@ import AppContext from './AppContext';
 
 // React-Widgets Styling
 import 'react-widgets/dist/css/react-widgets.css';
+
+// React-Toastify Styling
+import 'react-toastify/dist/ReactToastify.css';
+
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
@@ -63,6 +68,17 @@ function App() {
 					</Router>
 				</AppContext>
 			</Provider>
+			<ToastContainer
+				position="bottom-left"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
 		</>
 	);
 }
