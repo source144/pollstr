@@ -19,6 +19,8 @@ import Poll from './components/pages/Poll/Poll';
 import CreatePoll from './components/pages/CreatePoll/CreatePoll';
 import AppContext from './AppContext';
 
+import useWindowDimension from './components/util/useWindowDimension'
+
 // React-Widgets Styling
 import 'react-widgets/dist/css/react-widgets.css';
 
@@ -27,25 +29,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
+import useWindowDimensions from './components/util/useWindowDimension';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
 // axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
-
-	// const { token } = useSelector(state => state.auth.auth)
-
-	// useEffect(() => {
-	// 	const authInterceptor = axios.interceptors.response.use(
-	// 		response => response,
-	// 		error => {
-
-	// 		}
-	// 	);
-	// 	// Dispose interceptor
-	// 	return () => { axios.interceptors.response.eject(authInterceptor); }
-	// }, [token])
+	const { height, width } = useWindowDimension();
+	const isMobile = width <= 960;
 
 	return (
 		<>
@@ -74,12 +66,13 @@ function App() {
 				position="bottom-left"
 				autoClose={5000}
 				hideProgressBar={false}
-				newestOnTop={false}
+				newestOnTop={true}
 				closeOnClick
 				rtl={false}
 				pauseOnFocusLoss
 				draggable
 				pauseOnHover
+				limit={!isMobile ? 5 : 2}
 			/>
 		</>
 	);

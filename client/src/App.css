@@ -131,8 +131,8 @@ input {
 }
 
 ._loading_overlay_content > div:first-child {
-	width: auto;
-	margin-bottom: 15px;
+  width: auto;
+  margin-bottom: 15px;
 }
 .RMM__close-button,
 .RMM__close-button:hover {
@@ -140,8 +140,8 @@ input {
 }
 
 .opacity-0 {
-	opacity: 0 !important;
-	transition: opacity .5s;
+  opacity: 0 !important;
+  transition: opacity 0.5s;
 }
 
 .RMM__placeholder {
@@ -164,6 +164,14 @@ body {
 .Toastify__toast-container.Toastify__toast-container--top-center,
 .Toastify__toast-container.Toastify__toast-container--top-left {
   margin-top: var(--nav-height);
+}
+
+@media screen and (max-width: 960px) {
+  .Toastify__toast-container.Toastify__toast-container--top-right,
+  .Toastify__toast-container.Toastify__toast-container--top-center,
+  .Toastify__toast-container.Toastify__toast-container--top-left {
+	  display: none;
+  }
 }
 
 .app {
