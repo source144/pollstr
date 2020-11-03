@@ -86,9 +86,7 @@ VoteSchema.pre('save', function (next) {
 // (3) Trigger Socket.IO update votes
 VoteSchema.post('save', function (doc, next) {
 	var vote = this;
-	console.log("In VoteSchema.post('save')");
 	console.log("vote.wasNew", vote.wasNew);
-	console.log("doc:", doc);
 
 	const abort = (message) => {
 		console.log('abort()');

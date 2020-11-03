@@ -81,8 +81,6 @@ PollSchema.methods.toJSON = function () {
 PollSchema.pre('save', function (next) {
 	var poll = this;
 
-	console.log('PollSchema.pre-Save started');
-
 	// only hash the password if it has been modified (or is new)
 	if (poll.isModified('passcode') && poll.passcode) {
 		console.log('passcode was modified');
