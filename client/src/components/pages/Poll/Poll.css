@@ -1,6 +1,6 @@
 .poll-wrapper {
   min-width: 320px;
-  max-width: 600px;
+  max-width: min(600px, 100vw);
   transition: height 0.5s ease-in-out;
   padding: 0;
 }
@@ -69,5 +69,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for WebKit */
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+
   /* margin-left: 1rem;	 */
 }
