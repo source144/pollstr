@@ -53,18 +53,16 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 		CaretPositioning.restoreSelection(editable.current, savedCaretPosition);
 
 		// Grow text box if needed
-		if (!singleline) {
+		if (!singleline)
 			editable.current.style.height = 'auto';
-			// if (!_content) {
-			// 	editable.current.style.height = 'auto';
-			// }
-
-			// editable.current.style.height = "1px";
-			// const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
-			// editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
-		}
 
 		onChange(editable.current.innerText);
+	}
+
+	// Fix placeholder psuedo element blocking selection
+	const handleFocus = (e) => {
+		if (editable.current.matches(':empty'))
+			CaretPositioning.restoreSelection(editable.current, { start: 0, end: 0 });
 	}
 
 	useEffect(() => {
@@ -84,6 +82,7 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 				ref={editable}
 				onPaste={handlePaste}
 				onInput={handleEdit}
+				onFocus={handleFocus}
 				background='red'
 				width='200px'
 				className={`__HashtagTextAreaComponent__ __HashtagTextAreaComponent--placeholder__ ${className} ${singleline ? "__HashtagTextAreaComponent-overflow-hidden__" : ""}`}
