@@ -37,7 +37,7 @@ const Poll = () => {
 			<div className="form-centered-container">
 				<div className="form-form-wrapper poll-wrapper">
 					<div className="poll-detail-wrapper">
-						{poll.timeToLive ? <CountdownTimer startDate={poll.createDate} timeToLive={poll.timeToLive} onComplete={() => { dispatch(disableVoting) }}></CountdownTimer> : null}
+						{poll.timeToLive ? <CountdownTimer startDate={poll.createDate} timeToLive={poll.timeToLive} onComplete={() => { dispatch(disableVoting()) }}></CountdownTimer> : null}
 						<div className="poll-info">
 							<h1 className='poll-title'><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
 							<div className="form-description"><p className="poll-description">{poll.description}</p></div>
