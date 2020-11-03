@@ -570,7 +570,7 @@ const CreatePoll = () => {
 								</>
 							}
 							{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
-							<div className="form-item">
+							<div className="form-item" style={!isMobile ? { marginRight: '-1rem' } : {}}>
 								<input
 									className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
 									type="submit" value="Create!" onClick={handleSubmit} disabled={!title || !_.filter(options, option => !!option.value && !!option.value.trim()).length >= 2} />
