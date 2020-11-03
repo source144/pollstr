@@ -158,6 +158,7 @@ function Navbar() {
 
 	const { redirect, setRedirect } = useState(undefined);
 	const { auth, global_loading, gloabl_error } = useSelector(state => state.auth);
+	const { isOpen } = useSelector(state => state.modal);
 	const dispatch = useDispatch();
 	const hasAuth = !_.isEmpty(auth);
 
@@ -205,7 +206,7 @@ function Navbar() {
 
 	return (
 		<>
-			<nav className="navbar">
+			<nav className="navbar" style={isOpen ? { zIndex: 4 } : null}>
 				<Link to="/" className="navbar-logo">
 					<span className='navbar-logo-text'>Pollstr</span> <i className="navbar-logo__icon fas fa-volleyball-ball" />
 				</Link>

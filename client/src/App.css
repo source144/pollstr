@@ -130,6 +130,22 @@ input {
   box-sizing: inherit;
 }
 
+.RMM__close-button,
+.RMM__close-button:hover {
+  background: rgb(0, 0, 0) !important;
+}
+
+.opacity-0 {
+	opacity: 0 !important;
+	transition: opacity .5s;
+}
+
+.RMM__placeholder {
+  margin-top: var(--nav-height);
+  background: rgb(0, 0, 0);
+  /* transition: background 4s ease-out; */
+}
+
 html {
   font-size: 62.5%;
 }

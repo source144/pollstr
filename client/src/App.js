@@ -25,6 +25,8 @@ import 'react-widgets/dist/css/react-widgets.css';
 // React-Toastify Styling
 import 'react-toastify/dist/ReactToastify.css';
 
+// React-Morphing-Modal Styling
+import 'react-morphing-modal/dist/ReactMorphingModal.css';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
