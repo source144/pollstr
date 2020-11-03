@@ -57,10 +57,11 @@ export const getPoll = pollId => {
 const votePollRequest = () => ({ type: VOTE_POLL_REQUEST })
 const votePollSuccess = poll => ({ type: VOTE_POLL_SUCCESS, poll })
 const votePollFailure = error => ({ type: VOTE_POLL_FAILURE, error })
-export const votePoll = (pollId, optionId) => {
+export const votePoll = (pollId, optionId, passcode = undefined) => {
 	return (dispatch) => {
 		dispatch(votePollRequest);
-		axios.post(`poll/${pollId}/vote/${optionId}`)
+		console.log('passcode', passcode)
+		axios.post(`poll/${pollId}/vote/${optionId}`, { passcode })
 			.then(response => {
 				const poll = response.data;
 				dispatch(votePollSuccess(poll));
