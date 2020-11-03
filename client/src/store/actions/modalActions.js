@@ -1,4 +1,4 @@
-import { MODAL_CLOSE, MODAL_OPEN } from './types/modalTypes'
+import { MODAL_CLOSE, MODAL_OPEN, MODAL_FADE } from './types/modalTypes'
 
 let modalCloseBtnEvnt;
 let modalKeyPressEvnt;
@@ -43,4 +43,11 @@ export const modalClose = () => {
 	}
 
 	return ({ type: MODAL_CLOSE });
+}
+
+
+export const modalStatFade = () => {
+	setTimeout(() => modalCloseBtnEvnt ? modalCloseBtnEvnt() : undefined, 50);
+
+	return ({ type: MODAL_FADE });
 }
