@@ -112,7 +112,7 @@ const Login = () => {
 						</div>
 						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
-					{!!error ? <div className="form-item__error">{error}{needsVerification ? <span>! <Link className='form-switch-action' onClick={handleResendVerification}>Resend Here</Link></span> : undefined}</div> : null}
+					{!!error ? <div className="form-item__error">{error}{needsVerification ? <span>! <a className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

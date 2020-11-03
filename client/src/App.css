@@ -330,6 +330,7 @@ body {
 }
 
 .form-switch-action:hover {
+  cursor: pointer;
   color: var(--color-primary-light);
 }
 
