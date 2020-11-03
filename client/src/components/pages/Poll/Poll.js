@@ -21,6 +21,7 @@ const Poll = () => {
 	const { id } = useParams();
 	const [passcode, setPasscode] = useState(undefined);
 	const pollWrapper = useRef();
+	const passcodeInput = useRef();
 
 	const { poll, error, selected } = useSelector(state => state.poll);
 
@@ -28,6 +29,7 @@ const Poll = () => {
 	const { modalProps, open, close } = useModal({
 		id: 'passcode-modal',
 		onClose: () => dispatch(modalClose()),
+		onOpen: () => passcodeInput.current.focus(),
 		background: 'rgb(0, 0, 0, 0.6)'
 	});
 
@@ -103,11 +105,12 @@ const Poll = () => {
 										<input
 											value={passcode ?? ''}
 											className='form-item__input'
-											type="text"
+											type="password"
 											placeholder="e.g. ********"
 											name="passcode"
 											formNoValidate
-											onChange={(e) => setPasscode(e.target.value)} />
+											onChange={(e) => setPasscode(e.target.value)}
+											ref={passcodeInput} />
 										<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
 									</div>
 								</div>
