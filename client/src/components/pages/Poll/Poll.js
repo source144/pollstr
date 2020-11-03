@@ -13,7 +13,7 @@ import socket from '../../../store/socket';
 import PollOption from '../../PollOption';
 import Chip from '../../Chip';
 import './Poll.css';
-import { getPoll, disableVoting, votePoll, updatePoll } from '../../../store/actions/pollActions';
+import { getPoll, disableVoting, votePoll, updatePoll, flushPoll } from '../../../store/actions/pollActions';
 
 const _defaultId = '5f94abf7c82e940a918f7b3c';
 
@@ -23,14 +23,15 @@ const Poll = () => {
 	const [loaded, setLoaded] = useState(undefined);
 
 	const { poll, loading, error, selected } = useSelector(state => state.poll);
+
 	const dispatch = useDispatch();
 
 	const handleHashTagClick = tag => console.log("TODO: redirect to search", tag);
 
 	useEffect(() => {
 		dispatch(getPoll(id));
-		return () => { socket.emit("leave", `${id}`); }
-	}, [loaded]);
+		return () => { socket.emit("leave", `${id}`); dispatch(flushPoll()) }
+	}, [id]);
 
 	return (
 		<>{poll && Object.keys(poll).length > 2 ?

@@ -19,7 +19,8 @@ import {
 	VOTE_POLL_SUCCESS,
 	VOTE_POLL_FAILURE,
 	SELECT_OPTION,
-	DISABLE_VOTING
+	DISABLE_VOTING,
+	FLUSH_POLL
 } from '../actions/types/pollTypes'
 
 const initState = { poll: {}, loading: undefined, error: undefined, selected: undefined };
@@ -59,6 +60,7 @@ const pollReducer = (state = initState, action) => {
 		case UPDATE_POLL: return { ...state, poll: { ...state.poll, ...transform(action.poll) } };
 		case SELECT_OPTION: return { ...state, selected: action.selected };
 		case DISABLE_VOTING: return { ...state, poll: { ...state.poll, expired: true } };
+		case FLUSH_POLL: return { ...state, poll: {} };
 
 		case VOTE_POLL_REQUEST: return { ...initState, poll: { ...state.poll }, loading: true };
 		case VOTE_POLL_SUCCESS: return { ...initState, poll: { ...state.poll, ...transform(action.poll) } };

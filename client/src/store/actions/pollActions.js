@@ -20,12 +20,14 @@ import {
 	VOTE_POLL_SUCCESS,
 	VOTE_POLL_FAILURE,
 	SELECT_OPTION,
-	DISABLE_VOTING
+	DISABLE_VOTING,
+	FLUSH_POLL
 } from './types/pollTypes'
 
 export const updatePoll = updatedPoll => ({ type: UPDATE_POLL, poll: updatedPoll });
 export const selectOption = selected => ({ type: SELECT_OPTION, selected })
 export const disableVoting = () => ({ type: DISABLE_VOTING })
+export const flushPoll = () => ({ type: FLUSH_POLL })
 
 const getPollRequest = () => ({ type: GET_POLL_REQUEST })
 const getPollSuccess = poll => ({ type: GET_POLL_SUCCESS, poll })

@@ -24,3 +24,5 @@ export const VOTE_POLL_FAILURE = 'VOTE_POLL_FAILURE';
 export const SELECT_OPTION = 'SELECT_OPTION';
 
 export const DISABLE_VOTING = 'DISABLE_VOTING';
+
+export const FLUSH_POLL = 'FLUSH_POLL';
