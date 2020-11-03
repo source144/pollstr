@@ -33,10 +33,12 @@ export default ({ option }) => {
 	} else optionPercentDisplayWidth = option.percent;
 
 	return (
-		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected_this ? 'poll-option--selected' : ''}`}>
-			<label>{option.title}</label>
+		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected_this ? 'poll-option--selected' : ''}`}
+			onClick={() => !disabled && !selected_this ? dispatch(selectOption(option.id)) : undefined}
+		>
+			<label >{option.title}</label>
 			{option.description ? <span>{option.description}</span> : null}
-			<button className="option-percent" onClick={() => !disabled && !selected_this ? dispatch(selectOption(option.id)) : undefined}>
+			<button className="option-percent">
 				<div className="option-percent-display" style={{ width: `${optionPercentDisplayWidth}%` }}>
 					{/* <span className={`option-percent-value ${(!disabled && !showResult) || option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult ? option.percent : '??'}%</span> */}
 					{disabled || showResult || total_votes === 0 ? <span className={`option-percent-value ${option.percent < 15 ? 'option-percent-value--right' : ''}`}>{disabled || showResult || total_votes === 0 ? option.percent : '?'}%</span> : null}
