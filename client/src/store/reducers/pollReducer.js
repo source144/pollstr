@@ -64,7 +64,7 @@ const pollReducer = (state = initState, action) => {
 
 		case VOTE_POLL_REQUEST: return { ...initState, poll: { ...state.poll }, loading: true };
 		case VOTE_POLL_SUCCESS: return { ...initState, poll: { ...state.poll, ...transform(action.poll) } };
-		case VOTE_POLL_FAILURE: return { ...initState, poll: { ...state.poll }, error: action.error };
+		case VOTE_POLL_FAILURE: return { ...initState, poll: { ...state.poll }, error: action.error, selected: state.selected };
 		default: return state;
 	}
 }
