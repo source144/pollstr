@@ -1,5 +1,7 @@
+import React from 'react';
 import axios from 'axios';
 import socket from '../socket';
+import { toast } from 'react-toastify';
 import {
 	CREATE_POLL_REQUEST,
 	CREATE_POLL_SUCCESS,
@@ -60,11 +62,21 @@ export const votePoll = (pollId, optionId) => {
 			.then(response => {
 				const poll = response.data;
 				dispatch(votePollSuccess(poll));
+
+				// Toast user
+				toast.success(<>Vote received!</>, {
+					autoClose: 2000,
+				})
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
 				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				dispatch(votePollFailure(errorMsg))
+
+
+				toast.error(<><strong>Oops!</strong> {errorMsg}</>, {
+					autoClose: 5000,
+				})
 			});
 	}
 }

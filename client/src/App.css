@@ -140,6 +140,12 @@ body {
   background: var(--color-bg-calm-1);
 }
 
+.Toastify__toast-container.Toastify__toast-container--top-right,
+.Toastify__toast-container.Toastify__toast-container--top-center,
+.Toastify__toast-container.Toastify__toast-container--top-left {
+  margin-top: var(--nav-height);
+}
+
 .app {
   position: relative;
   z-index: 4;
