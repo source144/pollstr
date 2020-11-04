@@ -301,8 +301,9 @@ const visitorId = (req, res, next) => {
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cors());
+app.options('*', cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-app.use('/api', withSocket, visitorId, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }),);
+app.use('/api', withSocket, visitorId, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
 app.use('/api/polls', withCredentials, pollsRoutes);
