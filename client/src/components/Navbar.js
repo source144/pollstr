@@ -233,14 +233,14 @@ function Navbar() {
 						</Link>
 						{dropdown && <Dropdown />}
 					</li>
-					{hasAuth ? profileNav(auth) : signInNav}
 					<li className="nav-item mobile-only">
-						<Link to={hasAuth ? '/' : '/signup'} className='nav-link' onClick={closeMobileMenu}>
+						<Link to={hasAuth ? '/polls/create' : '/signup'} className='nav-link' onClick={closeMobileMenu}>
 							{hasAuth ? "Create" : "Sign Up"}
 						</Link>
 					</li>
+					{hasAuth ? profileNav(auth) : signInNav}
 				</ul>
-				<Link to={hasAuth ? '/' : '/signup'} className="desktop-only">
+				<Link to={hasAuth ? '/polls/create' : '/signup'} className="desktop-only">
 					<Button className="btn--primary-outline">{hasAuth ? "Create" : "Sign Up"}</Button>
 				</Link>
 			</nav>
