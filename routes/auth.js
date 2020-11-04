@@ -57,8 +57,9 @@ const enforceCredentials = (req, res, next) => {
 
 // TODO : SwaggerHub documentation?
 router.post('/fingerprint', (req, res) => {
+	console.log('[POST auth/fingerprint] received ', req.body.visitorId)
 	if (!req.body.visitorId)
-		res.status(400).send(errorObject('Missing Visitor Id'));
+		return res.status(400).send(errorObject('Missing Visitor Id'));
 
 	Fingerprint.findOne({ fingerprint: req.body.visitorId }, function (error, fingerprint) {
 		if (error) return res.status(500).send(errorObject(error.message));
