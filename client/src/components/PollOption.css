@@ -27,7 +27,8 @@
   background-color: var(--color-primary-dark);
 }
 
-.poll-option:not(.poll-option--disabled) .option-percent:active,
+.poll-option:not(.poll-option--disabled):not(.poll-option--voted)
+  .option-percent:active,
 .poll-option.poll-option--selected .option-percent {
   background: var(--color-grey-light-4);
   /* box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),

@@ -8,11 +8,13 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import moment from 'moment';
 
+import useWindowDimension from '../../util/useWindowDimension'
 import socket from '../../../store/socket';
 import Placeholder from '../Placeholder/Placeholder';
 import PollOption from '../../PollOption';
 import Chip from '../../Chip';
 import './Poll.css';
+
 
 import { getPoll, disableVoting, votePoll, updatePoll, flushPoll } from '../../../store/actions/pollActions';
 import { modalClose, modalOpen, modalStatFade } from '../../../store/actions/modalActions';
@@ -63,6 +65,10 @@ const __poll_placeholder = (() => {
 
 
 const Poll = () => {
+	// TODO : Use a global state from AppContext
+	const { width } = useWindowDimension();
+	const isMobile = width <= 600;
+
 	// TODO : get ID from path
 	const { id } = useParams();
 	const [passcode, setPasscode] = useState(undefined);
@@ -122,15 +128,15 @@ const Poll = () => {
 			<div className="form-centered-container">
 				{!_prevent_fetch_ && !poll_loading && poll && Object.keys(poll).length > 2 ?
 					<div className="form-form-wrapper poll-wrapper" ref={pollWrapper}>
-						<div className="poll-detail-wrapper">
+						<div className="poll-detail-wrapper" style={isMobile && poll.timeToLive ? {padding: "2rem"} : {}}>
 							{!poll.timeToLive ? undefined :
 								<CountdownTimer
 									onComplete={() => { dispatch(disableVoting()) }}
 									startDate={poll.createDate}
 									timeToLive={poll.timeToLive} />}
 							<div className="poll-info">
-								<h1 className='poll-title'><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
-								<div className="form-description"><p className="poll-description">{poll.description}</p></div>
+								<h1 className='poll-title' style={isMobile && !poll.timeToLive ? { fontSize: '2.5rem' } : {}}><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
+								<div className="form-description" style={isMobile && !poll.timeToLive ? { fontSize: '1.8rem' } : {}}><p className="poll-description">{poll.description}</p></div>
 								<ul className='poll-tags'>{poll.tags.map((tag, i) => tag ? <Chip key={i}>{tag}</Chip> : null)}</ul>
 								<span className="poll-total-votes">{`${poll.total_votes > 0 ? poll.total_votes : 'no'} voter${poll.total_votes != 1 ? 's' : ''}`}</span>
 							</div>
