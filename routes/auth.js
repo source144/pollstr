@@ -62,15 +62,19 @@ router.post('/fingerprint', (req, res) => {
 		return res.status(400).send(errorObject('Missing Visitor Id'));
 
 	Fingerprint.findOne({ fingerprint: req.body.visitorId }, function (error, fingerprint) {
+		console.log('[POST auth/fingerprint] findOne() error ', error)
+		console.log('[POST auth/fingerprint] findOne() fingerprint ', fingerprint)
+
 		if (error) return res.status(500).send(errorObject(error.message));
-		if (fingerprint) return res.status(200).send();
+		if (fingerprint) return res.status(200).send({});
 
 
-		fingerprint = new Fingerprint({
+		const _fingerprint = new Fingerprint({
 			fingerprint: req.body.visitorId
 		});
 
-		fingerprint.save(function (error) {
+		_fingerprint.save(function (error) {
+			console.log('[POST auth/fingerprint] save() error ', error)
 			if (error) return res.status(500).send(errorObject(error.message));
 			else return res.status(204).send();
 		});
