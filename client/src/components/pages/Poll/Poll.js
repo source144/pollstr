@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 
 import socket from '../../../store/socket';
+import Placeholder from '../Placeholder/Placeholder';
 import PollOption from '../../PollOption';
 import Chip from '../../Chip';
 import './Poll.css';
@@ -23,7 +24,11 @@ const Poll = () => {
 	const pollWrapper = useRef();
 	const passcodeInput = useRef();
 
-	const { poll, error, selected } = useSelector(state => state.poll);
+	const { poll, error, selected, loading: poll_loading } = useSelector(state => state.poll);
+	const { global_loading: auth_loading, fingerprint } = useSelector(state => state.auth);
+
+	// Prevent API calls until authenticated/identified
+	const _prevent_fetch_ = auth_loading || !fingerprint
 
 	const dispatch = useDispatch();
 	const { modalProps, open, close } = useModal({
@@ -37,6 +42,7 @@ const Poll = () => {
 
 	const handleVote = (e) => {
 		e.preventDefault();
+		if (!poll) return;
 
 		if (poll.passcode) {
 			dispatch(modalOpen());
@@ -47,6 +53,7 @@ const Poll = () => {
 
 	const handlePasscode = (e) => {
 		e.preventDefault();
+		if (!poll) return;
 
 		dispatch(votePoll(id, selected, passcode));
 		setPasscode(undefined);
@@ -54,18 +61,28 @@ const Poll = () => {
 		close(pollWrapper);
 	}
 
+	// Fetch poll ONLY after 
+	// identifying user/guest
 	useEffect(() => {
-		dispatch(getPoll(id));
-		return () => { socket.emit("leave", `${id}`); dispatch(flushPoll()) }
-	}, [id]);
+		if (!_prevent_fetch_) {
+			dispatch(getPoll(id));
+			return () => { socket.emit("leave", `${id}`); dispatch(flushPoll()) }
+		}
+	}, [id, auth_loading, fingerprint]);
+
+	// TODO : useEffect for error to display error toasts
 
 	return (
-		<>{poll && Object.keys(poll).length > 2 ?
-			<>
-				<div className="form-centered-container">
+		<>
+			<div className="form-centered-container">
+				{!_prevent_fetch_ && !poll_loading && poll && Object.keys(poll).length > 2 ?
 					<div className="form-form-wrapper poll-wrapper" ref={pollWrapper}>
 						<div className="poll-detail-wrapper">
-							{poll.timeToLive ? <CountdownTimer startDate={poll.createDate} timeToLive={poll.timeToLive} onComplete={() => { dispatch(disableVoting()) }}></CountdownTimer> : null}
+							{!poll.timeToLive ? undefined :
+								<CountdownTimer
+									onComplete={() => { dispatch(disableVoting()) }}
+									startDate={poll.createDate}
+									timeToLive={poll.timeToLive} />}
 							<div className="poll-info">
 								<h1 className='poll-title'><ReactHashtag onHashtagClick={handleHashTagClick}>{poll.title}</ReactHashtag></h1>
 								<div className="form-description"><p className="poll-description">{poll.description}</p></div>
@@ -94,39 +111,42 @@ const Poll = () => {
 								disabled={selected == null || poll.voted != null || poll.expired} />
 						</div>
 					</div>
-				</div>
-				<Modal {...modalProps}>
-					<div className="form-centered-container">
-						<div className="form-form-wrapper">
-							<h1 className='form-title'>Enter Passcode</h1>
-							<form onSubmit={() => { }} formNoValidate className='form-form'>
-								<div className="form-item">
-									<div className='form-item-wrapper'>
-										<input
-											value={passcode ?? ''}
-											className='form-item__input'
-											type="password"
-											placeholder="e.g. ********"
-											name="passcode"
-											formNoValidate
-											onChange={(e) => setPasscode(e.target.value)}
-											ref={passcodeInput} />
-										<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
-									</div>
-								</div>
-								<div className="form-item">
+					// : error ? <h1>{error}</h1> : <div style={{ height: "100%", width: "100%" }}></div>
+					: error ? <h1>{error}</h1> : <Placeholder />
+					// : error ? <h1>{error}</h1> : <__poll_placeholder />
+					// __poll_placeholder()
+				}
+			</div>
+			<Modal {...modalProps}>
+				<div className="form-centered-container">
+					<div className="form-form-wrapper">
+						<h1 className='form-title'>Enter Passcode</h1>
+						<form onSubmit={() => { }} formNoValidate className='form-form'>
+							<div className="form-item">
+								<div className='form-item-wrapper'>
 									<input
-										disabled={!passcode || !passcode.trim()}
-										onClick={handlePasscode}
-										className='btn btn--tertiary form-item__submit'
-										type="button" value="Vote" />
+										value={passcode ?? ''}
+										className='form-item__input'
+										type="password"
+										placeholder="e.g. ********"
+										name="passcode"
+										formNoValidate
+										onChange={(e) => setPasscode(e.target.value)}
+										ref={passcodeInput} />
+									<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
 								</div>
-							</form>
-						</div>
+							</div>
+							<div className="form-item">
+								<input
+									disabled={!passcode || !passcode.trim()}
+									onClick={handlePasscode}
+									className='btn btn--tertiary form-item__submit'
+									type="button" value="Vote" />
+							</div>
+						</form>
 					</div>
-				</Modal>
-			</> : <h1>{error ? error : null}</h1>
-		}
+				</div>
+			</Modal>
 		</>
 	);
 
