@@ -1,9 +1,13 @@
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import React from 'react'
 import axios from 'axios';
 import moment from 'moment';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
 import {
+	AUTH_FINGERPRINT_REQUEST,
+	AUTH_FINGERPRINT_SUCCESS,
+	AUTH_FINGERPRINT_FAILURE,
 	AUTH_SIGNUP_REQUEST,
 	AUTH_SIGNUP_SUCCESS,
 	AUTH_SIGNUP_FAILURE,
@@ -21,6 +25,60 @@ import {
 } from './types/authTypes'
 
 const DATE_FORMAT = "ddd, MMM Do YYYY, hA";
+
+// let visitorId;
+// let requestInterceptor;
+// requestInterceptor = axios.interceptors.request.use(config =>
+// 	new Promise((resolve, reject) => {
+// 		// ... your code ...
+
+// 		axios.get(API_BASE_URL + '/auth/refresh')
+// 			.then(response => {
+// 				// Get your config from the response
+// 				const newConfig = getConfigFromResponse(response);
+
+// 				// Resolve the promise
+// 				resolve(newConfig);
+// 			}, reject);
+
+// 		// Or when you don't need an HTTP request just resolve
+// 		resolve(config);
+// 	})
+// });
+
+const authFingerprintRequest = () => ({ type: AUTH_FINGERPRINT_REQUEST });
+const authFingerprintSuccess = () => ({ type: AUTH_FINGERPRINT_SUCCESS });
+const authFingerprintFailure = (error, errorMsg) => ({ type: AUTH_FINGERPRINT_FAILURE, error_data: error, error: errorMsg });
+export const authFingerprint = () => {
+	return (dispatch) => {
+		FingerprintJS.load()
+			.then(fp => {
+				fp.get()
+					.then(({ visitorId }) => {
+						// Register visitor with API
+						axios.post('/auth/fingerprint', { visitorId })
+							.then(response => {
+								// Add fingerprint to header
+								axios.defaults.headers.common['x-finger-print'] = visitorId;
+
+								dispatch(authFingerprintSuccess())
+							})
+							.catch(error => {
+								console.log(error);
+								dispatch(authFingerprintFailure(error, "failed to store fingerprint on server"))
+							})
+					})
+					.catch(error => {
+						console.log(error);
+						dispatch(authFingerprintFailure(error, "failed to get fingerprint"))
+					})
+			})
+			.catch(error => {
+				console.log(error);
+				dispatch(authFingerprintFailure(error, "failed to connect to fingerpint server"))
+			});
+	}
+}
 
 const authResendVerificationRequest = () => ({ type: AUTH_RESEND_VERIFICATION_REQUEST });
 const authResendVerificationSuccess = () => ({ type: AUTH_RESEND_VERIFICATION_SUCCESS });
