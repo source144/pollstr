@@ -1,5 +1,6 @@
 const { User, validate, validatePassword } = require('../models/User');
 const { Verification, PasswordReset } = require('../models/Verification');
+const { Fingerprint } = require('../models/Fingerprint');
 const { errorObject } = require('../shared/util');
 const express = require('express');
 const nodemailer = require('nodemailer');
@@ -53,6 +54,27 @@ const enforceCredentials = (req, res, next) => {
 		next();
 	});
 }
+
+// TODO : SwaggerHub documentation?
+router.post('/fingerprint', (req, res) => {
+	if (!req.body.visitorId)
+		res.status(400).send(errorObject('Missing Visitor Id'));
+
+	Fingerprint.findOne({ fingerprint: req.body.visitorId }, function (error, fingerprint) {
+		if (error) return res.status(500).send(errorObject(error.message));
+		if (fingerprint) return res.status(200).send();
+
+
+		fingerprint = new Fingerprint({
+			fingerprint: req.body.visitorId
+		});
+
+		fingerprint.save(function (error) {
+			if (error) return res.status(500).send(errorObject(error.message));
+			else return res.status(204).send();
+		});
+	})
+})
 
 
 /**

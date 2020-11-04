@@ -339,20 +339,18 @@ router.get('/:id', withUserId, (req, res) => {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
-		console.log(`[GET  ${req.params.id}] HASH: ${req.fingerprint ? req.fingerprint.hash : undefined} ~ IP: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress} ~ USER_ID: ${req.user ? req.user.id : undefined}`)
-
 		// User/guest (or both) identification for query
 		let _voteQuery;
-		if (req.fingerprint && req.fingerprint.hash) {
+		if (req.fingerprint && (req.fingerprint.hash || req.visitorId)) {
 			if (req.user && req.user.id) {
 				_voteQuery = {
 					$or: [
 						{ _userId: req.user.id },
-						{ _fingerPrint: req.fingerprint.hash }
+						req.visitorId ? { _visitorId: req.visitorId } : { _fingerPrint: req.fingerprint.hash }
 					]
 				};
 			}
-			else _voteQuery = { _fingerPrint: req.fingerprint.hash };
+			else _voteQuery = req.visitorId ? { _visitorId: req.visitorId } : { _fingerPrint: req.fingerprint.hash };
 		} else if (req.user && req.user.id) _voteQuery = { _userId: req.user.id };
 		else return res.status(500).send(errorObject("Can't get vote. Missing guest id and user id."));
 
@@ -409,8 +407,6 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
-		console.log(`[VOTE ${req.params.id}] HASH: ${req.fingerprint ? req.fingerprint.hash : undefined} ~ IP: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress} ~ USER_ID: ${req.user ? req.user.id : undefined}`)
-
 		// TODO : allow creator to vote?
 		// if (poll._creator == req.user.id) 
 		// return res.status(405).send(errorObject('Poll creators aren't allowed to vote on their polls'));
@@ -424,15 +420,15 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 			let _voteQuery;
 
 			// User/guest (or both) identification for query
-			if (req.fingerprint && req.fingerprint.hash) {
+			if (req.fingerprint && (req.fingerprint.hash || req.visitorId)) {
 				if (req.user && req.user.id) {
 					_voteQuery = {
 						$or: [
 							{ _userId: req.user.id },
-							{ _fingerPrint: req.fingerprint.hash }
+							req.visitorId ? { _visitorId: req.visitorId } : { _fingerPrint: req.fingerprint.hash }
 						]
 					};
-				} else _voteQuery = { _fingerPrint: req.fingerprint.hash };
+				} else _voteQuery = req.visitorId ? { _visitorId: req.visitorId } : { _fingerPrint: req.fingerprint.hash };
 			} else if (req.user && req.user.id) _voteQuery = { _userId: req.user.id };
 			else return res.status(500).send(errorObject("Can't submit vote. Missing guest id and user id."));
 
@@ -444,7 +440,8 @@ router.post('/:id/vote/:optionId', withUserId, (req, res) => {
 				const _voteModel = {
 					_pollId: poll._id,
 					_optionId: req.params.optionId,
-					_fingerPrint: req.fingerprint.hash,
+					_visitorId: req.visitorId,
+					_fingerPrint: req.fingerprint.hash
 				};
 				if (req.user && req.user.id) _voteModel._userId = req.user.id;
 

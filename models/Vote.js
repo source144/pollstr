@@ -12,6 +12,7 @@ const VoteSchema = new mongoose.Schema({
 	_pollId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Poll" },
 	_optionId: { type: mongoose.Schema.Types.ObjectId, required: true },
 	_userId: { type: mongoose.Schema.Types.ObjectId, required: false, ref: "User" },
+	_visitorId: { type: String, required: false },
 	_fingerPrint: { type: String, required: false },
 	createDate: { type: Date, required: true, default: Date.now },
 });
@@ -19,7 +20,8 @@ const VoteSchema = new mongoose.Schema({
 VoteSchema.methods.toJSON = function () {
 	const obj = this.toObject();
 
-	return _.omit({ ...obj, id: obj._id }, ['_id', '__v', '_userId', '_fingerPrint']);
+	// return _.pick({ ...obj, id: obj._id }, ['id', '_pollId', '_optionId', 'createDate']);
+	return _.omit({ ...obj, id: obj._id }, ['_id', '__v', '_userId', '_visitorId', '_fingerPrint']);
 }
 
 // Validate that vote has a guest identification (fingerprint)
@@ -36,7 +38,6 @@ VoteSchema.pre('validate', function (next) {
 
 	const verifyPoll = () => {
 		Poll.findOne({ _id: vote._pollId }, function (err, poll) {
-			console.log('in verify Poll');
 			if (err) return next(new ValidationError(`Failed to validate Poll - ${err.message}`));
 			if (!poll) return next(new ValidationError('Vote invalid, the Poll associated with this vote does not exist.'));
 			// if (!poll) vote.invalidate('_pollId', 'Vote invalid, the Poll associated with this vote does not exist.')
@@ -54,15 +55,13 @@ VoteSchema.pre('validate', function (next) {
 		});
 	}
 
-	if (!vote._userId && !vote._fingerPrint) {
-		console.log('in not user id and not fingerprint');
+	if (!vote._userId && !vote._fingerPrint && !vote._visitorId) {
 		return next(new ValidationError('A guest Vote must have a guest fingerprint for identification'));
 		// vote.invalidate('_fingerPrint', 'Vote must have a user fingerprint for identification if userId is not included')
 	}
 
 	if (vote._userId) {
 		User.findOne({ _id: vote._userId }, function (err, user) {
-			console.log('in findOne userId');
 			if (err) return next(new ValidationError(`Failed to validate User - ${err.message}`));
 			if (!user) return next(new ValidationError('Vote invalid, the User associated with this vote does not exist.'));
 			// if (!user) vote.invalidate('_userId', 'Vote invalid, the User associated with this vote does not exist.')
@@ -86,7 +85,6 @@ VoteSchema.pre('save', function (next) {
 // (3) Trigger Socket.IO update votes
 VoteSchema.post('save', function (doc, next) {
 	var vote = this;
-	console.log("vote.wasNew", vote.wasNew);
 
 	const abort = (message) => {
 		console.log('abort()');
@@ -98,20 +96,15 @@ VoteSchema.post('save', function (doc, next) {
 	};
 
 	if (vote.wasNew) {
-		console.log('wasNew');
 		Poll.findOne({ _id: vote._pollId }, function (err, poll) {
 			if (err) abort(`Error finding poll associated with vote - ${err.message}`);
 			if (!poll) abort(new Error('Failed to find poll associated with vote'));
-
-			console.log('vote._optionId', vote._optionId);
-			console.log("Options:", poll.options);
 
 			const option = _.find(poll.options, function (option) { return option._id && vote._optionId && option._id.toString() == vote._optionId.toString() });
 			if (!option) {
 				console.log('should abort..');
 				abort('Failed to find poll option associated with vote');
 			}
-			console.log("option", option);
 
 			poll.total_votes = poll.total_votes + 1;
 			option.votes = option.votes + 1;
@@ -124,7 +117,6 @@ VoteSchema.post('save', function (doc, next) {
 
 	}
 	else {
-		console.log('testing');
 		return next();
 	}
 });
@@ -134,8 +126,9 @@ function validateVote(vote) {
 		_pollId: Joi.string().trim().required(),
 		_optionId: Joi.string().trim().required(),
 		_userId: Joi.string().trim(),
+		_visitorId: Joi.string().trim(),
 		_fingerPrint: Joi.string().trim()
-	}).or('_userId', '_fingerPrint');
+	}).or('_userId', '_visitorId', '_fingerPrint');
 	return schema.unknown().validate(vote);
 }
 

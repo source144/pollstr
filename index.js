@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
+const { Fingerprint: fp } = require('./models/Fingerprint');
 const Fingerprint = require('express-fingerprint');
 const { errorObject } = require('./shared/util');
 
@@ -282,13 +283,26 @@ function emitPollData(pollId, eventName, payload) {
 	io.in(pollId).emit(eventName, payload);
 };
 
+// Validate vistor id if there is one
+const visitorId = (req, res, next) => {
+	const vId = req.headers['x-finger-print'];
 
+	if (vId) {
+		fp.findOne({ fingerprint: vId }, function (error, fingerprint) {
+			if (error) { next(); }
+			else if (!fingerprint) { next(); }
+			else { req.visitorId = vId; next(); }
+		})
+
+	}
+	else next();
+}
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-app.use('/api', withSocket, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }));
+app.use('/api', withSocket, visitorId, Fingerprint({ parameters: [Fingerprint.useragent, Fingerprint.geoip] }),);
 app.use('/api/auth', authRoutes);
 app.use('/api/poll', withCredentials, pollRoutes);
 app.use('/api/polls', withCredentials, pollsRoutes);
