@@ -3,6 +3,9 @@ import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import moment from 'moment';
 import './CountdownTimer.css';
 
+import useWindowDimension from './util/useWindowDimension'
+
+
 const minuteSeconds = 60;
 const hourSeconds = 3600;
 const daySeconds = 86400;
@@ -35,8 +38,12 @@ const renderTime = ({ remainingTime }) => {
 };
 
 const CountdownTimer = ({ startDate, timeToLive, onComplete }) => {
+	// TODO : Use a global state from AppContext
+	const { width } = useWindowDimension();
+	const isMobile = width <= 600;
+
 	const timeLeft = timeToLive - (moment().unix() - moment(startDate).unix())
-	
+
 	return (
 		<div className="timer-wrapper">
 			<CountdownCircleTimer
@@ -45,6 +52,7 @@ const CountdownTimer = ({ startDate, timeToLive, onComplete }) => {
 				initialRemainingTime={timeLeft > 0 ? timeLeft : 0}
 				onComplete={onComplete ? onComplete : () => { }}
 				colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
+				size={isMobile ? 65 : 100}
 			>
 				{renderTime}
 			</CountdownCircleTimer>
