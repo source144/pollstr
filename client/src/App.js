@@ -29,9 +29,9 @@ import 'react-toastify/dist/ReactToastify.css';
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
 
-// axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
-axios.defaults.baseURL = 'http://localhost:5000/api/';
+// axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
 	// TODO : move this to AppContext
