@@ -46,7 +46,6 @@ const DATE_FORMAT = "ddd, MMM Do YYYY, hA";
 // 	})
 // });
 
-const authFingerprintRequest = () => ({ type: AUTH_FINGERPRINT_REQUEST });
 const authFingerprintSuccess = () => ({ type: AUTH_FINGERPRINT_SUCCESS });
 const authFingerprintFailure = (error, errorMsg) => ({ type: AUTH_FINGERPRINT_FAILURE, error_data: error, error: errorMsg });
 export const authFingerprint = () => {
@@ -159,7 +158,7 @@ export const authLogin = auth => {
 				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 
 				let needsVerification;
-				if (error.response && error.response.status == 426 && error.config.data)
+				if (error.response && error.response.status === 426 && error.config.data)
 					needsVerification = JSON.parse(error.config.data).email
 
 				dispatch(authLoginFailure(errorMsg, needsVerification));

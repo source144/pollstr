@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useParams, Redirect } from 'react-router-dom';
+import LoadingOverlay from 'react-loading-overlay';
+import { toast } from 'react-toastify'
+import { PushSpinner } from 'react-spinners-kit'
 import axios from 'axios';
 
 const lowerRegex = /(?=.*[a-z])/
@@ -19,7 +22,7 @@ const checkForm = (payload) => {
 
 
 	// Trim the payload
-	Object.keys(payload).map(function (key, index) { payload[key] = payload[key].trim(); });
+	Object.keys(payload).forEach(function (key, index) { payload[key] = payload[key].trim(); });
 
 	if (!payload.password) errors.password = 'A password is required';
 	else {
@@ -77,14 +80,16 @@ const PasswordReset = () => {
 		if (valid) {
 			// /api/auth/password/reset/{id}
 			setLoading(true);
-			axios.put(`/api/auth/password/reset/${id}`, payload)
+			// TODO : endpoint to check if the reset link is valid
+			axios.put(`/auth/password/reset/${id}`, payload)
 				.then(response => {
 					setLoading(false);
-					setTimeout(() => {
-						setRedirect(true);
-					}, 700);
+					toast('Password Updated!', { position: "top-center", autoClose: 5000 });
+					setRedirect(true);
 				})
 				.catch(error => {
+					setLoading(false);
+
 					const errorData = error.response ? error.response.data : {};
 					const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 
@@ -97,50 +102,56 @@ const PasswordReset = () => {
 		return (<Redirect to="/login" />);
 
 	return (
-		<div className="form-centered-container">
-			<div className="form-form-wrapper">
-				<h1 className='form-title'>Reset Password</h1>
-				<div className="form-description form--mb1"><p>Please enter your new password below.</p></div>
-				<form onSubmit={handleSubmit} formNoValidate className='form-form'>
-					<div className="form-item">
-						<label htmlFor="password">New Password</label>
-						<div className='form-item-wrapper'>
-							<input
-								className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
-								type="password"
-								placeholder="Something Secret! (Shhh..)"
-								// placeholder="e.g. CaputDraconis420"
-								name="password"
-								formNoValidate
-								onChange={handlePassword} />
-							<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
+		<LoadingOverlay
+			active={loading}
+			spinner={<PushSpinner size={80} color={'#55c57a'} />}
+			text='Loading stuff'
+		>
+			<div className="form-centered-container">
+				<div className="form-form-wrapper">
+					<h1 className='form-title'>Reset Password</h1>
+					<div className="form-description form--mb1"><p>Please enter your new password below.</p></div>
+					<form onSubmit={handleSubmit} formNoValidate className='form-form'>
+						<div className="form-item">
+							<label htmlFor="password">New Password</label>
+							<div className='form-item-wrapper'>
+								<input
+									className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
+									type="password"
+									placeholder="Something Secret! (Shhh..)"
+									// placeholder="e.g. CaputDraconis420"
+									name="password"
+									formNoValidate
+									onChange={handlePassword} />
+								<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
+							</div>
+							{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 						</div>
-						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
-					</div>
-					<div className="form-item">
-						<label htmlFor="confirm">Confirm New Password</label>
-						<div className='form-item-wrapper'>
-							<input
-								className={`form-item__input ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-								type="password"
-								placeholder="Same Secret!"
-								name="confirm"
-								formNoValidate
-								onChange={handleConfirm} />
-							<span className='form-item__input-icon'><i className="fas fa-key"></i></span>
+						<div className="form-item">
+							<label htmlFor="confirm">Confirm New Password</label>
+							<div className='form-item-wrapper'>
+								<input
+									className={`form-item__input ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+									type="password"
+									placeholder="Same Secret!"
+									name="confirm"
+									formNoValidate
+									onChange={handleConfirm} />
+								<span className='form-item__input-icon'><i className="fas fa-key"></i></span>
+							</div>
+							{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
 						</div>
-						{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
-					</div>
-					{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
-					<div className="form-item">
-						<input
-							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="submit" value="Set New Password" />
-					</div>
-					<div className="form-switch"><p>Know your password? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
-				</form>
+						{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
+						<div className="form-item">
+							<input
+								className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+								type="submit" value="Set New Password" />
+						</div>
+						<div className="form-switch"><p>Know your password? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
+					</form>
+				</div>
 			</div>
-		</div>
+		</LoadingOverlay >
 	)
 
 }

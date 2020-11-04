@@ -4,8 +4,8 @@ import _ from 'lodash';
 
 import "./HashtagTextArea.css";
 
-const isTag = /^\#(?!_)\w+/
-const splitTags = /\B(\#(?!_)\w+\b)(?!#)/
+const isTag = /^#(?!_)\w+/
+const splitTags = /\B(#(?!_)\w+\b)(?!#)/
 
 // Other tested regex
 // const splitTags = /\B(\#[a-zA-Z0-0_]+\b)(?!#)/ // <- using this one
@@ -14,7 +14,6 @@ const splitTags = /\B(\#(?!_)\w+\b)(?!#)/
 
 const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singleline = false, newlines = false, tagClass = 'inputHashtag', onChange }) => {
 
-	const [loaded, setLoaded] = useState(undefined);
 	const editable = useRef();
 
 	const handlePaste = (e) => {
@@ -72,7 +71,7 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 			const _newHeight = Math.max(editable.current.scrollHeight + 4, 70);
 			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
 		}
-	}, [loaded])
+	}, [singleline])
 
 	return (
 		<>

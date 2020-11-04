@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { MODAL_CLOSE, MODAL_OPEN } from '../actions/types/modalTypes'
 
 const initState = { isOpen: false };

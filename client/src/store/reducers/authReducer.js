@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
 	AUTH_SIGNUP_REQUEST,
 	AUTH_SIGNUP_SUCCESS,

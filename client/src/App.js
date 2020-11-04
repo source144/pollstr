@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { createStor } from 'redux';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import './App.css';
@@ -29,14 +28,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
-import useWindowDimensions from './components/util/useWindowDimension';
 
-axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+// axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';
-// axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
-	const { height, width } = useWindowDimension();
+	// TODO : move this to AppContext
+	// TODO : add to application state
+	const { width } = useWindowDimension();
 	const isMobile = width <= 960;
 
 	return (

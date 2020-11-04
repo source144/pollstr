@@ -7,9 +7,11 @@ const SELECT_PERCENTAGE_INCREASE = 3;
 const NO_POLL_VOTERS_PERCENTAGE = 30;
 const HIDDEN_RESULTS_PERCENTAGE = 70;
 
-export default ({ option }) => {
-	const { voted, hideResults, expired, total_votes } = useSelector(state => state.poll.poll);
-	const { selected } = useSelector(state => state.poll);
+const templatePollData = { voted: true, hideResults: false, expired: true, total_votes: 37 };
+
+export default ({ option, isTemplate = false }) => {
+	const { voted, hideResults, expired, total_votes } = !isTemplate ? useSelector(state => state.poll.poll) : templatePollData;
+	const { selected } = !isTemplate ? useSelector(state => state.poll) : { selected: false };
 	const dispatch = useDispatch();
 
 	const disabled = voted != undefined || expired;

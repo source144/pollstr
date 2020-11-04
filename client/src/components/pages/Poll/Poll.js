@@ -6,7 +6,7 @@ import CountdownTimer from '../../CountdownTimer';
 import ReactHashtag from "react-hashtag";
 import { useSelector, useDispatch } from 'react-redux';
 
-import _ from 'lodash';
+import moment from 'moment';
 
 import socket from '../../../store/socket';
 import Placeholder from '../Placeholder/Placeholder';
@@ -16,6 +16,51 @@ import './Poll.css';
 
 import { getPoll, disableVoting, votePoll, updatePoll, flushPoll } from '../../../store/actions/pollActions';
 import { modalClose, modalOpen, modalStatFade } from '../../../store/actions/modalActions';
+
+// TODO : probably not gonna use this
+const __poll_placeholder = (() => {
+	const poll = {
+		timeToLive: 900,
+		title: "Loading...",
+		description: "Please wait...",
+		createDate: moment().subtract({ minutes: 3 }).toString(),
+		tags: ['loading', 'patience'],
+		total_votes: 37,
+		options: [
+			{ id: 11, title: "Loading..", percent: 73, votes: 27 },
+			{ id: 22, title: "Please wait..", percent: 27, votes: 10 }
+		]
+	}
+
+	return (
+		<div className="form-form-wrapper poll-wrapper">
+			<div className="poll-detail-wrapper">
+				<CountdownTimer startDate={poll.createDate} timeToLive={poll.timeToLive}></CountdownTimer>
+				<div className="poll-info">
+					<h1 className='poll-title'><ReactHashtag>{poll.title}</ReactHashtag></h1>
+					<div className="form-description"><p className="poll-description">{poll.description}</p></div>
+					<ul className='poll-tags'>{poll.tags.map((tag, i) => tag ? <Chip key={i}>{tag}</Chip> : null)}</ul>
+					<span className="poll-total-votes">{poll.total_votes} voters</span>
+				</div>
+			</div>
+			<div className="form--mb1"></div>
+			<div className="form--mb1"></div>
+
+			{poll.options.map((option) =>
+				<PollOption
+					key={option.id}
+					option={option}>
+				</PollOption>)
+			}
+			<div className="form-item">
+				<input
+					className="btn btn--tertiary form-item__submit"
+					type="button" value="Vote" disabled />
+			</div>
+		</div>
+	)
+});
+
 
 const Poll = () => {
 	// TODO : get ID from path
@@ -68,7 +113,7 @@ const Poll = () => {
 			dispatch(getPoll(id));
 			return () => { socket.emit("leave", `${id}`); dispatch(flushPoll()) }
 		}
-	}, [id, auth_loading, fingerprint]);
+	}, [id, _prevent_fetch_, dispatch]);
 
 	// TODO : useEffect for error to display error toasts
 

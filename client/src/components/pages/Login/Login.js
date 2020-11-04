@@ -18,7 +18,7 @@ const checkForm = (payload) => {
 
 
 	// Trim the payload
-	Object.keys(payload).map(function (key, index) { payload[key] = payload[key].trim(); });
+	Object.keys(payload).forEach(function (key, index) { payload[key] = payload[key].trim(); });
 
 	if (!payload.email) errors.email = 'An email is required';
 	else if (!emailRegex.test(payload.email)) errors.email = 'Please enter a valid email';
@@ -32,7 +32,11 @@ const checkForm = (payload) => {
 const Login = () => {
 
 
-	const { auth, error, loading, needsVerification } = useSelector(state => state.auth)
+	const { auth, error, needsVerification,
+		global_loading: auth_loading,
+		loading: verification_loading,
+	} = useSelector(state => state.auth)
+
 	const dispatch = useDispatch()
 
 	const [email, setEmail] = useState('');
@@ -53,6 +57,9 @@ const Login = () => {
 	const handleSubmit = e => {
 		e.preventDefault();
 
+		// Prevent multiple requests
+		if (auth_loading || verification_loading)
+			return;
 
 		let valid = true;
 		const auth = getPayload()
@@ -66,6 +73,10 @@ const Login = () => {
 	}
 	const handleResendVerification = e => {
 		e.preventDefault();
+
+		// Prevent multiple requests
+		if (auth_loading || verification_loading)
+			return;
 
 		// Shouldn't be called. (Do nothing)
 		if (!needsVerification)
@@ -112,7 +123,7 @@ const Login = () => {
 						</div>
 						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
-					{!!error ? <div className="form-item__error">{error}{needsVerification ? <span>! <a className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
+					{!!error ? <div className="form-item__error">{error}{needsVerification ? <span>! <a href='#' className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
 					<div className="form-item">
 						<input
 							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}

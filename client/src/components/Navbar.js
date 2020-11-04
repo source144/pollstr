@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { authLogin } from '../store/actions/authActions';
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
 import { authLogout } from '../store/actions/authActions'
@@ -156,8 +155,7 @@ const userDropdown = [
 
 function Navbar() {
 
-	const { redirect, setRedirect } = useState(undefined);
-	const { auth, global_loading, gloabl_error } = useSelector(state => state.auth);
+	const { auth, global_loading } = useSelector(state => state.auth);
 	const { isOpen } = useSelector(state => state.modal);
 	const dispatch = useDispatch();
 	const hasAuth = !_.isEmpty(auth);

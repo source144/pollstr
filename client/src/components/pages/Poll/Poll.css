@@ -54,6 +54,7 @@
 }
 
 .poll-detail-wrapper {
+  position: relative;
   align-self: center;
   display: flex;
   width: 100%;
@@ -69,7 +70,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
+
   -ms-word-break: break-all;
   word-break: break-all;
 
@@ -81,4 +82,69 @@
   hyphens: auto;
 
   /* margin-left: 1rem;	 */
+}
+
+.three-dots-box {
+  position: absolute;
+  top: 3rem;
+  right: 2rem;
+  content: "";
+  height: 35px;
+  width: 35px;
+
+  background: red;
+  /* transform: translateY(-50%), translateX(-50%); */
+  transform: translate(-50%, -50%);
+  /* translateX(-50%); */
+  /* transform: translateX(-50%) */
+}
+
+.three-dots {
+  position: absolute;
+  top: 3rem;
+  right: 2rem;
+  content: "";
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.three-dots,
+.three-dots::before,
+.three-dots::after {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-grey-dark-5);
+}
+
+.three-dots::before,
+.three-dots::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+}
+
+.three-dots::before {
+  top: -0.8rem;
+}
+.three-dots::after {
+  top: 0.8rem;
+}
+
+.three-dots:hover::before {
+  transform: translateY(-0.2rem);
+}
+
+.three-dots:hover::before {
+  transform: translateY(0.2rem);
+}
+
+.three-dots:hover::before {
+  transform: translateY(-0.2rem);
+}
+
+.three-dots:hover::after {
+  transform: translateY(0.2rem);
 }

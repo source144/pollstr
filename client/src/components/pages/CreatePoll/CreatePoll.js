@@ -66,7 +66,8 @@ const validate = (payload) => {
 }
 
 const CreatePoll = () => {
-	const { height, width } = useWindowDimension();
+	// TODO : Use a global state from AppContext
+	const { width } = useWindowDimension();
 	const isMobile = width <= 960;
 
 	const { auth, global_loading: auth_loading } = useSelector(state => state.auth);

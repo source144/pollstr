@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authSignup } from '../../store/actions/authActions';
+import LoadingOverlay from 'react-loading-overlay';
+import { toast } from 'react-toastify'
+import { PushSpinner } from 'react-spinners-kit'
 import './SignupForm.css';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -22,9 +25,7 @@ const checkForm = (payload) => {
 		confirm: '',
 	};
 	const pwDetails = [];
-	let valid = true;
 	let pwLength;
-
 
 	// Trim the payload
 	Object.keys(payload).map(function (key, index) { payload[key] = payload[key].trim(); });
@@ -100,90 +101,97 @@ const SignUpForm = () => {
 	if (signup_complete) return <Redirect to='/' />
 
 	return (
-		<div className="form-form-wrapper">
-			<h1 className='form-title'>Create Account</h1>
-			<form onSubmit={handleSubmit} formNoValidate className='form-form'>
-				<div className="form-item">
-					<label htmlFor="firstName">First Name</label>
-					<div className='form-item-wrapper'>
-						<input
-							className={`form-item__input ${!!errors.firstName ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. Serverus"
-							name="firstName"
-							formNoValidate
-							onChange={handleFirstName} />
-						<span className='form-item__input-icon'><i className="fas fa-user-graduate"></i></span>
-					</div>
-					{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
 
-				</div>
-				<div className="form-item">
-					<label htmlFor="lastName">Last Name</label>
-					<div className='form-item-wrapper'>
-						<input
-							className={`form-item__input ${!!errors.lastName ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. Snape"
-							name="lastName"
-							formNoValidate
-							onChange={handleLasttName} />
-						<span className='form-item__input-icon'><i className="fas fa-user-tie"></i></span>
+		<LoadingOverlay
+			active={signup_loading}
+			spinner={<PushSpinner size={80} color={'#55c57a'} />}
+			text='Loading stuff'
+		>
+			<div className="form-form-wrapper">
+				<h1 className='form-title'>Create Account</h1>
+				<form onSubmit={handleSubmit} formNoValidate className='form-form'>
+					<div className="form-item">
+						<label htmlFor="firstName">First Name</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.firstName ? 'form-item__input--err' : ''}`}
+								type="text"
+								placeholder="e.g. Serverus"
+								name="firstName"
+								formNoValidate
+								onChange={handleFirstName} />
+							<span className='form-item__input-icon'><i className="fas fa-user-graduate"></i></span>
+						</div>
+						{!!errors.firstName ? <span className='form-item__error'>{errors.firstName}</span> : null}
+
 					</div>
-					{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
-				</div>
-				<div className="form-item">
-					<label htmlFor="email">Email</label>
-					<div className='form-item-wrapper'>
-						<input
-							className={`form-item__input ${!!errors.email ? 'form-item__input--err' : ''}`}
-							type="text"
-							placeholder="e.g. serverus@hogwarts.edu"
-							name="email"
-							formNoValidate
-							onChange={handleEmail} />
-						<span className='form-item__input-icon'><i className="fas fa-envelope"></i></span>
+					<div className="form-item">
+						<label htmlFor="lastName">Last Name</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.lastName ? 'form-item__input--err' : ''}`}
+								type="text"
+								placeholder="e.g. Snape"
+								name="lastName"
+								formNoValidate
+								onChange={handleLasttName} />
+							<span className='form-item__input-icon'><i className="fas fa-user-tie"></i></span>
+						</div>
+						{!!errors.lastName ? <span className='form-item__error'>{errors.lastName}</span> : null}
 					</div>
-					{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
-				</div>
-				<div className="form-item">
-					<label htmlFor="password">Password</label>
-					<div className='form-item-wrapper'>
-						<input
-							className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="password"
-							placeholder="Something Secret! (Shhh..)"
-							// placeholder="e.g. CaputDraconis420"
-							name="password"
-							formNoValidate
-							onChange={handlePassword} />
-						<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
+					<div className="form-item">
+						<label htmlFor="email">Email</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.email ? 'form-item__input--err' : ''}`}
+								type="text"
+								placeholder="e.g. serverus@hogwarts.edu"
+								name="email"
+								formNoValidate
+								onChange={handleEmail} />
+							<span className='form-item__input-icon'><i className="fas fa-envelope"></i></span>
+						</div>
+						{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 					</div>
-					{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
-				</div>
-				<div className="form-item">
-					<label htmlFor="confirm">Confirm Password</label>
-					<div className='form-item-wrapper'>
-						<input
-							className={`form-item__input ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-							type="password"
-							placeholder="Same Secret!"
-							name="confirm"
-							formNoValidate
-							onChange={handleConfirm} />
-						<span className='form-item__input-icon'><i className="fas fa-key"></i></span>
+					<div className="form-item">
+						<label htmlFor="password">Password</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.password || !!errors.confirm ? 'form-item__input--err' : ''}`}
+								type="password"
+								placeholder="Something Secret! (Shhh..)"
+								// placeholder="e.g. CaputDraconis420"
+								name="password"
+								formNoValidate
+								onChange={handlePassword} />
+							<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
+						</div>
+						{!!errors.password ? <span className='form-item__error'>{errors.password}</span> : null}
 					</div>
-					{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
-				</div>
-				{!!signup_error ? <div className="form-item__error">{signup_error}</div> : null}
-				<div className="form-item">
-					<input
-						className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-						type="submit" value="Sign Up" />
-				</div>
-				<div className="form-switch"><p>Already have an account? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
-			</form>
-		</div>
+					<div className="form-item">
+						<label htmlFor="confirm">Confirm Password</label>
+						<div className='form-item-wrapper'>
+							<input
+								className={`form-item__input ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+								type="password"
+								placeholder="Same Secret!"
+								name="confirm"
+								formNoValidate
+								onChange={handleConfirm} />
+							<span className='form-item__input-icon'><i className="fas fa-key"></i></span>
+						</div>
+						{!!errors.confirm ? <span className='form-item__error'>{errors.confirm}</span> : null}
+					</div>
+					{!!signup_error ? <div className="form-item__error">{signup_error}</div> : null}
+					<div className="form-item">
+						<input
+							className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+							type="submit" value="Sign Up" />
+					</div>
+					<div className="form-switch"><p>Already have an account? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
+				</form>
+			</div>
+		</LoadingOverlay>
 	);
 };
 
