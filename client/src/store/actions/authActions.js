@@ -52,19 +52,13 @@ export const authFingerprint = () => {
 	return (dispatch) => {
 		FingerprintJS.load()
 			.then(fp => {
-				console.log('Connected to FingerprintJS service')
 				fp.get()
 					.then(({ visitorId }) => {
-						console.log('Got fingerprint ', visitorId);
-
-						// Dispose fingerprint header before sending request
-						delete axios.defaults.headers.common["x-finger-print"];
-
-
-
+						
 						// Register visitor with API
 						axios.post('/auth/fingerprint', { visitorId })
 							.then(response => {
+
 								// Add fingerprint to header
 								axios.defaults.headers.common['x-finger-print'] = visitorId;
 
