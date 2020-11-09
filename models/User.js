@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema({
 	role: { type: String, required: true, default: 'user' },
 	verified: { type: Boolean, required: true, default: false },
 	createDate: { type: Date, required: true, default: Date.now },
-	lastLogin: { type: Date, default: Date.now },
+	lastLogin: { type: Date },
 	pollCount: { type: Number, min: 0, default: 0 },
 	polls: [mongoose.Schema.Types.ObjectId]
 });
