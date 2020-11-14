@@ -12,6 +12,7 @@
     "moment": "^2.29.1",
     "qrcode.react": "^1.0.0",
     "react": "^17.0.0",
+    "react-animate-height": "^2.0.23",
     "react-beautiful-dnd": "^13.0.0",
     "react-chips": "^0.8.0",
     "react-countdown-circle-timer": "^2.3.7",
