@@ -96,6 +96,12 @@
     var(--color-black--2) 100%
   );
 
+  --poll-tools-padding-x: 10px;
+  --poll-tools-padding-y: 5px;
+
+  --poll-tools-action-padding-x: 4px;
+  --poll-tools-action-padding-y: 2px;
+
   /* --gradient-secondary--2: linear-gradient(
       130deg,
       var(--color-secondary) 0%,
@@ -137,6 +143,12 @@ input {
 .RMM__close-button,
 .RMM__close-button:hover {
   background: rgb(0, 0, 0) !important;
+  margin-top: var(--nav-height);
+}
+.RMM__body,
+.RMM__body.RMM__body--is-active {
+  height: calc(100vh- var(--nav-height)) !important;
+  /* overflow: hidden !important; */
 }
 
 .opacity-0 {
@@ -145,7 +157,7 @@ input {
 }
 
 .RMM__placeholder {
-  margin-top: var(--nav-height);
+  /* margin-top: var(--nav-height); */
   background: rgb(0, 0, 0);
   /* transition: background 4s ease-out; */
 }
@@ -158,6 +170,7 @@ body {
   box-sizing: border-box;
   background-color: var(--color-grey-dark-4);
   background: var(--color-bg-calm-1);
+  overflow: auto !important;
 }
 
 .Toastify__toast-container.Toastify__toast-container--top-right,
@@ -170,7 +183,7 @@ body {
   .Toastify__toast-container.Toastify__toast-container--top-right,
   .Toastify__toast-container.Toastify__toast-container--top-center,
   .Toastify__toast-container.Toastify__toast-container--top-left {
-	  display: none;
+    display: none;
   }
 }
 
@@ -444,6 +457,11 @@ body {
   padding-right: 3.4rem;
 }
 
+.form-item__input--small {
+  /* font-size: var(--form-input-size--small); */
+  height: 43px;
+}
+
 .form-item__input:focus {
   border-color: #4dabf7;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
@@ -498,6 +516,33 @@ body {
 .form-item__error {
   color: var(--color-danger--1);
   font-size: 1.4rem;
+}
+
+/* 
+  ---------------------------
+  --------- Margins ---------
+  --------------------------- 
+  */
+.mt-0 {
+  margin-top: 0rem;
+}
+.mt-1 {
+  margin-top: 1rem;
+}
+.mt-2 {
+  margin-top: 2rem;
+}
+.mt-3 {
+  margin-top: 3rem;
+}
+.mt-4 {
+  margin-top: 4rem;
+}
+.mt-5 {
+  margin-top: 5rem;
+}
+.mt-6 {
+  margin-top: 6rem;
 }
 
 /* 
