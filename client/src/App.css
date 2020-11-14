@@ -147,8 +147,9 @@ input {
 }
 .RMM__body,
 .RMM__body.RMM__body--is-active {
-  height: calc(100vh- var(--nav-height)) !important;
-  /* overflow: hidden !important; */
+  /* height: 100%; */
+  /* height: calc(100vh - var(--nav-height)) !important; */
+  overflow: hidden !important;
 }
 
 .opacity-0 {
