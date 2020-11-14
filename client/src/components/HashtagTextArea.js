@@ -12,7 +12,10 @@ const splitTags = /\B(#(?!_)\w+\b)(?!#)/
 // const splitTags = /([#|＃][^\s]+)/g
 
 
-const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singleline = false, newlines = false, tagClass = 'inputHashtag', onChange }) => {
+const HashtagTextArea = (
+	{ placeholder, className = "HashtagTextArea", singleline = false,
+		newlines = false, tagClass = 'inputHashtag', disabled = false,
+		onChange = undefined }) => {
 
 	const editable = useRef();
 
@@ -55,7 +58,8 @@ const HashtagTextArea = ({ placeholder, className = "HashtagTextArea", singlelin
 		if (!singleline)
 			editable.current.style.height = 'auto';
 
-		onChange(editable.current.innerText);
+		if (onChange && onChange instanceof Function)
+			onChange(editable.current.innerText);
 	}
 
 	// Fix placeholder psuedo element blocking selection
