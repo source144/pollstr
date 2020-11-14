@@ -19,6 +19,7 @@ const no_special_chars = (str) => str.replace(/[^\w\s]/gi, '');
 
 const PollSchema = new mongoose.Schema({
 	_creator: { type: mongoose.Schema.Types.ObjectId, required: false, ref: "User" },
+	_visitorId: { type: String, required: false },
 	title: {
 		type: String,
 		trim: true,

@@ -256,7 +256,6 @@ router.post('/signup', (req, res) => {
 		lastName: req.body.lastName
 	});
 
-
 	user.save(function (err) {
 		if (err) {
 			if (err.errors) return res.status(422).send(errorObject(err.message.split(':')[2]));

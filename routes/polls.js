@@ -41,15 +41,56 @@ const withUserId = (req, res, next) => {
  *          description: Server Side Error
  *        401:
  *          description: Must be logged in
- *        404:
- *          description: Poll does not exist
  *        426:
  *          description: User is not verified yet.
  */
 router.get('/', withUserId, (req, res) => {
+	// TODO : get query params for search
+	// TODO : req.query.search; req.query.foo;
+	// TODO : req.query.search;		// String
+	// TODO : req.query.public;		// True/False
+	// TODO : req.query.guests;		// True/False
+	// TODO : req.query.hidden;		// True/False
+	// TODO : req.query.passcode;	// True/False
 	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to get user polls'));
 
 	Poll.find({ _creator: req.user.id }, function (err, polls) {
+		if (err) return res.status(500).send({ err, message: err.message });
+		return res.status(200).send(polls);
+	})
+});
+
+/**
+ * @swagger
+ *  /api/polls/guest:
+ *    get:
+ *      tags:
+ *        - Polls
+ *      description: Fetches the polls created by the requester  (guest/visitor)
+ *      security:
+ *        - BearerAuth: []
+ *      produces:
+ *        - application/json
+ * 
+ *      responses:
+ *        200:
+ *          description: Fetch Successful. Returns Polls created/owned by guest
+ *        500:
+ *          description: Server Side Error
+ *        404:
+ *          description: Poll does not exist
+ */
+router.get('/guest', withUserId, (req, res) => {
+	// TODO : get query params for search
+	// TODO : req.query.search; req.query.foo;
+	// TODO : req.query.search;		// String
+	// TODO : req.query.public;		// True/False
+	// TODO : req.query.guests;		// True/False
+	// TODO : req.query.hidden;		// True/False
+	// TODO : req.query.passcode;	// True/False
+	console.log('[GET /polls/guest] req.fingerprint.hash', req.fingerprint.hash)
+	console.log('[GET /polls/guest] req.visitorId', req.visitorId)
+	Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, function (err, polls) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		return res.status(200).send(polls);
 	})

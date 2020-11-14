@@ -66,7 +66,14 @@ router.post('/', withUserId, (req, res) => {
 	const { error } = validatePoll(req.body);
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
 
-	req.body._creator = req.user && req.user.id;
+	// Omit identifying fields from request
+	req.body = _.omit(req.body, "_creator", "_visitorId", "createDate");
+
+	// If logged in
+	if (req.user && req.user.id) req.body._creator = req.user.id;
+
+	// Otherwise, link to guest id
+	else req.body._visitorId = req.visitorId ? req.visitorId : req.fingerprint.hash;
 
 	const poll = new Poll(req.body);
 	poll.save(function (err) {
