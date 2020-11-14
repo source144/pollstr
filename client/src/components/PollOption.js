@@ -9,13 +9,14 @@ const HIDDEN_RESULTS_PERCENTAGE = 70;
 
 const templatePollData = { voted: true, hideResults: false, expired: true, total_votes: 37 };
 
-export default ({ option, isTemplate = false }) => {
+// TODO : selectable/voteable - defaults to true
+export default ({ option, isTemplate = false, interactable = true }) => {
 	const { voted, hideResults, expired, total_votes } = !isTemplate ? useSelector(state => state.poll.poll) : templatePollData;
 	const { selected } = !isTemplate ? useSelector(state => state.poll) : { selected: false };
 	const dispatch = useDispatch();
 
-	const disabled = voted != undefined || expired;
-	const showResult = !hideResults || expired;
+	const disabled = voted != undefined || expired || !interactable;
+	const showResult = !hideResults || expired || !interactable;
 	const selected_this = selected === option.id;
 
 	let optionPercentDisplayWidth;
@@ -34,8 +35,11 @@ export default ({ option, isTemplate = false }) => {
 		// Otherwise, just show the actual result
 	} else optionPercentDisplayWidth = option.percent;
 
+
+	const optionStyle = voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected_this ? 'poll-option--selected' : ''
+
 	return (
-		<div className={`form-item form--mb1 poll-option ${voted === option.id ? 'poll-option--voted' : disabled ? 'poll-option--disabled' : selected_this ? 'poll-option--selected' : ''}`}
+		<div className={`form-item form--mb1 poll-option ${optionStyle}`}
 			onClick={() => !disabled && !selected_this ? dispatch(selectOption(option.id)) : undefined}
 		>
 			<label >{option.title}</label>

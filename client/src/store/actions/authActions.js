@@ -54,7 +54,7 @@ export const authFingerprint = () => {
 			.then(fp => {
 				fp.get()
 					.then(({ visitorId }) => {
-						
+
 						// Register visitor with API
 						axios.post('/auth/fingerprint', { visitorId })
 							.then(response => {

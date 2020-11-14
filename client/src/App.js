@@ -16,6 +16,7 @@ import Verify from './components/pages/Verify/Verify';
 import NotFound from './components/pages/NotFound/NotFound';
 import Poll from './components/pages/Poll/Poll';
 import CreatePoll from './components/pages/CreatePoll/CreatePoll';
+import UserPolls from './components/pages/UserPolls/UserPolls';
 import AppContext from './AppContext';
 
 import useWindowDimension from './components/util/useWindowDimension'
@@ -29,9 +30,9 @@ import 'react-toastify/dist/ReactToastify.css';
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
 
-axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
-// axios.defaults.baseURL = 'https://pollstr.app/api/';
-// axios.defaults.baseURL = 'http://localhost:5000/api/';
+// axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+// axios.defaults.baseURL = 'https://pollstr.app/api/';  // <- alias
+axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
 	// TODO : move this to AppContext
@@ -47,13 +48,15 @@ function App() {
 						<Navbar />
 						<div className="app">
 							<Switch>
+								{/* <Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route> */}
 								<Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route>
 								<Route path='/signup' component={Signup} exact></Route>
 								<Route path='/login' component={Login} exact></Route>
 								<Route path='/password/forgot' component={PasswordForgot} exact></Route>
 								<Route path='/password/reset/:id-:token' component={PasswordReset}></Route>
 								<Route path='/verify/:id-:token' component={Verify}></Route>
-								<Route path='/polls' exact><Redirect to='/polls/create/' /></Route>
+								{/* <Route path='/polls' exact><Redirect to='/polls/create/' /></Route> */}
+								<Route path='/polls' exact component={UserPolls}></Route>
 								<Route path='/polls/create' exact component={CreatePoll}></Route>
 								<Route path='/poll/:id' component={Poll}></Route>
 								<Route path='/*' component={NotFound}></Route>

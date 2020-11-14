@@ -1,0 +1,28 @@
+.content-horizontal-center {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-fullscreen {
+  min-height: calc(100vh - var(--nav-height));
+}
+
+.user-polls .poll-wrapper {
+  width: min(600px, 100vw);
+  margin-bottom: 7rem;
+}
+
+@media screen and (min-width: 961px) {
+  .polls-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 600px;
+    max-width: 800px;
+    width: 80vw;
+  }
+}
