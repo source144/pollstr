@@ -22,6 +22,7 @@
 
 :root {
   --form-input-size: 1.6rem;
+  --form-input-size--clipboard: 1rem;
   --form-placeholder-size: 1.3rem;
 
   --color-primary: #55c57a;
@@ -332,6 +333,8 @@ body {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-centered-container {
@@ -387,6 +390,10 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0.6rem;
+}
+
+.form-item.form-item--clipboard {
+  width: 200px;
 }
 
 .form-item.form-item--no-margin {
@@ -458,12 +465,18 @@ body {
   padding-right: 3.4rem;
 }
 
+.form-item__input.form-item__input--clipboard {
+  font-size: var(--form-input-size--clipboard);
+  padding-right: 3.6rem;
+  background: var(--color-grey-light-3);
+}
+
 .form-item__input--small {
   /* font-size: var(--form-input-size--small); */
   height: 43px;
 }
 
-.form-item__input:focus {
+.form-item__input:focus:not(.form-item__input--clipboard) {
   border-color: #4dabf7;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0125),
     0 0 8px rgba(34, 139, 230, 0.5);
@@ -492,7 +505,17 @@ body {
   font-size: 1.5rem;
   color: var(--color-grey-dark-1);
 }
-
+.form-item__input-icon.form-item__input-icon--clipboard {
+  padding: 4px;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+}
+.form-item__input-icon.form-item__input-icon--clipboard:hover {
+  color: var(--color-primary);
+}
+.form-item__input-icon.form-item__input-icon--clipboard:active {
+  filter: brightness(0.85);
+}
 .form-item__input-remove {
   font-size: 1.5rem;
   color: var(--color-danger--1-unfocused);

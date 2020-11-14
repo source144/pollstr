@@ -13,6 +13,7 @@ import moment from 'moment';
 import useWindowDimension from '../../../util/useWindowDimension'
 import PollOption from '../../../PollOption';
 import Chip from '../../../Chip';
+import SharePoll from '../../../SharePoll/SharePoll';
 
 
 import { modalClose, modalOpen, modalStatFade } from '../../../../store/actions/modalActions';
@@ -138,17 +139,7 @@ const Poll = ({ poll }) => {
 					{/* TODO : use the Create Poll Form, with disabled fields */}
 
 					<Modal {...modalProps}>
-						<div className="form-centered-container">
-							<div className="form-form-wrapper">
-								<div onSubmit={(e) => { e.preventDefault() }} formNoValidate className='form-form'>
-									<div className="form-switch poll-created-description">Use this QR Code to Acces Poll</div>
-									<div className="poll-created-qr">
-										<QRCode value={`${window.location.protocol}//${window.location.host}/poll/${poll.id}`} size={200} />
-									</div>
-									<div className="form-switch poll-created-description">You can also use <a to={`/poll/${poll.id}`} className='form-switch-action'>This Link</a></div>
-								</div>
-							</div>
-						</div>
+						<SharePoll poll={poll} />
 					</Modal>
 
 					{/* TODO : modal for "are you sure you want to delete"? */}

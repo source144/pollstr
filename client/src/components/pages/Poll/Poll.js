@@ -14,6 +14,7 @@ import socket from '../../../store/socket';
 import Placeholder from '../Placeholder/Placeholder';
 import PollOption from '../../PollOption';
 import Chip from '../../Chip';
+import SharePoll from '../../SharePoll/SharePoll';
 import './Poll.css';
 
 
@@ -164,17 +165,7 @@ const Poll = () => {
 		</div>
 	</div>
 
-	const _QRModal = <div className="form-centered-container">
-		<div className="form-form-wrapper">
-			<div onSubmit={(e) => { e.preventDefault() }} formNoValidate className='form-form'>
-				<div className="form-switch poll-created-description">Use this QR Code to Acces Poll</div>
-				<div className="poll-created-qr">
-					<QRCode value={`${window.location.protocol}//${window.location.host}/poll/${poll.id}`} size={200} />
-				</div>
-				<div className="form-switch poll-created-description">You can also use <a to={`/poll/${poll.id}`} className='form-switch-action'>This Link</a></div>
-			</div>
-		</div>
-	</div>
+	const _QRModal = <SharePoll poll={poll} />
 
 	let _modal_content;
 	switch (modalContent) {
