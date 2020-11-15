@@ -71,7 +71,7 @@
   color: var(--color-primary);
 }
 
-.poll-wrapper .poll-actions .poll-action:active {
+.poll-wrapper .poll-actions .poll-action:not(.poll-action--no-active-style):active {
   filter: brightness(85%);
 }
 

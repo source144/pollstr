@@ -192,6 +192,10 @@ const Poll = () => {
 								<span className="poll-total-votes">{`${poll.total_votes > 0 ? poll.total_votes : 'no'} voter${poll.total_votes != 1 ? 's' : ''}`}</span>
 							</div>
 							<div className="poll-actions">
+
+								{poll.passcode ? <div className="poll-action poll-action--passcode poll-action--no-active-style">
+									<i className="fas fa-lock"></i>
+								</div> : undefined}
 								<div className="poll-action poll-action--share" onClick={handleShare}>
 									<i className="fas fa-link"></i>
 								</div>
