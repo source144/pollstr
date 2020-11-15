@@ -77,11 +77,46 @@ const Poll = ({ poll }) => {
 		</div>
 	</div>
 
-	// TODO : _editPasscodeModal
+	const _editPasscodeModal = <div className="form-centered-container">
+		<div className="form-form-wrapper">
+			<h1 className='form-title'>{poll.passcode ? "Modify Passcode" : "Add Passcode"}</h1>
+			<form onSubmit={(e) => { e.preventDefault(); console.log("EDIT PASSCODE") }} formNoValidate className='form-form'>
+				<div className="form-item">
+					<div className='form-item-wrapper'>
+
+
+						<input
+							value={passcode ?? ''}
+							className='form-item__input'
+							type="password"
+							// placeholder="Remove Passcode"
+							placeholder="e.g. *******"
+							name="passcode"
+							formNoValidate
+							onChange={(e) => setPasscode(e.target.value)} />
+						<span className='form-item__input-icon'><i className="fas fa-lock"></i></span>
+						{poll.passcode ? <label htmlFor="passcode" style={{ flexDirection: "column" }}>
+							<span style={{
+								alignSelf: 'flex-end',
+								fontStyle: "italic",
+								fontSize: "1rem"
+							}}>(leave empty to remove passcode)</span>
+						</label> : undefined}
+					</div>
+				</div>
+				<div className="form-item">
+					<input
+						onClick={(e) => { e.preventDefault(); console.log("EDIT PASSCODE") }}
+						className='btn btn--tertiary form-item__submit'
+						type="button" value="Save" />
+				</div>
+			</form>
+		</div>
+	</div>
 
 	let _modal_content;
 	switch (modalContent) {
-		case "PASSCODE": _modal_content = <h1>EDIT PASSCODE</h1>; break;
+		case "PASSCODE": _modal_content = _editPasscodeModal; break;
 		case "DELETE": _modal_content = _deleteModal; break;
 		case "EDIT": _modal_content = <EditPoll poll={poll} />; break;
 		case "QR": _modal_content = <SharePoll poll={poll} />; break;
