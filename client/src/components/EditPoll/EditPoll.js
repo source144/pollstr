@@ -64,6 +64,19 @@ export default ({ poll }) => {
 								/>
 							</div>
 
+							{/* Expiry and Poll Settings */}
+							<div className="form-item form-item--no-margin form--mb1">
+								<label htmlFor="expire" className='rw-datepicker-label'>Expire Date</label>
+								<DateTimePicker
+									min={new Date()}
+									onChange={date => setExpireDate(date)}
+									step={5}
+									timeCaption="time"
+									placeholder="No Exipiry Set"
+									defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined}
+								/>
+							</div>
+
 							{/* Poll Options */}
 							<div className="form-item">
 								<label>Options</label>
@@ -82,18 +95,7 @@ export default ({ poll }) => {
 								})}
 							</div>
 
-							{/* Expiry and Poll Settings */}
-							<div className="form-item form-item--no-margin form--mb1">
-								<label htmlFor="expire" className='rw-datepicker-label'>Expire Date</label>
-								<DateTimePicker
-									min={new Date()}
-									onChange={date => setExpireDate(date)}
-									step={5}
-									timeCaption="time"
-									placeholder="No Exipiry Set"
-									defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined}
-								/>
-							</div>
+
 							<div className="form-item">
 								<label htmlFor="tags">Tags</label>
 								<div className='form-item-wrapper'>
