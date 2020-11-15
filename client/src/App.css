@@ -478,6 +478,11 @@ body {
   padding-right: 3.4rem;
 }
 
+.form-item__input--small:disabled,
+.form-item__input:disabled {
+  background: var(--color-grey-light-1);
+}
+
 .form-item__input.form-item__input--clipboard {
   font-size: var(--form-input-size--clipboard);
   padding-right: 3.6rem;

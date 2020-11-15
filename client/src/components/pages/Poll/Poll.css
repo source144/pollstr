@@ -58,6 +58,9 @@
   margin-left: 6px;
 }
 
+.poll-wrapper .poll-actions .poll-action.poll-action--passcode:hover {
+  color: var(--color-tertiary-dark);
+}
 .poll-wrapper .poll-actions .poll-action.poll-action--edit:hover {
   color: var(--color-tertiary);
 }

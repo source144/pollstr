@@ -459,7 +459,8 @@ const CreatePoll = () => {
 
 											<div className="form-section-item w-40">
 												<div className="form-item">
-													<label htmlFor="passcode">Passcode</label>
+													<label htmlFor="passcode" className="optional">Passcode</label>
+													{/* <p className="optional">Require a passcode for every vote</p> */}
 													<div className='form-item-wrapper'>
 														<input
 															className={`form-item__input ${!!errors.passcode ? 'form-item__input--err' : ''}`}
