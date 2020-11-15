@@ -12,20 +12,19 @@ export default (poll) => {
 	const { width } = useWindowDimension();
 	const isMobile = width <= 960;
 
-	console.log(poll);
 	const url = `${window.location.protocol}//${window.location.host}/poll/${poll.id}`;
 
 	const onCopyHandler = (e) => {
-		if (e && e.preventDefault) e.preventDefault();
+		if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
 		toast('Poll Link Copied!');
 	}
 	const handleShareToApps = (e) => {
-		if (e) e.preventDefault();
+		if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
 		const shareData = {
 			title: poll.title,
-			text: poll.description,
+			text: poll.title,
 			url: url,
 		}
 
@@ -54,9 +53,10 @@ export default (poll) => {
 								value={url}
 								className='form-item__input form-item__input--clipboard'
 								type="text"
-								placeholder="e.g. ********"
 								name={`url-${poll.id}`}
-								formNoValidate />
+								formNoValidate
+								disabled
+							/>
 							<CopyToClipboard text={url} onCopy={onCopyHandler}>
 								<span className='form-item__input-icon form-item__input-icon--clipboard'><i className="fas fa-copy"></i></span>
 							</CopyToClipboard>
