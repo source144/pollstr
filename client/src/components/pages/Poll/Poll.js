@@ -136,7 +136,7 @@ const Poll = () => {
 		}
 	}, [id, _prevent_fetch_, dispatch]);
 
-	const _passcodeModal = <div className="form-centered-container">
+	const _passcodeModal = <div className="form-centered-container form-centered-container--auto-height">
 		<div className="form-form-wrapper">
 			<h1 className='form-title'>Enter Passcode</h1>
 			<form onSubmit={handlePasscode} formNoValidate className='form-form'>

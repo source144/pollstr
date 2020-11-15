@@ -150,7 +150,13 @@ input {
 .RMM__body.RMM__body--is-active {
   /* height: 100%; */
   /* height: calc(100vh - var(--nav-height)) !important; */
-  overflow: hidden !important;
+  /* overflow: hidden !important; */
+}
+
+.RMM__body::-webkit-scrollbar,
+.RMM__body.RMM__body--is-active::-webkit-scrollbar {
+  width: 0px; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
 }
 
 .opacity-0 {
@@ -358,6 +364,10 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.form-centered-container.form-centered-container--auto-height {
+  min-height: 100%;
 }
 
 /* Center nicer for mobile */

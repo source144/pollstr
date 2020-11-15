@@ -57,7 +57,7 @@ const Poll = ({ poll }) => {
 		close(pollWrapper);
 	}
 
-	const _deleteModal = <div className="form-centered-container">
+	const _deleteModal = <div className="form-centered-container form-centered-container--auto-height">
 		<div className="form-form-wrapper">
 			<h1 className='form-title'>Delete Poll</h1>
 			<form onSubmit={() => { }} formNoValidate className='form-form'>
@@ -77,7 +77,7 @@ const Poll = ({ poll }) => {
 		</div>
 	</div>
 
-	const _editPasscodeModal = <div className="form-centered-container">
+	const _editPasscodeModal = <div className="form-centered-container form-centered-container--auto-height">
 		<div className="form-form-wrapper">
 			<h1 className='form-title'>{poll.passcode ? "Modify Passcode" : "Add Passcode"}</h1>
 			<form onSubmit={(e) => { e.preventDefault(); console.log("EDIT PASSCODE") }} formNoValidate className='form-form'>

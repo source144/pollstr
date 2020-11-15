@@ -39,7 +39,7 @@ export default (poll) => {
 			})
 	}
 	return (
-		<div className="form-centered-container">
+		<div className="form-centered-container form-centered-container--auto-height">
 			<div className="form-form-wrapper">
 				<div onSubmit={(e) => { e.preventDefault() }} formNoValidate className='form-form'>
 					<div className="form-switch poll-created-description">Use this QR Code to Acces Poll</div>
