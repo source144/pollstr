@@ -27,7 +27,7 @@ export default ({ poll }) => {
 	const errors = { tags: "" }
 
 	return <>
-		<div className="form-centered-container form-centered-container--auto-height">
+		<div className="form-centered-container">
 			<div className="form-form-wrapper poll-create-form">
 
 				<h1 className='form-title'>Edit Poll</h1>
