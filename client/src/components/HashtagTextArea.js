@@ -12,12 +12,25 @@ const splitTags = /\B(#(?!_)\w+\b)(?!#)/
 // const splitTags = /([#|＃][^\s]+)/g
 
 
+
 const HashtagTextArea = (
 	{ placeholder, className = "HashtagTextArea", singleline = false,
 		newlines = false, tagClass = 'inputHashtag', disabled = false,
-		onChange = undefined }) => {
+		value = undefined, onChange = undefined }) => {
 
 	const editable = useRef();
+
+	const getStyledHtml = innerText => {
+		let _content = innerText;
+		if (!newlines) _content = _content.replace(/[\r\n]+/g, ' ');
+
+		const split = _content.split(splitTags);
+		return _.map(split, (segment) => {
+			if (segment.match(isTag))
+				return `<span class="${tagClass}">${segment}</span>`
+			else return segment;
+		}).join('');
+	}
 
 	const handlePaste = (e) => {
 		e.preventDefault();
@@ -31,8 +44,9 @@ const HashtagTextArea = (
 	const handleEdit = (e) => {
 
 		// Undo and Redo not supported currently.
-		if (e.nativeEvent && (e.nativeEvent.inputType === 'historyUndo' || e.nativeEvent.inputType === 'historyRedo'))
+		if (e && e.nativeEvent && (e.nativeEvent.inputType === 'historyUndo' || e.nativeEvent.inputType === 'historyRedo'))
 			return;
+		if (disabled) return;
 
 		// Handle Caret position
 		// Credit to @Wronski - https://stackoverflow.com/a/55887417/9382757
@@ -40,15 +54,7 @@ const HashtagTextArea = (
 
 		// Split the content into hashtags and non hashtags
 		// const content = newlines ? editable.current.innerText : editable.current.textContent.replace(/\s\s+/g, ' ');
-		let _content = editable.current.innerText;
-		if (!newlines) _content = _content.replace(/[\r\n]+/g, ' ');
-
-		const split = _content.split(splitTags);
-		const styled = _.map(split, (segment) => {
-			if (segment.match(isTag))
-				return `<span class="${tagClass}">${segment}</span>`
-			else return segment;
-		}).join('');
+		const styled = getStyledHtml(editable.current.innerText);
 
 		// Replace the unstyled content
 		editable.current.innerHTML = styled;
@@ -64,6 +70,8 @@ const HashtagTextArea = (
 
 	// Fix placeholder psuedo element blocking selection
 	const handleFocus = (e) => {
+		if (disabled) return;
+		
 		if (editable.current.matches(':empty'))
 			CaretPositioning.restoreSelection(editable.current, { start: 0, end: 0 });
 	}
@@ -76,6 +84,12 @@ const HashtagTextArea = (
 			editable.current.style.height = `${_newHeight > 70 ? _newHeight + 4 : _newHeight}px`;
 		}
 	}, [singleline])
+
+	useEffect(() => {
+		if (disabled && editable && editable.current) {
+			editable.current.innerHTML = getStyledHtml(value);
+		}
+	}, [])
 
 	return (
 		<>
