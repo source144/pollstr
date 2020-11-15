@@ -15,3 +15,7 @@
 .__HashtagTextAreaComponent-overflow-hidden__ {
   overflow: hidden;
 }
+
+.__HashtagTextAreaComponent__[contenteditable="false"] {
+  background: var(--color-grey-light-3);
+}

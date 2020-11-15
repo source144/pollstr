@@ -42,11 +42,9 @@ const HashtagTextArea = (
 	}
 
 	const handleEdit = (e) => {
-
 		// Undo and Redo not supported currently.
 		if (e && e.nativeEvent && (e.nativeEvent.inputType === 'historyUndo' || e.nativeEvent.inputType === 'historyRedo'))
 			return;
-		if (disabled) return;
 
 		// Handle Caret position
 		// Credit to @Wronski - https://stackoverflow.com/a/55887417/9382757
@@ -70,8 +68,6 @@ const HashtagTextArea = (
 
 	// Fix placeholder psuedo element blocking selection
 	const handleFocus = (e) => {
-		if (disabled) return;
-		
 		if (editable.current.matches(':empty'))
 			CaretPositioning.restoreSelection(editable.current, { start: 0, end: 0 });
 	}
@@ -94,7 +90,7 @@ const HashtagTextArea = (
 	return (
 		<>
 			<div
-				contentEditable
+				contentEditable={!disabled}
 				suppressContentEditableWarning
 				ref={editable}
 				onPaste={handlePaste}
