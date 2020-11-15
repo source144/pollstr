@@ -22,7 +22,7 @@ export default ({ poll }) => {
 	const [resultsHidden, setResultsHidden] = useState(poll.hideResults);
 	const [allowGuests, setAllowGuests] = useState(!poll.usersOnly);
 	const [publicPoll, setPublicPoll] = useState(poll.public);
-	const [expireDate, setExpireDate] = useState(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix + poll.timeToLive).toDate() : undefined)
+	const [expireDate, setExpireDate] = useState(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
 
 	const errors = { tags: "" }
 
@@ -91,7 +91,7 @@ export default ({ poll }) => {
 									step={5}
 									timeCaption="time"
 									placeholder="No Exipiry Set"
-									defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix + poll.timeToLive).toDate() : undefined}
+									defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined}
 								/>
 							</div>
 							<div className="form-item">
@@ -205,7 +205,7 @@ export default ({ poll }) => {
 											step={5}
 											timeCaption="time"
 											placeholder="No Exipiry Set"
-											defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix + poll.timeToLive).toDate() : undefined}
+											defaultValue={poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined}
 										/>
 									</div>
 									<div className="form-item form-item--row">
