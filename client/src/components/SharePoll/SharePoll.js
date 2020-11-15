@@ -3,6 +3,7 @@ import QRCode from 'qrcode.react'
 import useWindowDimension from '../util/useWindowDimension'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify'
+import Share from '../util/ShareOnMobile'
 
 export default (poll) => {
 	// TODO : for testing
@@ -21,7 +22,6 @@ export default (poll) => {
 	}
 	const handleShareToApps = (e) => {
 		if (e) e.preventDefault();
-		if (!navigator || !navigator.share) return;
 
 		const shareData = {
 			title: poll.title,
@@ -29,11 +29,13 @@ export default (poll) => {
 			url: url,
 		}
 
-		navigator.share(shareData)
+		Share(shareData)
 			.then(() => {
 				// Succesfully sharing to other apps
+				console.log("Share opened")
 			})
 			.catch((e) => {
+				console.log("Share failed", e);
 				// Succesfully sharing to other apps
 			})
 	}
