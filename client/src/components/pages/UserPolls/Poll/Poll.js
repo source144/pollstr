@@ -108,7 +108,7 @@ const Poll = ({ poll }) => {
 					<input
 						onClick={(e) => { e.preventDefault(); console.log("EDIT PASSCODE") }}
 						className='btn btn--tertiary form-item__submit'
-						type="button" value={poll.passcode && !passcode ? "Remove" : "Save"} />
+						type="button" value="Save" />
 				</div>
 			</form>
 		</div>
