@@ -37,51 +37,6 @@ export default ({ poll }) => {
 						//   Mobile View   //
 						// --------------- //
 						<>
-							{/* General Information */}
-							<div className="form-item">
-								<label htmlFor="title">Poll Title</label>
-								<div className='form-item-wrapper'>
-									<HashtagTextArea
-										className="form-item__input"
-										tagClass="form-item__input--hashtag"
-										placeholder="(No Title)"
-										singleline={true}
-										disabled
-										value={poll.title}
-									/>
-								</div>
-							</div>
-							<div className="form-item">
-								<label htmlFor="description">Description</label>
-								{/* <div className='form-item-wrapper'> */}
-								<HashtagTextArea
-									className="form-item__input form-item__input--textarea"
-									placeholder="(No description)"
-									tagClass="form-item__input--hashtag"
-									newlines={true}
-									disabled
-									value={poll.description}
-								/>
-							</div>
-
-							{/* Poll Options */}
-							<div className="form-item">
-								<label>Options</label>
-								{poll.options.map(option => {
-									return (
-										<div className="form-item" key={'option-' + option.id}>
-											<div className="form-item-wrapper p-rel">
-												<input
-													type="text"
-													value={option.title}
-													className="form-item__input"
-													disabled />
-											</div>
-										</div>
-									)
-								})}
-							</div>
-
 							{/* Expiry and Poll Settings */}
 							<div className="form-item form-item--no-margin form--mb1">
 								<label htmlFor="expire" className='rw-datepicker-label'>Expire Date</label>
@@ -143,7 +98,6 @@ export default ({ poll }) => {
 									name="publicPoll"
 								/>
 							</div>
-
 						</>
 						:
 						// ---------------- //
