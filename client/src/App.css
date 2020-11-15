@@ -262,6 +262,19 @@ body {
 .btn.btn--tertiary:not(.disabled):not(:disabled):active {
   background: var(--color-tertiary-dark--1);
 }
+.btn.btn--danger {
+  color: var(--color-white);
+  background-color: var(--color-danger--1);
+  transition: all 0.2s ease-in;
+  -webkit-transition: all 0.2s ease-in;
+}
+
+.btn.btn--danger:not(.disabled):not(:disabled):hover {
+  filter: brightness(0.95);
+}
+.btn.btn--danger:not(.disabled):not(:disabled):active {
+  filter: brightness(0.8);
+}
 
 .btn.btn--primary {
   color: var(--color-white);
