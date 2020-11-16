@@ -52,12 +52,20 @@ router.get('/', withUserId, (req, res) => {
 	// TODO : req.query.guests;		// True/False
 	// TODO : req.query.hidden;		// True/False
 	// TODO : req.query.passcode;	// True/False
-	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to get user polls'));
+	// if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to get user polls'));
 
-	Poll.find({ _creator: req.user.id }, function (err, polls) {
-		if (err) return res.status(500).send({ err, message: err.message });
-		return res.status(200).send(polls);
-	})
+	if (req.user && req.user.id) {
+		Poll.find({ _creator: req.user.id }, function (err, polls) {
+			if (err) return res.status(500).send({ err, message: err.message });
+			return res.status(200).send(polls);
+		})
+	}
+	else {
+		Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, function (err, polls) {
+			if (err) return res.status(500).send({ err, message: err.message });
+			return res.status(200).send(polls);
+		})
+	}
 });
 
 /**
