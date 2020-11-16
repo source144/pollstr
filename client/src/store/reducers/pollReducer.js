@@ -51,6 +51,7 @@ const pollReducer = (state = initState, action) => {
 		case DELETE_POLL_SUCCESS:
 		case DELETE_POLL_FAILURE:
 			return state;
+
 		case EDIT_POLL_REQUEST:
 		case EDIT_POLL_SUCCESS:
 		case EDIT_POLL_FAILURE:

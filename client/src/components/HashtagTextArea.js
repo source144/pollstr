@@ -21,7 +21,7 @@ const HashtagTextArea = (
 	const editable = useRef();
 
 	const getStyledHtml = innerText => {
-		let _content = innerText;
+		let _content = innerText || '';
 		if (!newlines) _content = _content.replace(/[\r\n]+/g, ' ');
 
 		const split = _content.split(splitTags);

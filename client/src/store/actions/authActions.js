@@ -256,8 +256,11 @@ const createAuthInterceptor = refresh_token => {
 				// Auth related errors
 				case 401:
 				case 403:
+					if (!error.response.data || !error.response.data.action)
+						return Promise.reject(originalError);
+
 					// Get new access token using the refresh token
-					if (error.response.data.action && error.response.data.action === 'REFRESH') {
+					if (error.response.data.action === 'REFRESH') {
 						return axios.post('/auth/refresh/', { refresh_token })
 							.then(response => {
 								// Set default Auth header
@@ -286,7 +289,7 @@ const createAuthInterceptor = refresh_token => {
 							});
 					}
 					// API prompts client to logout
-					else if (!error.response.data.action || error.response.data.action === 'LOGOUT') {
+					else if (error.response.data.action === 'LOGOUT') {
 						return axios.post('/auth/logout/', { refresh_token })
 							.finally(() => {
 								// TODO : dispatch authLogout()

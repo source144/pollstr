@@ -18,7 +18,7 @@ import SharePoll from '../../SharePoll/SharePoll';
 import './Poll.css';
 
 
-import { getPoll, disableVoting, votePoll, updatePoll, flushPoll } from '../../../store/actions/pollActions';
+import { getPoll, disableVoting, votePoll, flushPoll } from '../../../store/actions/pollActions';
 import { modalClose, modalOpen, modalStatFade } from '../../../store/actions/modalActions';
 
 // TODO : probably not gonna use this

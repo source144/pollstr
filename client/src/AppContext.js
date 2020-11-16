@@ -12,9 +12,10 @@ export default ({ children }) => {
 
 	const { loading: auth_loading, global_loading, fingerprint } = useSelector(state => state.auth)
 	const { loading: poll_loading } = useSelector(state => state.poll)
+	const { loading: polls_loading } = useSelector(state => state.polls)
 
 	// Reduce loading state to a single boolean
-	const _loading = !!auth_loading || !!poll_loading || !!global_loading || !fingerprint;
+	const _loading = !!auth_loading || !!poll_loading || !!polls_loading || !!global_loading || !fingerprint;
 
 	// On first load only
 	useEffect(() => {

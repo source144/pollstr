@@ -134,11 +134,23 @@ function validatePoll(poll, passcode) {
 		hideResults: Joi.bool(),
 		usersOnly: Joi.bool(),
 		public: Joi.bool(),
-		tag: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
+		tags: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
 		options: Joi.array().items(Joi.object().keys({
 			title: Joi.string().min(1).max(50).required(),
 			description: Joi.string().min(1).max(50),
 		})).min(2).unique('title').required()
+	});
+	return schema.unknown().validate(poll);
+}
+
+function validatePollEdit(poll, passcode) {
+	const schema = Joi.object({
+		timeToLive: Joi.number().integer().min(0),
+		passcode: pcSchema,
+		hideResults: Joi.bool(),
+		usersOnly: Joi.bool(),
+		public: Joi.bool(),
+		tags: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
 	});
 	return schema.unknown().validate(poll);
 }
@@ -149,4 +161,5 @@ function validatePasscode(passcode) {
 
 exports.Poll = mongoose.model('Poll', PollSchema);
 exports.validatePoll = validatePoll;
+exports.validatePollEdit = validatePollEdit;
 exports.validatePasscode = validatePasscode;
