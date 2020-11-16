@@ -21,10 +21,9 @@ export default (poll) => {
 	}
 	const handleShareToApps = (e) => {
 		if (e && typeof e.preventDefault === 'function') e.preventDefault();
-
 		const shareData = {
 			title: poll.title,
-			text: poll.title,
+			text: poll.title ? [poll.title, ''].join('\n') : 'Check out this poll!\n',
 			url: url,
 		}
 
