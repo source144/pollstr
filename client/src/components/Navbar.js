@@ -171,6 +171,7 @@ function Navbar() {
 
 	const handleClick = () => setClick(!click);
 	const closeMobileMenu = () => setClick(false);
+	const DISPLAY_NAME = hasAuth ? (auth.firstName ? auth.firstName : auth.email) : "temp";
 
 	const onMouseEnter = () => setDropdown(window.innerWidth > 960);
 	const onMouseLeave = () => setDropdown(false);
@@ -184,10 +185,9 @@ function Navbar() {
 	);
 
 	const profileNav = (auth) => {
-		const DISPLAY_NAME = hasAuth ? (auth.firstName ? auth.firstName : auth.email) : "temp";
 		return (
 			<>
-				<li className={["nav-item", activeNavClass('/profile')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+				<li className={["nav-item", activeNavClass('/profile')].join(' ')}>
 					<Link to='/profile' className='nav-link' onClick={closeMobileMenu}>
 						{DISPLAY_NAME} <i className='fas fa-caret-down' />
 					</Link>
@@ -220,22 +220,31 @@ function Navbar() {
 							Home
 						</Link>
 					</li>
-					<li className={["nav-item", activeNavClass('/contact-us')].join(' ')}>
+					{/* <li className={["nav-item", activeNavClass('/contact-us')].join(' ')}>
 						<Link to='/contact-us' className='nav-link' onClick={closeMobileMenu}>
 							Contact Us
 						</Link>
-					</li>
-					<li className={["nav-item", activeNavClass('/polls')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+					</li> */}
+					{/* <li className={["nav-item", activeNavClass('/polls')].join(' ')} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}> */}
+					{/* <Link to='/polls' className='nav-link' onClick={closeMobileMenu}> */}
+					<li className={["nav-item", activeNavClass('/polls')].join(' ')}>
 						<Link to='/polls' className='nav-link' onClick={closeMobileMenu}>
-							Polls <i className='fas fa-caret-down' />
+							My Polls
+							{/* {hasAuth ? `${DISPLAY_NAME}'s` : "My"} Polls */}
+							{/* My Polls <i className='fas fa-caret-down' /> */}
 						</Link>
 						{dropdown && <Dropdown />}
 					</li>
-					<li className="nav-item mobile-only">
+					<li className={`nav-item ${hasAuth ? 'mobile-only' : ''}`}>
 						<Link to={hasAuth ? '/polls/create' : '/signup'} className='nav-link' onClick={closeMobileMenu}>
-							{hasAuth ? "Create" : "Sign Up"}
+							Create
 						</Link>
 					</li>
+					{!hasAuth ? <li className="nav-item mobile-only">
+						<Link to='/signup' className='nav-link' onClick={closeMobileMenu}>
+							Sign Up
+						</Link>
+					</li> : undefined}
 					{hasAuth ? profileNav(auth) : signInNav}
 				</ul>
 				<Link to={hasAuth ? '/polls/create' : '/signup'} className="desktop-only">
