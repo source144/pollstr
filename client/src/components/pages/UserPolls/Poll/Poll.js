@@ -15,7 +15,7 @@ import PollOption from '../../../PollOption';
 import Chip from '../../../Chip';
 import SharePoll from '../../../SharePoll/SharePoll';
 
-import { deletePoll, editPoll, editPollPasscode } from '../../../../store/actions/managePollsActions';
+import { deletePoll, editPoll, editPollPasscode, flushOpErrors } from '../../../../store/actions/managePollsActions';
 import { modalClose, modalOpen, modalStatFade } from '../../../../store/actions/modalActions';
 import EditPoll from '../../../EditPoll/EditPoll';
 import { disableVoting } from '../../../../store/actions/pollActions';
@@ -38,7 +38,7 @@ const Poll = ({ poll }) => {
 	const { op_loading: form_loading, op_error: form_error } = useSelector(state => state.polls)
 	const { modalProps, open, close } = useModal({
 		id: `poll-${poll.id}-modal`,
-		onClose: () => dispatch(modalClose(pollWrapper)),
+		onClose: () => { dispatch(modalClose(pollWrapper)); dispatch(flushOpErrors()); setSubmited(false) },
 		background: 'rgb(0, 0, 0, 0.6)'
 	});
 

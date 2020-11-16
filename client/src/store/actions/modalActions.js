@@ -78,8 +78,11 @@ export const modalClose = (ref = undefined) => {
 }
 
 
-export const modalStatFade = () => {
-	setTimeout(() => modalCloseBtnEvnt ? modalCloseBtnEvnt() : undefined, 50);
+export const modalStatFade = (ref = undefined) => {
+	setTimeout(() => {
+		window.onscroll = function () { };
+		if (modalCloseBtnEvnt) modalCloseBtnEvnt()
+	}, 50);
 
 	return ({ type: MODAL_FADE });
 }

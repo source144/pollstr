@@ -1,4 +1,4 @@
-const { Poll, validatePoll, validatePasscode } = require('../models/Poll');
+const { Poll, validatePoll, validatePollEdit, validatePasscode } = require('../models/Poll');
 const { Vote, validateVote } = require('../models/Vote');
 const { User } = require('../models/User');
 // const { Option, validateOption } = require('../models/Option');
@@ -197,7 +197,7 @@ router.delete('/:id/passcode', withUserId, (req, res) => {
 // TODO : delete a poll (administartor/creator) or error if poll does not exist
 /**
  * @swagger
- *  /api/poll/{id}/passcode:
+ *  /api/poll/{id}:
  *    delete:
  *      tags:
  *        - Poll
@@ -247,7 +247,7 @@ router.delete('/:id', withUserId, (req, res) => {
 // TODO : validate request body for poll information
 /**
  * @swagger
- *  /api/poll/{id}/passcode:
+ *  /api/poll/{id}:
  *    put:
  *      tags:
  *        - Poll
@@ -285,27 +285,33 @@ router.delete('/:id', withUserId, (req, res) => {
  *          description: User is not verified yet
  */
 router.put('/:id', withUserId, (req, res) => {
-	const { error } = validatePoll(req.body);
+	const { error } = validatePollEdit(req.body);
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
 	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to modify poll'));
 
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
-		if (poll._creator != req.user.id && req.user.role !== 'admin')
-			return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
+
+		let owner = false;
+		if (req.user && req.user.id) owner = req.user.id == poll._creator || req.user.role === 'admin';
+		else if (req.visitorId) owner = req.visitorId == poll._visitorId;
+		else if (req.fingerprint && req.fingerprint.hash) owner = req.fingerprint.hash == poll._visitorId;
+		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		// TODO : logic to check if transaction (save is needed)
 		// TODO : or respond with no changes needed..
 
-		poll.passcode = !req.body.passcode ? undefined : req.body.passcode;
-		poll.title = req.body.title;
-		poll.description = req.body.description;
-		poll.tags = req.body.tags;
-		poll.public = req.body.public;
-		poll.usersOnly = req.body.usersOnly;
-		poll.timeToLive = req.body.timeToLive;
+		// poll.passcode = !req.body.passcode ? undefined : req.body.passcode;
+		// poll.title = req.body.title;
+		// poll.description = req.body.description;
+		if (req.body.tags != undefined) poll.tags = req.body.tags;
+		if (req.body.tags != undefined) poll.public = req.body.public;
+		if (req.body.tags != undefined) poll.usersOnly = req.body.usersOnly;
+		if (req.body.tags != undefined) poll.hideResults = req.body.hideResults;
+		if (req.body.tags != undefined) poll.timeToLive = req.body.timeToLive;
 
+		// TODO : live update poll with socket
 		poll.save(function (err) {
 			if (err) return res.status(500).send(err);
 			return res.status(200).send({ message: "Poll infomration updated" })
@@ -348,9 +354,9 @@ router.get('/:id', withUserId, (req, res) => {
 
 		// Mark if the requester is the owner/creator of the poll
 		let owner = false;
-		if (req.user && req.user.id)						owner = req.user.id == poll._creator;
-		else if (req.visitorId) 							owner = req.visitorId == poll._visitorId;
-		else if (req.fingerprint && req.fingerprint.hash)	owner = req.fingerprint.hash == poll._visitorId;
+		if (req.user && req.user.id) owner = req.user.id == poll._creator;
+		else if (req.visitorId) owner = req.visitorId == poll._visitorId;
+		else if (req.fingerprint && req.fingerprint.hash) owner = req.fingerprint.hash == poll._visitorId;
 
 		// User/guest (or both) identification for query
 		let _voteQuery;
