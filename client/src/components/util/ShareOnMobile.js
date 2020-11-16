@@ -9,6 +9,7 @@ export default options => new Promise((resolve, reject) => {
 				error.name = 'InternalError';
 
 			reject(error);
+			return Promise.resolve();
 		});
 
 		/*
