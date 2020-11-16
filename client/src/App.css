@@ -152,7 +152,17 @@ input {
 .RMM__body.RMM__body--is-active {
   /* height: 100%; */
   /* height: calc(100vh - var(--nav-height)) !important; */
+  /* max-height: calc(100vh - var(--nav-height)); */
   overflow: hidden !important;
+}
+
+@media screen and (max-width: 960px) {
+  .RMM__body,
+  .RMM__body.RMM__body--is-active {
+    /* height: 100%; */
+    /* height: calc(100vh - var(--nav-height)) !important; */
+    overflow: auto !important;
+  }
 }
 
 .modal-loader-overlay {
