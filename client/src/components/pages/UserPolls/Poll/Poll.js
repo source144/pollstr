@@ -157,7 +157,11 @@ const Poll = ({ poll }) => {
 		}
 	}, [submited, form_loading, form_error, modal_open, dispatch]);
 
-	useEffect(() => { window.onscroll = function () { } }, [])
+	// TODO : temporary solution?
+	// Cleanup (close modal on unmount)
+	useEffect(() => {
+		return () => { dispatch(modalStatFade()); close(pollWrapper); }
+	}, [])
 
 	return (
 		<>
