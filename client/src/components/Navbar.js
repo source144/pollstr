@@ -236,7 +236,7 @@ function Navbar() {
 						{dropdown && <Dropdown />}
 					</li>
 					<li className={`nav-item ${hasAuth ? 'mobile-only' : ''}`}>
-						<Link to={hasAuth ? '/polls/create' : '/signup'} className='nav-link' onClick={closeMobileMenu}>
+						<Link to='/polls/create' className='nav-link' onClick={closeMobileMenu}>
 							Create
 						</Link>
 					</li>
