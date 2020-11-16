@@ -101,7 +101,7 @@ const PasswordForgot = () => {
 							</div>
 							{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 						</div>
-						{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
+						{!!responseError ? <div className="form-item__error">{responseError}{needsVerification ? <span>! <a href='#' className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
 						<div className="form-item">
 							<input
 								className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
