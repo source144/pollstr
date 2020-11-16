@@ -128,16 +128,14 @@ router.post('/', withUserId, (req, res) => {
  *          description: User is not verified yet
  */
 router.put('/:id/passcode', withUserId, (req, res) => {
-	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to modify poll passcode'));
-
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
 		let owner = false;
 		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
-		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
-		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		else if (!poll._creator && req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (!poll._creator && req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		poll.passcode = !req.body.passcode ? undefined : req.body.passcode;
@@ -182,16 +180,14 @@ router.put('/:id/passcode', withUserId, (req, res) => {
  *          description: User is not verified yet
  */
 router.delete('/:id/passcode', withUserId, (req, res) => {
-	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to modify poll passcode'));
-
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
 		let owner = false;
 		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
-		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
-		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		else if (!poll._creator && req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (!poll._creator && req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		poll.passcode = undefined;
@@ -238,16 +234,14 @@ router.delete('/:id/passcode', withUserId, (req, res) => {
  *          description: User is not verified yet
  */
 router.delete('/:id', withUserId, (req, res) => {
-	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to delete a poll'));
-
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
 		let owner = false;
 		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
-		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
-		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		else if (!poll._creator && req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (!poll._creator && req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to delete their poll'));
 
 		poll.passcode = undefined;
@@ -301,7 +295,6 @@ router.delete('/:id', withUserId, (req, res) => {
 router.put('/:id', withUserId, (req, res) => {
 	const { error } = validatePollEdit(req.body);
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
-	if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to modify poll'));
 
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
@@ -309,8 +302,8 @@ router.put('/:id', withUserId, (req, res) => {
 
 		let owner = false;
 		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
-		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
-		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		else if (!poll._creator && req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (!poll._creator && req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		// TODO : logic to check if transaction (save is needed)
@@ -372,8 +365,8 @@ router.get('/:id', withUserId, (req, res) => {
 		// Mark if the requester is the owner/creator of the poll
 		let owner = false;
 		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString();
-		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
-		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		else if (!poll._creator && req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (!poll._creator && req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 
 		// User/guest (or both) identification for query
 		let _voteQuery;
