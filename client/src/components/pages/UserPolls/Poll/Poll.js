@@ -110,7 +110,7 @@ const Poll = ({ poll }) => {
 								className='form-item__input'
 								type="password"
 								// placeholder="Remove Passcode"
-								placeholder="e.g. *******"
+								placeholder={poll.passcode ? "(Remove passcode)" : "(No passcode)"}
 								name="passcode"
 								formNoValidate
 								onChange={(e) => setPasscode(e.target.value)} />
@@ -140,19 +140,24 @@ const Poll = ({ poll }) => {
 	switch (modalContent) {
 		case "PASSCODE": _modal_content = _editPasscodeModal; break;
 		case "DELETE": _modal_content = _deleteModal; break;
-		case "EDIT": _modal_content = <EditPoll poll={poll} lodaing={form_loading} error={form_error} onSubmit={handleSavePoll} />; break;
+		case "EDIT": _modal_content = <EditPoll poll={poll} loading={form_loading} error={form_error} onSubmit={handleSavePoll} />; break;
 		case "QR": _modal_content = <SharePoll poll={poll} />; break;
 		default: _modal_content = undefined; break;
 	}
 	// TODO : useEffect for error to display error toasts
 
 	useEffect(() => {
+		console.log("\n\n\n\n\n\nuseEffect\n\n\n\n\n\n")
+
 		if (modal_open && submited && !form_loading && !form_error) {
-			setSubmited(false);
+			console.log("\n\n\n\n\n\nFade modal\n\n\n\n\n\n")
+			setPasscode(undefined)
 			dispatch(modalStatFade())
 			close(pollWrapper);
 		}
-	}, [submited, form_loading, form_loading, modal_open, dispatch]);
+	}, [submited, form_loading, form_error, modal_open, dispatch]);
+
+	useEffect(() => { window.onscroll = function () { } }, [])
 
 	return (
 		<>
@@ -172,6 +177,7 @@ const Poll = ({ poll }) => {
 					<div className="poll-detail-wrapper" style={isMobile && poll.timeToLive ? { padding: "2rem" } : {}}>
 						{!poll.timeToLive ? undefined :
 							<CountdownTimer
+								key={`poll-${poll.id}-${poll.timeToLive}`}
 								onComplete={() => {/* TODO : disable editing?? */ }}
 								startDate={poll.createDate}
 								timeToLive={poll.timeToLive} />}

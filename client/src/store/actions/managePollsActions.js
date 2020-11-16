@@ -115,12 +115,12 @@ const editPollPasscodeFailure = error => ({ type: EDIT_POLL_PASSCODE_FAILURE, er
 export const editPollPasscode = (pollId, passcode) => {
 	return (dispatch) => {
 		dispatch(editPollPasscodeRequest());
-		axios.put(`poll/${pollId}/passcode`, passcode)
+		axios.put(`poll/${pollId}/passcode`, { passcode })
 			.then(response => {
 				dispatch(editPollPasscodeSuccess(pollId, !!passcode));
 
 				// Toast user
-				toast(<>Passcode {!!passcode ? 'Removed' : 'Updated'}!</>, {
+				toast(<>Passcode {!!passcode ? 'Updated' : 'Removed'}!</>, {
 					autoClose: 2000,
 				})
 			})

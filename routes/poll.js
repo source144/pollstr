@@ -68,6 +68,8 @@ router.post('/', withUserId, (req, res) => {
 
 	// Omit identifying fields from request
 	req.body = _.omit(req.body, "_creator", "_visitorId", "createDate");
+	if (typeof req.body.tags === 'string')
+		req.body.tags = req.body.tags.trim(' ').split(' ');
 
 	// If logged in
 	if (req.user && req.user.id) req.body._creator = req.user.id;
@@ -131,8 +133,12 @@ router.put('/:id/passcode', withUserId, (req, res) => {
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
-		if (poll._creator != req.user.id && req.user.role !== 'admin')
-			return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
+
+		let owner = false;
+		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
+		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		poll.passcode = !req.body.passcode ? undefined : req.body.passcode;
 		poll.save(function (err) {
@@ -182,8 +188,11 @@ router.delete('/:id/passcode', withUserId, (req, res) => {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
-		if (poll._creator != req.user.id && req.user.role !== 'admin')
-			return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
+		let owner = false;
+		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
+		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		poll.passcode = undefined;
 		poll.save(function (err) {
@@ -234,7 +243,12 @@ router.delete('/:id', withUserId, (req, res) => {
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
-		if (poll._creator != req.user.id) return res.status(403).send(errorObject('Only poll creators are permitted to delete their poll'));
+
+		let owner = false;
+		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
+		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
+		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to delete their poll'));
 
 		poll.passcode = undefined;
 		poll.remove(function (err) {
@@ -294,22 +308,25 @@ router.put('/:id', withUserId, (req, res) => {
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
 		let owner = false;
-		if (req.user && req.user.id) owner = req.user.id == poll._creator || req.user.role === 'admin';
-		else if (req.visitorId) owner = req.visitorId == poll._visitorId;
-		else if (req.fingerprint && req.fingerprint.hash) owner = req.fingerprint.hash == poll._visitorId;
+		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString() || req.user.role === 'admin';
+		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 		if (!owner) return res.status(403).send(errorObject('Only poll creators are permitted to modify their poll'));
 
 		// TODO : logic to check if transaction (save is needed)
 		// TODO : or respond with no changes needed..
 
+		if (typeof req.body.tags === 'string')
+			req.body.tags = req.body.tags.trim(' ').split(' ');
+
 		// poll.passcode = !req.body.passcode ? undefined : req.body.passcode;
 		// poll.title = req.body.title;
 		// poll.description = req.body.description;
 		if (req.body.tags != undefined) poll.tags = req.body.tags;
-		if (req.body.tags != undefined) poll.public = req.body.public;
-		if (req.body.tags != undefined) poll.usersOnly = req.body.usersOnly;
-		if (req.body.tags != undefined) poll.hideResults = req.body.hideResults;
-		if (req.body.tags != undefined) poll.timeToLive = req.body.timeToLive;
+		if (req.body.public != undefined) poll.public = req.body.public;
+		if (req.body.usersOnly != undefined) poll.usersOnly = req.body.usersOnly;
+		if (req.body.hideResults != undefined) poll.hideResults = req.body.hideResults;
+		if (req.body.timeToLive != undefined) poll.timeToLive = req.body.timeToLive;
 
 		// TODO : live update poll with socket
 		poll.save(function (err) {
@@ -354,9 +371,9 @@ router.get('/:id', withUserId, (req, res) => {
 
 		// Mark if the requester is the owner/creator of the poll
 		let owner = false;
-		if (req.user && req.user.id) owner = req.user.id == poll._creator;
-		else if (req.visitorId) owner = req.visitorId == poll._visitorId;
-		else if (req.fingerprint && req.fingerprint.hash) owner = req.fingerprint.hash == poll._visitorId;
+		if (req.user && req.user.id && poll._creator) owner = req.user.id == poll._creator.toString();
+		else if (req.visitorId && poll._visitorId) owner = req.visitorId == poll._visitorId.toString();
+		else if (req.fingerprint && req.fingerprint.hash && poll._visitorId) owner = req.fingerprint.hash == poll._visitorId.toString();
 
 		// User/guest (or both) identification for query
 		let _voteQuery;

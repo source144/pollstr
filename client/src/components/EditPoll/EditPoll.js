@@ -20,22 +20,18 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 	const { auth, global_loading: auth_loading } = useSelector(state => state.auth);
 	const isLoggedIn = !_.isEmpty(auth);
 
-	const [tags, setTags] = useState(poll.tags);
+	const [submitted, setSubmitted] = useState(false);
+	const [tags, setTags] = useState(poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '');
 	const [resultsHidden, setResultsHidden] = useState(poll.hideResults);
 	const [allowGuests, setAllowGuests] = useState(!poll.usersOnly);
 	const [publicPoll, setPublicPoll] = useState(poll.public);
 	const [expireDate, setExpireDate] = useState(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
 
-	const unchanged_tags = tags == poll.tags
+	const unchanged_tags = tags == poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '';
 	const unchanged_resultsHidden = resultsHidden == poll.hideResults
 	const unchanged_allowGuests = allowGuests == !poll.usersOnly
 	const unchanged_publicPoll = publicPoll == poll.public
 	const unchanged_expireDate = expireDate == (poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
-	console.log("unchanged_tags", unchanged_tags)
-	console.log("unchanged_resultsHidden", unchanged_resultsHidden)
-	console.log("unchanged_allowGuests", unchanged_allowGuests)
-	console.log("unchanged_publicPoll", unchanged_publicPoll)
-	console.log("unchanged_expireDate", unchanged_expireDate)
 	const disableSave = (
 		unchanged_tags &&
 		unchanged_resultsHidden &&
@@ -49,7 +45,8 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 	const handleSubmit = e => {
 		if (e && typeof e.preventDefault === 'function') e.preventDefault();
 		if (onSubmit && typeof onSubmit === 'function') {
-			const _timeToLive = !!expireDate ? moment(expireDate).unix() - moment().unix() : 0
+			setSubmitted(true);
+			const _timeToLive = !!expireDate ? moment(expireDate).unix() - moment(poll.createDate).unix() : 0
 			onSubmit({
 				tags: tags,
 				hideResults: resultsHidden,
@@ -59,6 +56,16 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 			})
 		}
 	}
+
+	useEffect(() => {
+		if (submitted && !loading && !error) {
+			setTags(poll.tags)
+			setResultsHidden(poll.hideResults)
+			setAllowGuests(!poll.usersOnly)
+			setPublicPoll(poll.public)
+			setExpireDate(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
+		}
+	}, [submitted])
 
 	return <>
 		<div className="form-centered-container">
@@ -91,6 +98,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 									<label htmlFor="tags">Tags</label>
 									<div className='form-item-wrapper'>
 										<input
+											defaultValue={tags}
 											className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 											type="text"
 											placeholder="e.g. #Food #Health"
@@ -174,6 +182,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 											<label htmlFor="tags">Tags</label>
 											<div className='form-item-wrapper'>
 												<input
+													defaultValue={tags}
 													className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 													type="text"
 													placeholder="(e.g. #Food #Health)"

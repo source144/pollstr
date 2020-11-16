@@ -14,7 +14,6 @@ export const modalOpen = (ref = undefined) => {
 		if (ref && ref.current) closebtn = ref.current.querySelector('.RMM__container .RMM__close-button');
 		else closebtn = document.querySelector('.RMM__container .RMM__close-button');
 
-		console.log('closebtn', closebtn);
 
 		// Disable scrolling while modal is open
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -23,16 +22,13 @@ export const modalOpen = (ref = undefined) => {
 
 		if (ref && ref.current && placeholder) {
 			const rect = ref.current.getBoundingClientRect();
-			console.log(`${Math.floor(rect.top)}px - ${Math.floor(rect.left)}px`)
 			placeholder.style.top = `${Math.floor(rect.top)}px`;
 			placeholder.style.left = `${Math.floor(rect.left)}px`;
 		}
 
 		if (closebtn && container) {
-			console.log(closebtn)
 			if (modalCloseBtnEvnt) closebtn.removeEventListener('click', modalCloseBtnEvnt);
 			modalCloseBtnEvnt = function () {
-				console.log('Close btn clicked')
 				if (container)
 					container.classList.add("opacity-0");
 			}
@@ -45,16 +41,12 @@ export const modalOpen = (ref = undefined) => {
 			closebtn.addEventListener('click', modalCloseBtnEvnt);
 		}
 
-		console.log(container)
-		console.log(closebtn)
 	}, 1)
 
 	return ({ type: MODAL_OPEN })
 }
 
 export const modalClose = (ref = undefined) => {
-	console.log(closebtn)
-	console.log(container)
 	placeholder = document.querySelector('.RMM__container.RMM__container--is-active .RMM__placeholder');
 
 	// Enable scrolling
@@ -63,7 +55,6 @@ export const modalClose = (ref = undefined) => {
 
 	if (ref && ref.current && placeholder) {
 		const rect = ref.current.getBoundingClientRect();
-		console.log(`close to ${Math.floor(rect.top)}px - ${Math.floor(rect.left)}px`)
 		placeholder.style.top = `${Math.floor(rect.top)}px`;
 		placeholder.style.left = `${Math.floor(rect.left)}px`;
 	}
@@ -79,8 +70,10 @@ export const modalClose = (ref = undefined) => {
 
 
 export const modalStatFade = (ref = undefined) => {
+	// Enable scrolling
+	window.onscroll = function () { };
+
 	setTimeout(() => {
-		window.onscroll = function () { };
 		if (modalCloseBtnEvnt) modalCloseBtnEvnt()
 	}, 50);
 
