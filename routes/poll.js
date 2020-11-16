@@ -346,6 +346,12 @@ router.get('/:id', withUserId, (req, res) => {
 		if (err) return res.status(500).send({ err, message: err.message });
 		if (!poll) return res.status(404).send(errorObject('Poll does not exist'));
 
+		// Mark if the requester is the owner/creator of the poll
+		let owner = false;
+		if (req.user && req.user.id)						owner = req.user.id == poll._creator;
+		else if (req.visitorId) 							owner = req.visitorId == poll._visitorId;
+		else if (req.fingerprint && req.fingerprint.hash)	owner = req.fingerprint.hash == poll._visitorId;
+
 		// User/guest (or both) identification for query
 		let _voteQuery;
 		if (req.fingerprint && (req.fingerprint.hash || req.visitorId)) {
@@ -364,7 +370,7 @@ router.get('/:id', withUserId, (req, res) => {
 		Vote.findOne({ _pollId: poll._id, ..._voteQuery }, function (err, vote) {
 			if (err) return res.status(500).send({ err, message: err.message });
 
-			return res.status(200).send({ ...(poll.toJSON()), voted: vote && vote._optionId });
+			return res.status(200).send({ ...(poll.toJSON()), owner, voted: vote && vote._optionId });
 		});
 	});
 });
