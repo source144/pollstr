@@ -134,7 +134,7 @@ function validatePoll(poll, passcode) {
 		hideResults: Joi.bool(),
 		usersOnly: Joi.bool(),
 		public: Joi.bool(),
-		tags: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
+		tags: Joi.alternatives(Joi.array().items(Joi.string().allow('')), Joi.string().allow('')),
 		options: Joi.array().items(Joi.object().keys({
 			title: Joi.string().min(1).max(50).required(),
 			description: Joi.string().min(1).max(50),
@@ -150,7 +150,7 @@ function validatePollEdit(poll, passcode) {
 		hideResults: Joi.bool(),
 		usersOnly: Joi.bool(),
 		public: Joi.bool(),
-		tags: Joi.alternatives(Joi.array().items(Joi.string()), Joi.string()),
+		tags: Joi.alternatives(Joi.array().items(Joi.string().allow('')), Joi.string().allow('')),
 	});
 	return schema.unknown().validate(poll);
 }
