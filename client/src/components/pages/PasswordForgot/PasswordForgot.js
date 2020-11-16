@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { dispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import LoadingOverlay from 'react-loading-overlay';
 import { toast } from 'react-toastify'
 import { PushSpinner } from 'react-spinners-kit'
 import axios from 'axios';
+import { authResendVerification } from '../../../store/actions/authActions';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -25,6 +27,7 @@ const checkForm = (payload) => {
 }
 
 const PasswordForgot = () => {
+	const { needsVerification } = useSelector(state => state.auth)
 	const [redirect, setRedirect] = useState(undefined);
 	const [loading, setLoading] = useState(undefined);
 	const [email, setEmail] = useState('');
@@ -37,6 +40,21 @@ const PasswordForgot = () => {
 	const getPayload = () => ({
 		email
 	});
+
+	const handleResendVerification = e => {
+		e.preventDefault();
+
+		// Prevent multiple requests
+		if (auth_loading || verification_loading)
+			return;
+
+		// Shouldn't be called. (Do nothing)
+		if (!needsVerification)
+			return;
+
+		// Resend Verification Email to User
+		dispatch(authResendVerification(needsVerification))
+	}
 
 	const handleEmail = e => setEmail(e.target.value);
 	const handleSubmit = e => {
