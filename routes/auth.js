@@ -633,7 +633,7 @@ router.post('/password/forgot', (req, res) => {
 				var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
 				var mailOptions = {
 					from: NO_REPLY_EMAIL,
-					to: user.email,
+					to: req.body.email,
 					subject: 'Reset your Pollstr account password',
 					text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`
 				};

@@ -86,7 +86,7 @@ const authResendVerificationSuccess = () => ({ type: AUTH_RESEND_VERIFICATION_SU
 const authResendVerificationFailure = error => ({ type: AUTH_RESEND_VERIFICATION_FAILURE, error });
 export const authResendVerification = email => {
 	return (dispatch) => {
-		dispatch(authResendVerificationRequest);
+		dispatch(authResendVerificationRequest());
 		axios.post('auth/verify/resend', { email })
 			.then(response => {
 				dispatch(authResendVerificationSuccess());

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import LoadingOverlay from 'react-loading-overlay';
@@ -32,7 +32,8 @@ const PasswordForgot = () => {
 	const [loading, setLoading] = useState(undefined);
 	const [email, setEmail] = useState('');
 	const [responseError, setResponseError] = useState('');
-	const { needsVerification,
+	const [needsVerification, setNeedsVerification] = useState(undefined);
+	const { verification_sent, error: auth_error,
 		global_loading: auth_loading,
 		loading: verification_loading,
 	} = useSelector(state => state.auth)
@@ -73,6 +74,7 @@ const PasswordForgot = () => {
 
 		// TODO : dispatch to a gloabl loader
 		if (valid) {
+			setNeedsVerification(undefined);
 			setLoading(true);
 			axios.post('/auth/password/forgot', { email })
 				.then(response => {
@@ -86,6 +88,9 @@ const PasswordForgot = () => {
 					const errorData = error.response ? error.response.data : {};
 					const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 
+					if (error.response && error.response.status === 426 && error.config.data)
+						setNeedsVerification(JSON.parse(error.config.data).email);
+
 					setResponseError(errorMsg);
 				});
 			// Dispatch login request
@@ -94,17 +99,25 @@ const PasswordForgot = () => {
 		} else setErrors(_errors);
 	}
 
+	useEffect(() => {
+		if (verification_sent !== undefined) {
+			if (verification_sent === true)
+				setNeedsVerification(undefined);
+			setResponseError(auth_error)
+		}
+	}, [verification_sent, auth_error])
+
 	if (redirect)
 		return (<Redirect to="/login" />);
 
 	return (
 
-		<LoadingOverlay
-			active={loading}
-			spinner={<PushSpinner size={80} color={'#55c57a'} />}
-			text='Loading stuff'
-		>
-			<div className="form-centered-container">
+		<div className="form-centered-container">
+			<LoadingOverlay
+				active={loading}
+				spinner={<PushSpinner color={'#55c57a'} />}
+				classNamePrefix='modal-loader-'
+			>
 				<div className="form-form-wrapper">
 					<h1 className='form-title'>Forgot Password</h1>
 					<div className="form-description"><p>To reset your password, please enter identifying information.</p></div>
@@ -124,17 +137,17 @@ const PasswordForgot = () => {
 							</div>
 							{!!errors.email ? <span className='form-item__error'>{errors.email}</span> : null}
 						</div>
-						{!!responseError ? <div className="form-item__error">{responseError}{needsVerification ? <span>! <a href='#' className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
+						{!!responseError ? <div className="form-item__error">{responseError}{!!needsVerification ? <span>! <a href='#' className='form-switch-action' onClick={handleResendVerification}>Resend Here</a></span> : undefined}</div> : null}
 						<div className="form-item">
 							<input
 								className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-								type="submit" value="Send Reset Link " />
+								disabled={needsVerification} type="submit" value="Send Reset Link " />
 						</div>
 						<div className="form-switch"><p>Know your password? <Link to='/login' className='form-switch-action'>Sign In</Link></p></div>
 					</form>
 				</div>
-			</div>
-		</LoadingOverlay>
+			</LoadingOverlay >
+		</div>
 	)
 
 }

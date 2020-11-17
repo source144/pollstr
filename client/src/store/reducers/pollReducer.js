@@ -27,7 +27,8 @@ const transform = poll => {
 	const expired = poll.timeToLive != 0 && poll.timeToLive - (moment().unix() - moment(poll.createDate).unix()) < 0;
 	return {
 		...poll,
-		tags: _.uniq([...(poll.autoTags || []), ...(poll.tags || [])]),
+		// tags: _.uniq([...(poll.autoTags || []), ...(poll.tags || [])]),
+		tags: _.union((poll.tags ? (typeof poll.tags === 'string' ? poll.tags.split(' ') : poll.tags) : []), (poll.autoTags || [])),
 		options: poll.options.map(option => ({
 			...option,
 			percent: poll.total_votes > 0 ? parseInt((option.votes / poll.total_votes) * 100) : 0,

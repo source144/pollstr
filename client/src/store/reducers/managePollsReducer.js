@@ -43,7 +43,7 @@ const transform_one = poll => {
 	return {
 		...poll,
 		// tags: _.union([(poll.autoTags || []), (poll.tags || [])]).filter(tag => tag.trim() != ''),
-		tags: _.union((poll.autoTags || []), (poll.tags ? (typeof poll.tags === 'string' ? poll.tags.split(' ') : poll.tags) : [])),
+		tags: _.union((poll.tags ? (typeof poll.tags === 'string' ? poll.tags.split(' ') : poll.tags) : []), (poll.autoTags || [])),
 		options: poll.options.map(option => ({
 			...option,
 			percent: poll.total_votes > 0 ? parseInt((option.votes / poll.total_votes) * 100) : 0,
@@ -67,6 +67,7 @@ const pollReducer = (state = initState, action) => {
 
 		case DELETE_POLL_REQUEST: return { ...initState, polls: state.polls, op_loading: true };
 		case DELETE_POLL_SUCCESS: return { ...initState, polls: state.polls.filter(poll => poll.id != action.pollId) };
+		// case DELETE_POLL_SUCCESS: return { ...initState, polls: state.polls };
 		case DELETE_POLL_FAILURE: return { ...initState, polls: state.polls, op_error: action.error };
 
 		case EDIT_POLL_SUCCESS:

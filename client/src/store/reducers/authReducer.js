@@ -22,6 +22,7 @@ const initState = {
 	auth: {},
 	loading: undefined,
 	error: undefined,
+	verification_sent: undefined,
 	signup_complete: undefined,
 	signup_loading: undefined,
 	signup_error: undefined,
@@ -51,8 +52,8 @@ const authReducer = (state = initState, action) => {
 		case AUTH_LOGOUT_SUCCESS: return { ...initState, fingerprint };
 
 		case AUTH_RESEND_VERIFICATION_REQUEST: return { ...initState, fingerprint, loading: true };
-		case AUTH_RESEND_VERIFICATION_SUCCESS: return { ...initState, fingerprint, error: "Verification email resent." };
-		case AUTH_RESEND_VERIFICATION_FAILURE: return { ...initState, fingerprint, error: action.error };
+		case AUTH_RESEND_VERIFICATION_SUCCESS: return { ...initState, fingerprint, error: "Verification email resent.", verification_sent: true };
+		case AUTH_RESEND_VERIFICATION_FAILURE: return { ...initState, fingerprint, error: action.error, verification_sent: false };
 
 		case AUTH_FINGERPRINT_REQUEST: return { ...state };
 		case AUTH_FINGERPRINT_SUCCESS: return { ...state, fingerprint: true };
