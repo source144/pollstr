@@ -19,6 +19,7 @@ import Placeholder from '../Placeholder/Placeholder'
 // Use this date picker
 import momentLocalizer from 'react-widgets-moment';
 import DateTimePicker from 'react-widgets/lib/DateTimePicker';
+import { setWebTitle } from '../../../utils';
 
 // For React-Widgets 
 // DateTimePicker
@@ -218,6 +219,10 @@ const CreatePoll = () => {
 	const handleTags = e => { setTags(e.target.value) };
 
 	useEffect(() => { }, [description, title]);
+
+	useEffect(() => {
+		setWebTitle("Create Poll");
+	}, []);
 
 	return (
 

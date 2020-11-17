@@ -10,6 +10,7 @@ import './UserPolls.css';
 import _ from 'lodash';
 
 import _TestPolls from './_TestPolls.json';
+import { setWebTitle } from '../../../utils';
 const dbgPolls = _TestPolls.slice(0, Math.min(5, _TestPolls.length))
 	.map(poll => ({
 		...poll, options: poll.options.map(
@@ -35,6 +36,16 @@ export default () => {
 			return () => { dispatch(flushPolls()) }
 		}
 	}, [_prevent_fetch_, dispatch]);
+
+	useEffect(() => {
+		if (polls && Array.isArray(polls)) {
+			if (hasAuth && auth.firstName && typeof auth.firstName === 'string' && auth.firstName.trim())
+				setWebTitle(`${auth.firstName}'s Polls (${polls.length})`);
+			else setWebTitle(`Manage My Polls (${polls.length})`)
+		}
+		else setWebTitle("Manage My Polls (Loading...)")
+
+	}, [polls]);
 
 	return (
 		<div className="content-fullscreen">

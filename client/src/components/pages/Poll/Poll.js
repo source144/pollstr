@@ -20,6 +20,7 @@ import './Poll.css';
 
 import { getPoll, disableVoting, votePoll, flushPoll } from '../../../store/actions/pollActions';
 import { modalClose, modalOpen, modalStatFade } from '../../../store/actions/modalActions';
+import { setWebTitle } from '../../../utils';
 
 // TODO : probably not gonna use this
 const __poll_placeholder = (() => {
@@ -135,6 +136,17 @@ const Poll = () => {
 			return () => { socket.emit("leave", `${id}`); dispatch(flushPoll()) }
 		}
 	}, [id, _prevent_fetch_, dispatch]);
+
+	useEffect(() => {
+		if (poll && poll.title) {
+			const tagsString = !poll.tags ? '' : (typeof poll.tags === 'string' ? poll.tags : poll.tags.filter(tag => tag.trim() != '').join(' - '));
+			const tagsFormatted = tagsString && tagsString.trim() ? ` (${tagsString})` : '';
+
+			setWebTitle(`${poll.title}${tagsFormatted}`);
+		}
+		else setWebTitle("Loading Poll...")
+
+	}, [poll]);
 
 	const _passcodeModal = <div className="form-centered-container">
 		<div className="form-form-wrapper">

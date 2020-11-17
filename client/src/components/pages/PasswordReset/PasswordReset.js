@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams, Redirect } from 'react-router-dom';
 import LoadingOverlay from 'react-loading-overlay';
 import { toast } from 'react-toastify'
 import { PushSpinner } from 'react-spinners-kit'
 import axios from 'axios';
+import { setWebTitle } from '../../../utils';
 
 const lowerRegex = /(?=.*[a-z])/
 const upperRegex = /(?=.*[A-Z])/
@@ -97,6 +98,10 @@ const PasswordReset = () => {
 				});
 		} else setErrors(_errors);
 	}
+
+	useEffect(() => {
+		setWebTitle("Reset Password");
+	}, []);
 
 	if (redirect)
 		return (<Redirect to="/login" />);

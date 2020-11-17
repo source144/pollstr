@@ -4,6 +4,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import { toast } from 'react-toastify'
 import { PushSpinner } from 'react-spinners-kit'
 import axios from 'axios';
+import { setWebTitle } from '../../../utils';
 
 const Verify = () => {
 	const [redirect, setRedirect] = useState(false);
@@ -16,15 +17,18 @@ const Verify = () => {
 	// TODO : dispatch to a gloabl loader
 	// Perform once
 	useEffect(() => {
+		setWebTitle("Verifying Account (Loading...)")
 		setLoading(true);
 		axios.post(`/auth/verify/${id}`, { token })
 			.then(response => {
+				setWebTitle("Verifying Account (Success)")
 				setLoading(false);
 				toast('Account Verified!', { position: "top-center", autoClose: 5000 });
 				setLoading(false);
 				setRedirect(true);
 			})
 			.catch(error => {
+				setWebTitle("Verifying Account (Error)")
 				setLoading(false);
 
 				const errorData = error.response ? error.response.data : {};

@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLogin, authResendVerification } from '../../../store/actions/authActions';
 import _ from 'lodash'
 import './Login.css';
+import { setWebTitle } from '../../../utils';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -85,6 +86,10 @@ const Login = () => {
 		// Resend Verification Email to User
 		dispatch(authResendVerification(needsVerification))
 	}
+
+	useEffect(() => {
+		setWebTitle("Login");
+	}, []);
 
 	// TODO : ProtectedRoute instead of this:
 	if (!_.isEmpty(auth)) return <Redirect to='/' />

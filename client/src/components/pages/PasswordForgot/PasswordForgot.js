@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { PushSpinner } from 'react-spinners-kit'
 import axios from 'axios';
 import { authResendVerification } from '../../../store/actions/authActions';
+import { setWebTitle } from '../../../utils';
 
 const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -106,6 +107,10 @@ const PasswordForgot = () => {
 			setResponseError(auth_error)
 		}
 	}, [verification_sent, auth_error])
+
+	useEffect(() => {
+		setWebTitle("Forgot Password");
+	}, []);
 
 	if (redirect)
 		return (<Redirect to="/login" />);

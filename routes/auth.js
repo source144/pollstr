@@ -560,7 +560,7 @@ router.post('/verify/:id', (req, res) => {
 	if (!req.body.token) return res.status(400).send(errorObject('Missing verification token'));
 	if (!req.params.id) return res.status(400).send(errorObject('Missing verification id'));
 
-	if (!mongoObjectId.isValid(req.params.id)) res.status(400).send(errorObject('Invalid verification id'));
+	if (!mongoObjectId.isValid(req.params.id)) return res.status(400).send(errorObject('Invalid verification id'));
 
 	Verification.findOne({ token: req.body.token, _id: req.params.id }, function (err, verification) {
 		if (err) return res.status(500).send({ err, message: err.message });
