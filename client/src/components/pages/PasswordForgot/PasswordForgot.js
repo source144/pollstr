@@ -27,11 +27,15 @@ const checkForm = (payload) => {
 }
 
 const PasswordForgot = () => {
-	const { needsVerification } = useSelector(state => state.auth)
+
 	const [redirect, setRedirect] = useState(undefined);
 	const [loading, setLoading] = useState(undefined);
 	const [email, setEmail] = useState('');
 	const [responseError, setResponseError] = useState('');
+	const { needsVerification,
+		global_loading: auth_loading,
+		loading: verification_loading,
+	} = useSelector(state => state.auth)
 	const dispatch = useDispatch()
 
 	const [errors, setErrors] = useState({
