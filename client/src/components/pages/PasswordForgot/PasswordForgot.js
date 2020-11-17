@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { dispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import LoadingOverlay from 'react-loading-overlay';
 import { toast } from 'react-toastify'
@@ -32,6 +32,7 @@ const PasswordForgot = () => {
 	const [loading, setLoading] = useState(undefined);
 	const [email, setEmail] = useState('');
 	const [responseError, setResponseError] = useState('');
+	const dispatch = useDispatch()
 
 	const [errors, setErrors] = useState({
 		email: '',
