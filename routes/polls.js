@@ -48,23 +48,36 @@ router.get('/', withUserId, (req, res) => {
 	// TODO : get query params for search
 	// TODO : req.query.search; req.query.foo;
 	// TODO : req.query.search;		// String
+	// TODO : req.query;		// True/False
 	// TODO : req.query.public;		// True/False
 	// TODO : req.query.guests;		// True/False
 	// TODO : req.query.hidden;		// True/False
 	// TODO : req.query.passcode;	// True/False
 	// if (!req.user || !req.user.id) return res.status(401).send(errorObject('Must be logged in to get user polls'));
 
+	// Have a proper search query:
+	// TODO : ORDERBY - oldest first
+	// TODO : ORDERBY - number of options
+	// TODO : ORDERBY - number of tags
+	// TODO : has passcode?
+	// TODO : is Guest Only?
+	// TODO : is Public Poll?
+	// TODO : is Hidden results?
+	// TODO : Matches tags?
+	// TODO : Matches search query (title/description/options?)?
+
 	if (req.user && req.user.id) {
-		Poll.find({ _creator: req.user.id }, function (err, polls) {
+		Poll.find({ _creator: req.user.id }, null, { sort: { createDate: -1 } }, function (err, polls) {
 			if (err) return res.status(500).send({ err, message: err.message });
 			return res.status(200).send(polls);
 		})
 	}
 	else {
-		Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, function (err, polls) {
-			if (err) return res.status(500).send({ err, message: err.message });
-			return res.status(200).send(polls);
-		})
+		Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, null,
+			{ sort: { createDate: -1 } }, function (err, polls) {
+				if (err) return res.status(500).send({ err, message: err.message });
+				return res.status(200).send(polls);
+			})
 	}
 });
 
@@ -98,10 +111,11 @@ router.get('/guest', withUserId, (req, res) => {
 	// TODO : req.query.passcode;	// True/False
 	console.log('[GET /polls/guest] req.fingerprint.hash', req.fingerprint.hash)
 	console.log('[GET /polls/guest] req.visitorId', req.visitorId)
-	Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, function (err, polls) {
-		if (err) return res.status(500).send({ err, message: err.message });
-		return res.status(200).send(polls);
-	})
+	Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, null,
+		{ sort: { createDate: -1 } }, function (err, polls) {
+			if (err) return res.status(500).send({ err, message: err.message });
+			return res.status(200).send(polls);
+		})
 });
 
 module.exports = router;
