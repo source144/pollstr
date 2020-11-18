@@ -21,13 +21,13 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 	const isLoggedIn = !_.isEmpty(auth);
 
 	const [submitted, setSubmitted] = useState(false);
-	const [tags, setTags] = useState(poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '');
+	const [tags, setTags] = useState(poll.specifiedTags ? (typeof poll.specifiedTags === 'string' ? poll.specifiedTags : poll.specifiedTags.join(' ')) : '');
 	const [resultsHidden, setResultsHidden] = useState(poll.hideResults);
 	const [allowGuests, setAllowGuests] = useState(!poll.usersOnly);
 	const [publicPoll, setPublicPoll] = useState(poll.public);
 	const [expireDate, setExpireDate] = useState(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
 
-	const unchanged_tags = tags == poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '';
+	const unchanged_tags = tags == poll.specifiedTags ? (typeof poll.specifiedTags === 'string' ? poll.specifiedTags : poll.specifiedTags.join(' ')) : '';
 	const unchanged_resultsHidden = resultsHidden == poll.hideResults
 	const unchanged_allowGuests = allowGuests == !poll.usersOnly
 	const unchanged_publicPoll = publicPoll == poll.public
@@ -50,7 +50,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 			onSubmit({
 				tags: tags,
 				hideResults: resultsHidden,
-				usersOnly: allowGuests,
+				usersOnly: !allowGuests,
 				public: publicPoll,
 				timeToLive: _timeToLive,
 			})
@@ -59,7 +59,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 
 	useEffect(() => {
 		if (submitted && !loading && !error) {
-			setTags(poll.tags)
+			setTags(poll.specifiedTags)
 			setResultsHidden(poll.hideResults)
 			setAllowGuests(!poll.usersOnly)
 			setPublicPoll(poll.public)

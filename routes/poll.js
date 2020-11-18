@@ -66,6 +66,10 @@ router.post('/', withUserId, (req, res) => {
 	const { error } = validatePoll(req.body);
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
 
+	// Check if user is permitted to vote on this poll
+	if (req.body.usersOnly && (!req.user || !req.user.id))
+		return res.status(403).send(errorObject('Only registered users are permitted to disallow guest voting'));
+
 	// Omit identifying fields from request
 	req.body = _.omit(req.body, "_creator", "_visitorId", "createDate");
 	if (typeof req.body.tags === 'string')
@@ -295,6 +299,10 @@ router.delete('/:id', withUserId, (req, res) => {
 router.put('/:id', withUserId, (req, res) => {
 	const { error } = validatePollEdit(req.body);
 	if (error) return res.status(400).send({ error, message: error.details[0].message });
+
+	// Check if user is permitted to vote on this poll
+	if (req.body.usersOnly && (!req.user || !req.user.id))
+		return res.status(403).send(errorObject('Only registered users are permitted to disallow guest voting'));
 
 	Poll.findOne({ _id: req.params.id }, function (err, poll) {
 		if (err) return res.status(500).send({ err, message: err.message });
