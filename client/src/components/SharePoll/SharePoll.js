@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import QRCode from 'qrcode.react'
 import useWindowDimension from '../util/useWindowDimension'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -12,6 +12,7 @@ export default (poll) => {
 	const { width } = useWindowDimension();
 	const isMobile = width <= 960;
 
+	const urlInput = useRef();
 	const url = `${window.location.protocol}//${window.location.host}/poll/${poll.id}`;
 
 	const onCopyHandler = (e) => {
@@ -19,6 +20,20 @@ export default (poll) => {
 
 		toast('Poll Link Copied!');
 	}
+
+	// (iOS 14.1 bug - no solution..)
+	// If native share API fails
+	// Simply copy the link
+	const handleShareToAppsFallback = () => {
+		urlInput.current.removeAttribute('disabled');
+		urlInput.current.value = url;
+		urlInput.current.select();
+		document.execCommand('copy');
+		urlInput.current.setSelectionRange(0, 0);
+		urlInput.current.setAttribute('disabled', "")
+		toast('Poll Link Copied!');
+	}
+
 	const handleShareToApps = (e) => {
 		if (e && typeof e.preventDefault === 'function') e.preventDefault();
 		const shareData = {
@@ -26,15 +41,15 @@ export default (poll) => {
 			text: poll.title ? [poll.title, ''].join('\n') : 'Check out this poll!\n',
 			url: url,
 		}
-
-		Share(shareData)
+		console.log("Share to other apps")
+		Share(shareData, handleShareToAppsFallback)
 			.then(() => {
 				// Succesfully sharing to other apps
 				console.log("Share opened")
 			})
 			.catch((e) => {
+				// Share API failed
 				console.log("Share failed", e);
-				// Succesfully sharing to other apps
 			})
 	}
 	return (
@@ -49,6 +64,7 @@ export default (poll) => {
 					<div className="form-item form-item--clipboard">
 						<div className='form-item-wrapper'>
 							<input
+								ref={urlInput}
 								value={url}
 								className='form-item__input form-item__input--clipboard'
 								type="text"
@@ -62,10 +78,12 @@ export default (poll) => {
 						</div>
 					</div>
 				</div>
-				{isMobile ? <div
-					onClick={handleShareToApps}
-					className="form-switch poll-created-description">
-					Or, you can also <a to={`/poll/${poll.id}`} className='form-switch-action'>share to other Apps</a></div> : undefined}
+				{isMobile ? <>
+					<div
+						onClick={handleShareToApps}
+						className="form-switch poll-created-description">
+						Or, you can also <a href={url} onClick={e => e.preventDefault()} className='form-switch-action'>share to other Apps</a></div>
+				</> : <div className="form-switch poll-created-description">Or, you can also use <a href={url} target="_blank" rel="noopener noreferrer" className='form-switch-action'>This Link</a></div>}
 			</div>
 		</div >
 	)

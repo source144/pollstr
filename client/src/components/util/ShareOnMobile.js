@@ -1,6 +1,6 @@
 // Navigator.share() bug fix
 // https://stackoverflow.com/a/57711953/9382757
-export default options => new Promise((resolve, reject) => {
+export default (options, fallback = undefined) => new Promise((resolve, reject) => {
 	if (navigator && typeof navigator.share === "function") {
 		navigator.share(options).then(resolve).catch(error => {
 			// Differentiate between user 'AbortError' and internal errors.
@@ -8,6 +8,12 @@ export default options => new Promise((resolve, reject) => {
 			if (error.message.startsWith('Internal error:'))
 				error.name = 'InternalError';
 
+			// Call fallback in case
+			// Share API fails
+			if (fallback && typeof fallback === 'function')
+				fallback();
+
+			// Reject error
 			reject(error);
 		});
 
@@ -25,5 +31,9 @@ export default options => new Promise((resolve, reject) => {
 		}, 100);
 
 		window.addEventListener('focus', cancel);
+	} else if (fallback && typeof fallback === 'function') {
+		// Call fallback in case
+		// Share API is unavailable...
+		fallback();
 	}
 });
