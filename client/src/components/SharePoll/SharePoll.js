@@ -12,7 +12,7 @@ export default (poll) => {
 	const { width } = useWindowDimension();
 	const isMobile = width <= 960;
 
-	const urlInput = useRef();
+	const copyBtn = useRef();
 	const url = `${window.location.protocol}//${window.location.host}/poll/${poll.id}`;
 
 	const onCopyHandler = (e) => {
@@ -24,15 +24,7 @@ export default (poll) => {
 	// (iOS 14.1 bug - no solution..)
 	// If native share API fails
 	// Simply copy the link
-	const handleShareToAppsFallback = () => {
-		urlInput.current.removeAttribute('disabled');
-		urlInput.current.value = url;
-		urlInput.current.select();
-		document.execCommand('copy');
-		urlInput.current.setSelectionRange(0, 0);
-		urlInput.current.setAttribute('disabled', "")
-		toast('Poll Link Copied!');
-	}
+	const handleShareToAppsFallback = () => copyBtn && copyBtn.current && copyBtn.current.click();
 
 	const handleShareToApps = (e) => {
 		if (e && typeof e.preventDefault === 'function') e.preventDefault();
@@ -41,7 +33,7 @@ export default (poll) => {
 			text: poll.title ? [poll.title, ''].join('\n') : 'Check out this poll!\n',
 			url: url,
 		}
-		console.log("Share to other apps")
+
 		Share(shareData, handleShareToAppsFallback)
 			.then(() => {
 				// Succesfully sharing to other apps
@@ -64,7 +56,6 @@ export default (poll) => {
 					<div className="form-item form-item--clipboard">
 						<div className='form-item-wrapper'>
 							<input
-								ref={urlInput}
 								value={url}
 								className='form-item__input form-item__input--clipboard'
 								type="text"
@@ -73,7 +64,7 @@ export default (poll) => {
 								disabled
 							/>
 							<CopyToClipboard text={url} onCopy={onCopyHandler}>
-								<span className='form-item__input-icon form-item__input-icon--clipboard'><i className="fas fa-copy"></i></span>
+								<span ref={copyBtn} className='form-item__input-icon form-item__input-icon--clipboard'><i className="fas fa-copy"></i></span>
 							</CopyToClipboard>
 						</div>
 					</div>
