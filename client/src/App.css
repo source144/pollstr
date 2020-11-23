@@ -409,6 +409,7 @@ body {
   /* color: var(--color-grey-dark-1); */
   color: var(--color-primary-light);
   font-weight: 700;
+  transition: color 0.1s;
 }
 
 .form-switch-action:hover,
