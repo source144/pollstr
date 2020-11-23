@@ -405,13 +405,17 @@ body {
 
 .form-switch-action {
   text-decoration: none;
-  color: var(--color-grey-dark-1);
+  font-style: italic;
+  /* color: var(--color-grey-dark-1); */
+  color: var(--color-primary-light);
   font-weight: 700;
+  transition: color 0.1s;
 }
 
-.form-switch-action:hover {
+.form-switch-action:hover,
+.form-switch-action:active {
+  color: var(--color-primary);
   cursor: pointer;
-  color: var(--color-primary-light);
 }
 
 .form-item {

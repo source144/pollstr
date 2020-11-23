@@ -3,6 +3,7 @@
   color: var(--color-black);
   border-radius: 3px;
   list-style: none;
+  margin-top: 3px;
   padding: 4px;
 }
 
@@ -12,6 +13,6 @@
   cursor: pointer;
 }
 
-.chip:not(:first-child) {
-  margin-left: 5px;
+.chip:not(:last-child) {
+  margin-right: 5px;
 }

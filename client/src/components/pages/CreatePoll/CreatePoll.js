@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useWindowDimension from '../../util/useWindowDimension';
 import './CreatePoll.css';
 import HashtagTextArea from '../../HashtagTextArea';
 import Option from './Option';
 import _ from 'lodash';
 
+import Share from '../../util/ShareOnMobile';
 import Switch from 'react-ios-switch';
 import axios from 'axios';
 import moment from 'moment'
 import QRCode from 'qrcode.react';
+import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
 
 import Placeholder from '../Placeholder/Placeholder'
@@ -74,6 +77,7 @@ const CreatePoll = () => {
 	const { auth, global_loading: auth_loading } = useSelector(state => state.auth);
 	const isLoggedIn = !_.isEmpty(auth);
 
+	const copyBtn = useRef();
 	const [responseError, setResponseError] = useState('');
 	const [resultsHidden, setResultsHidden] = useState(true);
 	const [publicPoll, setPublicPoll] = useState(false);
@@ -218,6 +222,36 @@ const CreatePoll = () => {
 
 	const handleTags = e => { setTags(e.target.value) };
 
+	// (iOS 14.1 bug - no solution..)
+	// If native share API fails
+	// Simply copy the link
+	const handleShareToAppsFallback = () => copyBtn && copyBtn.current && copyBtn.current.click();
+
+	const handleShareToApps = (e) => {
+		if (e && typeof e.preventDefault === 'function') e.preventDefault();
+		const shareData = {
+			title: title,
+			text: title ? [title, ''].join('\n') : 'Check out this poll!\n',
+			url: `${window.location.protocol}//${window.location.host}/poll/${createdId}`,
+		}
+
+		Share(shareData, handleShareToAppsFallback)
+			.then(() => {
+				// Succesfully sharing to other apps
+				console.log("Share opened")
+			})
+			.catch((e) => {
+				// Share API failed
+				console.log("Share failed", e);
+			})
+	}
+
+	const onCopyHandler = (e) => {
+		if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+		toast('Poll Link Copied!');
+	}
+
 	useEffect(() => { }, [description, title]);
 
 	useEffect(() => {
@@ -236,11 +270,26 @@ const CreatePoll = () => {
 						<>
 							<h1 className='form-title'>Poll Created</h1>
 							<div onSubmit={(e) => { e.preventDefault() }} formNoValidate className='form-form'>
-								<div className="form-switch poll-created-description">Use this QR Code to Acces Poll</div>
+								<div className="form-switch poll-created-description">Use this QR Code to <Link to={`/poll/${createdId}`} className='form-switch-action'>Acces Poll</Link></div>
 								<div className="poll-created-qr">
 									<QRCode value={`${window.location.protocol}//${window.location.host}/poll/${createdId}`} size={200} />
 								</div>
-								<div className="form-switch poll-created-description">You can also use <Link to={`/poll/${createdId}`} className='form-switch-action'>This Link</Link></div>
+								<div className="form-item form-item--clipboard">
+									<div className='form-item-wrapper'>
+										<input
+											value={`${window.location.protocol}//${window.location.host}/poll/${createdId}`}
+											className='form-item__input form-item__input--clipboard'
+											type="text"
+											name={`url-${createdId}`}
+											formNoValidate
+											disabled
+										/>
+										<CopyToClipboard text={`${window.location.protocol}//${window.location.host}/poll/${createdId}`} onCopy={onCopyHandler}>
+											<span ref={copyBtn} className='form-item__input-icon form-item__input-icon--clipboard'><i className="fas fa-copy"></i></span>
+										</CopyToClipboard>
+									</div>
+								</div>
+								<div className="form-switch poll-created-description">Or, <a href={`${window.location.protocol}//${window.location.host}/poll/${createdId}`} onClick={handleShareToApps} className='form-switch-action'>share to other Apps</a></div>
 								<div className="form-item">
 									<input
 										className="btn btn--tertiary form-item__submit"
