@@ -139,6 +139,32 @@ input {
   box-sizing: inherit;
 }
 
+.privacy-policy {
+  padding: 1em;
+}
+.privacy-policy > * {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@media screen and (min-width: 961px) {
+  .privacy-policy {
+    padding: 5em;
+  }
+
+  .privacy-policy strong {
+    margin-top: 1em;
+  }
+
+  .privacy-policy li,
+  .privacy-policy li::marker {
+    margin-left: 2em;
+  }
+  .privacy-policy > * {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 1.8em;
+  }
+}
+
 ._loading_overlay_content > div:first-child {
   width: auto;
   margin-bottom: 15px;
