@@ -3,9 +3,6 @@
 export default (options, fallback = undefined) => new Promise((resolve, reject) => {
 	if (navigator && typeof navigator.share === "function") {
 		navigator.share(options).then(resolve).catch(error => {
-			console.log(`error.message: ${error.message}`);
-			console.log(`error.name: ${error.name}`);
-			console.log(`error.message.includes("AbortError"): ${error.message.includes("AbortError")}`);
 			// Differentiate between user 'AbortError' and internal errors.
 			// E.g. Internal error: could not connect to Web Share interface.
 			if (error.message.startsWith('Internal error:'))
@@ -13,7 +10,7 @@ export default (options, fallback = undefined) => new Promise((resolve, reject) 
 
 			// Call fallback in case
 			// Share API fails
-			if (!error.message.includes("AbortError") && fallback && typeof fallback === 'function')
+			if (!error.name.startsWith("AbortError") && fallback && typeof fallback === 'function')
 				fallback();
 
 			// Reject error
