@@ -224,7 +224,7 @@ export const authLogout = auth => {
 	return (dispatch) => {
 		dispatch(authLogoutRequest())
 
-		delete axios.defaults.headers.common["Authorization"];
+		delete axios.defaults.headers.common["AUTHORIZATION"];
 		const refresh_token = localStorage.getItem('refresh');
 
 		if (refresh_token) {
@@ -276,7 +276,7 @@ const createAuthInterceptor = refresh_token => {
 							.catch(error => {
 
 								// Dispose bad access token and refresh token
-								delete axios.defaults.headers.common["Authorization"];
+								delete axios.defaults.headers.common["AUTHORIZATION"];
 								localStorage.removeItem('refresh');
 
 								// TODO : eject the interceptor in this case!
@@ -295,7 +295,7 @@ const createAuthInterceptor = refresh_token => {
 								// TODO : dispatch authLogout()
 
 								// Dispose bad access token and refresh token
-								delete axios.defaults.headers.common["Authorization"];
+								delete axios.defaults.headers.common["AUTHORIZATION"];
 								localStorage.removeItem('refresh');
 
 								// TODO : eject the interceptor in this case!
