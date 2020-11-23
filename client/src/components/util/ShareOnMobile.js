@@ -10,7 +10,7 @@ export default (options, fallback = undefined) => new Promise((resolve, reject) 
 
 			// Call fallback in case
 			// Share API fails
-			if (fallback && typeof fallback === 'function')
+			if (!error.message.includes("AbortError") && fallback && typeof fallback === 'function')
 				fallback();
 
 			// Reject error

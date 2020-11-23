@@ -235,12 +235,12 @@ function Navbar() {
 						</Link>
 						{dropdown && <Dropdown />}
 					</li>
-					<li className={`nav-item ${hasAuth ? 'mobile-only' : ''}`}>
+					<li className={[`nav-item ${hasAuth ? 'mobile-only' : ''}`, activeNavClass('/polls/create')].join(' ')}>
 						<Link to='/polls/create' className='nav-link' onClick={closeMobileMenu}>
 							Create
 						</Link>
 					</li>
-					{!hasAuth ? <li className="nav-item mobile-only">
+					{!hasAuth ? <li className={["nav-item mobile-only", activeNavClass('/signup')].join(' ')}>
 						<Link to='/signup' className='nav-link' onClick={closeMobileMenu}>
 							Sign Up
 						</Link>
