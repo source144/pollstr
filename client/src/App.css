@@ -215,6 +215,11 @@ body {
   background-color: var(--color-grey-dark-4);
   background: var(--color-bg-calm-1);
   overflow: auto !important;
+  overflow-y: overlay !important;
+}
+
+.Toastify__toast-container.Toastify__toast-container--bottom-left {
+  bottom: 0;
 }
 
 .Toastify__toast-container.Toastify__toast-container--top-right,
