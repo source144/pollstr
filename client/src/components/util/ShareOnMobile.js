@@ -10,7 +10,7 @@ export default (options, fallback = undefined) => new Promise((resolve, reject) 
 
 			// Call fallback in case
 			// Share API fails
-			if (fallback && typeof fallback === 'function')
+			if (!error.name.startsWith("AbortError") && fallback && typeof fallback === 'function')
 				fallback();
 
 			// Reject error
@@ -35,5 +35,6 @@ export default (options, fallback = undefined) => new Promise((resolve, reject) 
 		// Call fallback in case
 		// Share API is unavailable...
 		fallback();
+		resolve();
 	}
 });

@@ -29,6 +29,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
+import PrivacyPolicy from './components/pages/PrivacyPolicy/PrivacyPolicy';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';  // <- alias
@@ -59,6 +60,7 @@ function App() {
 								<Route path='/polls' exact component={UserPolls}></Route>
 								<Route path='/polls/create' exact component={CreatePoll}></Route>
 								<Route path='/poll/:id' component={Poll}></Route>
+								<Route path='/privacy' component={PrivacyPolicy}></Route>
 								<Route path='/*' component={NotFound}></Route>
 							</Switch>
 						</div>
