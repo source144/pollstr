@@ -5,6 +5,7 @@ import CountdownTimer from '../../CountdownTimer';
 // TODO : Create my own react-hashtag component
 import ReactHashtag from "react-hashtag";
 import { useSelector, useDispatch } from 'react-redux';
+import { ImpulseSpinner } from 'react-spinners-kit'
 import QRCode from 'qrcode.react';
 
 import moment from 'moment';
@@ -80,7 +81,7 @@ const Poll = () => {
 	const pollWrapper = useRef();
 	const passcodeInput = useRef();
 
-	const { poll, error, selected, loading: poll_loading } = useSelector(state => state.poll);
+	const { poll, error, selected, loading: poll_loading, voting: isVoting } = useSelector(state => state.poll);
 	const { global_loading: auth_loading, fingerprint } = useSelector(state => state.auth);
 
 	// Prevent API calls until authenticated/identified
@@ -241,10 +242,12 @@ const Poll = () => {
 				<PollOption title={options[2].title} description={options[2].description} percent={options[2].percent}></PollOption> */}
 							{error ? <div className="form-item form-item__error">{error}</div> : null}
 							<div className="form-item">
-								<input
-									className="btn btn--tertiary form-item__submit"
-									type="submit" value="Vote" onClick={handleVote}
-									disabled={selected == null || poll.voted != null || poll.expired} />
+								<button
+									className="btn btn--tertiary form-item__submit form-item__submit--center-content"
+									type="submit" onClick={handleVote}
+									disabled={selected == null || poll.voted != null || poll.expired || isVoting}>
+									{isVoting ? <ImpulseSpinner backColor={'#55c57a'} /> : "Vote"}
+								</button>
 							</div>
 						</div>
 

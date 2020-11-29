@@ -55,16 +55,16 @@ export const getPoll = pollId => {
 }
 
 const votePollRequest = () => ({ type: VOTE_POLL_REQUEST })
-const votePollSuccess = poll => ({ type: VOTE_POLL_SUCCESS, poll })
-const votePollFailure = error => ({ type: VOTE_POLL_FAILURE, error })
+const votePollSuccess = (poll, pollId) => ({ type: VOTE_POLL_SUCCESS, poll, pollId })
+const votePollFailure = (error, pollId) => ({ type: VOTE_POLL_FAILURE, error, pollId })
 export const votePoll = (pollId, optionId, passcode = undefined) => {
 	return (dispatch) => {
-		dispatch(votePollRequest);
+		dispatch(votePollRequest());
 		console.log('passcode', passcode)
 		axios.post(`poll/${pollId}/vote/${optionId}`, { passcode })
 			.then(response => {
 				const poll = response.data;
-				dispatch(votePollSuccess(poll));
+				dispatch(votePollSuccess(poll, pollId));
 
 				// Toast user
 				toast.success(<>Vote received!</>, {
@@ -74,7 +74,7 @@ export const votePoll = (pollId, optionId, passcode = undefined) => {
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};
 				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
-				dispatch(votePollFailure(errorMsg))
+				dispatch(votePollFailure(errorMsg, pollId))
 
 
 				toast.error(<><strong>Oops!</strong> {errorMsg}</>, {

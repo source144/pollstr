@@ -22,7 +22,7 @@ import {
 	FLUSH_POLL
 } from '../actions/types/pollTypes'
 
-const initState = { poll: {}, loading: undefined, error: undefined, selected: undefined };
+const initState = { poll: {}, loading: undefined, error: undefined, selected: undefined, voting: undefined };
 const transform = poll => {
 	const expired = poll.timeToLive != 0 && poll.timeToLive - (moment().unix() - moment(poll.createDate).unix()) < 0;
 	return {
@@ -64,9 +64,21 @@ const pollReducer = (state = initState, action) => {
 		case DISABLE_VOTING: return { ...state, poll: { ...state.poll, expired: true } };
 		case FLUSH_POLL: return { ...state, poll: {} };
 
-		case VOTE_POLL_REQUEST: return { ...initState, poll: { ...state.poll }, loading: true };
-		case VOTE_POLL_SUCCESS: return { ...initState, poll: { ...state.poll, ...transform(action.poll) } };
-		case VOTE_POLL_FAILURE: return { ...initState, poll: { ...state.poll }, error: action.error, selected: state.selected };
+		case VOTE_POLL_REQUEST: return { ...initState, poll: { ...state.poll }, voting: true };
+		case VOTE_POLL_SUCCESS:
+			// Just in case another poll is loaded while the vote is being processed
+			if (state.poll && state.poll.id == action.pollId)
+				return { ...initState, poll: { ...state.poll, ...transform(action.poll) } };
+
+			// Othersise don't modify current polls' state.
+			return state;
+		case VOTE_POLL_FAILURE:
+			// Just in case another poll is loaded while the vote is being processed
+			if (state.poll && state.poll.id == action.pollId)
+				return { ...initState, poll: { ...state.poll }, error: action.error, selected: state.selected };
+
+			// Othersise don't modify current polls' state.
+			return state;
 		default: return state;
 	}
 }

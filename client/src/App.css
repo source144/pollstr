@@ -514,7 +514,11 @@ body {
   height: 5.5rem;
   margin-top: 1rem;
 }
-
+.form-item__submit.form-item__submit--center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .form-item__input {
   height: 47px;
   width: 100%;
