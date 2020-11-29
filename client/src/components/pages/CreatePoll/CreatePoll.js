@@ -23,6 +23,7 @@ import Placeholder from '../Placeholder/Placeholder'
 import momentLocalizer from 'react-widgets-moment';
 import DateTimePicker from 'react-widgets/lib/DateTimePicker';
 import { setWebTitle } from '../../../utils';
+import { ImpulseSpinner } from 'react-spinners-kit';
 
 // For React-Widgets 
 // DateTimePicker
@@ -78,6 +79,7 @@ const CreatePoll = () => {
 	const isLoggedIn = !_.isEmpty(auth);
 
 	const copyBtn = useRef();
+	const [isCreating, setIsCreating] = useState(false);
 	const [responseError, setResponseError] = useState('');
 	const [resultsHidden, setResultsHidden] = useState(true);
 	const [publicPoll, setPublicPoll] = useState(false);
@@ -206,13 +208,14 @@ const CreatePoll = () => {
 			return;
 		}
 
-		// TODO : loading
+		setIsCreating(true)
 		axios.post('/poll/', payload)
 			.then(response => { setCreatedId(response.data.id) })
 			.catch(error => {
 				const errorMsg = error.response && error.response.data ? (error.response.data.message ? error.response.data.message : (typeof error.response.data.error === 'string' ? error.response.data.error : error.message)) : error.message;
 				setResponseError(errorMsg);
 			})
+			.finally(() => setIsCreating(false))
 	};
 	const handlePasscode = e => { setPasscode(e.target.value) };
 
@@ -262,7 +265,8 @@ const CreatePoll = () => {
 
 		<div className="form-centered-container">
 			{auth_loading ? <Placeholder /> :
-				<div className="form-form-wrapper poll-create-form">
+				<div className="form-form-wrapper poll-create-form"
+					style={createdId && isMobile ? { maxWidth: "450px" } : undefined}>
 					{createdId ?
 						// ------------------ //
 						//   Create Success   //
@@ -627,10 +631,13 @@ const CreatePoll = () => {
 									</>
 								}
 								{!!responseError ? <div className="form-item__error">{responseError}</div> : null}
-								<div className="form-item" style={!isMobile ? { marginRight: '-1rem' } : {}}>
-									<input
-										className={`btn btn--tertiary form-item__submit ${!!errors.confirm ? 'form-item__input--err' : ''}`}
-										type="submit" value="Create!" onClick={handleSubmit} disabled={!title || !_.filter(options, option => !!option.value && !!option.value.trim()).length >= 2} />
+								<div className="form-item">
+									<button
+										className={`btn btn--tertiary form-item__submit form-item__submit--center-content ${!!errors.confirm ? 'form-item__input--err' : ''}`}
+										type="submit" onClick={handleSubmit}
+										disabled={isCreating || !title || !_.filter(options, option => !!option.value && !!option.value.trim()).length >= 2}>
+										{isCreating ? <ImpulseSpinner backColor={'#55c57a'} /> : "Create!"}
+									</button>
 								</div>
 							</div>
 						</>}
