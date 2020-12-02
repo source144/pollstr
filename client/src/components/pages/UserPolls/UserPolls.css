@@ -30,9 +30,9 @@
 
 .noresult--cta,
 .btn.noresult--cta {
-	margin-top: 10px;
-	font-size: 32px;
-	padding: 2.2rem;
+  margin-top: 10px;
+  font-size: 32px;
+  padding: 2.2rem;
 }
 
 .user-polls .poll-wrapper {
@@ -62,7 +62,7 @@
   background-clip: text;
   color: transparent;
 
-  transition: all 4s;
+  transition: all .4s;
 }
 .my-polls__search-btn:active {
   transform: translateY(1px);

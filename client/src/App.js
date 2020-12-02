@@ -32,9 +32,9 @@ import 'react-morphing-modal/dist/ReactMorphingModal.css';
 import PrivacyPolicy from './components/pages/PrivacyPolicy/PrivacyPolicy';
 import Landing from './components/pages/Landing/Landing';
 
-axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
+// axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';  // <- alias
-// axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 function App() {
 	// TODO : move this to AppContext

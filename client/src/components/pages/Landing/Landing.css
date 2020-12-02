@@ -37,7 +37,8 @@
   max-width: 225px;
 }
 
-.landing-menu * {
+.landing-menu *,
+.landing-header * {
   /* Disable text selection */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -77,4 +78,10 @@
 .landing-menu ul li a:hover {
   color: #000;
   text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+  .landing-centered-container {
+    min-height: calc(100vh - 2 * var(--nav-height));
+  }
 }
