@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getPolls, flushPolls, deletePoll, editPoll, editPollPasscode } from '../../../store/actions/managePollsActions';
@@ -24,24 +25,31 @@ export default () => {
 	const dispatch = useDispatch();
 	const { polls, loading: polls_loading, error: polls_error } = useSelector(state => state.polls);
 	const { auth, global_loading: auth_loading, fingerprint } = useSelector(state => state.auth);
-	const { searchQuery, setSearchQuery } = useState("");
+	const [searchQuery, setSearchQuery] = useState("");
+	const [disableSearch, setDisableSearch] = useState(true);
+	const [ownsNothing, setOwnsNothing] = useState(false);
 	const searchForm = useRef(null);
 	const hasAuth = !_.isEmpty(auth);
 
 	// Prevent API calls until authenticated/identified
 	const _prevent_fetch_ = auth_loading || (!fingerprint && !hasAuth)
 
+	// if (!ownsNothing && !_prevent_fetch_ && !polls_loading && !searchQuery && polls && Array.isArray(polls) && !polls.length)
+	// 	setOwnsNothing(true);
+
 	let noResults;
 	if (!_prevent_fetch_ && !polls_loading) {
 		if (searchQuery)
 			noResults =
 				<>
-
+					<div className="noresult--primary">No Polls Found</div>
+					<div className="noresult--secondary">Try a different filter</div>
 				</>
 		else
 			noResults =
 				<>
-
+					<div className="noresult--primary">You have no Polls</div>
+					<Link to="/polls/create" className="btn btn--primary-1 noresult--cta">Create New Poll</Link>
 				</>
 	}
 
@@ -51,10 +59,18 @@ export default () => {
 		const form = searchForm.current;
 		const query = form['query'].value;
 
-		if (_prevent_fetch_ || !query)
+		if (_prevent_fetch_ || disableSearch)
 			return;
 
+		setDisableSearch(true);
+		setSearchQuery(query);
 		dispatch(getPolls(query));
+	}
+
+	const onSearchChange = e => {
+		e.preventDefault();
+
+		setDisableSearch(e.target.value === searchQuery);
 	}
 
 	useEffect(() => {
@@ -80,11 +96,14 @@ export default () => {
 				<form className="form-form-wrapper polls-header" onSubmit={submitSearch} ref={searchForm}>
 					<div className="my-polls__search-input">
 						<input
+							onChange={onSearchChange}
 							name="query"
 							className="form-item__input form-item__input--small"
 							type="text"
 							placeholder="Filter Polls" />
-						<button type="submit" className='form-item__input-icon my-polls__search-btn'><i className="my-polls__search-btn--icon fas fa-search"></i></button>
+						<button type="submit" className='form-item__input-icon my-polls__search-btn' disabled={disableSearch}>
+							<i className="my-polls__search-btn--icon fas fa-search"></i>
+						</button>
 					</div>
 				</form>
 			</div>
@@ -95,7 +114,7 @@ export default () => {
 							polls.length > 0 ?
 								polls.map(poll => <Poll poll={poll} key={poll.id} />)
 								:
-								<h1>Oops. Couldn't find any polls!</h1>
+								<div className="noresult">{noResults}</div>
 							:
 							<h1>{polls_error}</h1>
 					}

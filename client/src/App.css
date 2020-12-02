@@ -118,7 +118,7 @@
     transform: rotate(0deg);
   }
   to {
-	  transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
@@ -292,6 +292,7 @@ body {
   border: none;
   cursor: pointer;
   font-size: 1.8rem;
+  text-decoration: none;
 }
 
 .btn.disabled,
@@ -340,10 +341,26 @@ body {
   padding: 0.5rem 1rem;
 }
 .btn.btn--primary:hover {
-  background: var(--color-primary);
+  background: var(--color-primary-light);
 }
 .btn.btn--primary:active {
-  background: var(--color-primary-damp);
+  background: var(--color-primary);
+}
+
+.btn.btn--primary-1 {
+  color: var(--color-white);
+  background: #4bbe37;
+  /* background: var(--color-primary-light); */
+  transition: all 0.2s ease-out;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+}
+.btn.btn--primary-1:hover {
+  background: #59c945;
+  /* filter: brightness(0.95); */
+}
+.btn.btn--primary-1:active {
+  filter: brightness(0.9);
 }
 
 .btn.btn--primary-outline {

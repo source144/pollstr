@@ -14,14 +14,36 @@
   min-height: calc(100vh - var(--nav-height));
 }
 
+.noresult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.noresult--primary {
+  font-size: 42px;
+  font-weight: 500;
+}
+.noresult--secondary {
+  font-size: 22px;
+}
+
+.noresult--cta,
+.btn.noresult--cta {
+	margin-top: 10px;
+	font-size: 32px;
+	padding: 2.2rem;
+}
+
 .user-polls .poll-wrapper {
   width: min(600px, 100vw);
   margin-bottom: 7rem;
 }
 
 .polls-header {
-  max-width: 375px;
-  min-width: 375px;
+  min-width: 320px;
+  max-width: min(600px, 100vw);
+  width: min(600px, 100vw);
 }
 
 .my-polls__search-btn {
@@ -33,29 +55,30 @@
   cursor: pointer;
 }
 
-.my-polls__search-btn--icon {
+.my-polls__search-btn .my-polls__search-btn--icon {
   padding: 4px 0;
   background: var(--gradient-primary--1);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+
+  transition: all 4s;
 }
 .my-polls__search-btn:active {
   transform: translateY(1px);
 }
-.my-polls__search-btn--icon:focus,
-.my-polls__search-btn--icon:active {
+.my-polls__search-btn .my-polls__search-btn--icon:focus,
+.my-polls__search-btn .my-polls__search-btn--icon:active {
   outline: none;
   border: none;
 }
 
-@media screen and (min-width: 961px) {
-  .polls-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    min-width: 600px;
-    max-width: 600px;
-  }
+.my-polls__search-btn:disabled .my-polls__search-btn--icon {
+  background: var(--color-grey-light-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  cursor: default;
+}
+.my-polls__search-btn:disabled {
+  cursor: default;
 }
