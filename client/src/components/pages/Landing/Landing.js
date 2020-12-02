@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLogout } from '../../../store/actions/authActions';
 import _ from 'lodash';
@@ -8,6 +8,7 @@ import "./Landing.css"
 
 const Landing = () => {
 	const { auth, global_loading } = useSelector(state => state.auth)
+	let history = useHistory();
 
 	const dispatch = useDispatch();
 	const hasAuth = !_.isEmpty(auth);
@@ -18,8 +19,8 @@ const Landing = () => {
 		</li>
 	</>
 	const guestOptions = <>
-		<li><Link to="/login">Sign In</Link></li>
-		<li><Link to="/signup">Sign Up</Link></li>
+		<li onClick={() => history.push("/login")}><Link>Sign In</Link></li>
+		<li onClick={() => history.push("/signup")}><Link>Sign Up</Link></li>
 	</>
 	const authButtons = hasAuth ? userOptions : guestOptions;
 
@@ -35,13 +36,13 @@ const Landing = () => {
 			</div>
 			<div className="form-form-wrapper landing-menu">
 				<ul>
-					<li>
-						<Link to="/polls/create">
+					<li onClick={() => history.push("/polls/create")}>
+						<Link>
 							Create
 						</Link>
 					</li>
-					<li>
-						<Link to="/polls">
+					<li onClick={() => history.push("/polls")}>
+						<Link>
 							Manage
 						</Link>
 					</li>
