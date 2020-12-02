@@ -113,6 +113,17 @@
     ); */
 }
 
+@keyframes gradient_animation_1 {
+  0%,
+  100% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 100% 0;
+  }
+}
+
 * {
   /* font-family: "PT Sans", sans-serif; */
   font-family: "Montserrat", sans-serif;

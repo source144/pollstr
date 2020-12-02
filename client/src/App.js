@@ -30,6 +30,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // React-Morphing-Modal Styling
 import 'react-morphing-modal/dist/ReactMorphingModal.css';
 import PrivacyPolicy from './components/pages/PrivacyPolicy/PrivacyPolicy';
+import Landing from './components/pages/Landing/Landing';
 
 axios.defaults.baseURL = 'https://pollstr-app.herokuapp.com/api/';
 // axios.defaults.baseURL = 'https://pollstr.app/api/';  // <- alias
@@ -50,7 +51,8 @@ function App() {
 						<div className="app">
 							<Switch>
 								{/* <Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route> */}
-								<Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route>
+								{/* <Route path='/' exact><Redirect to='/poll/5f94abf7c82e940a918f7b3c' /></Route> */}
+								<Route path='/' exact component={Landing}></Route>
 								<Route path='/signup' component={Signup} exact></Route>
 								<Route path='/login' component={Login} exact></Route>
 								<Route path='/password/forgot' component={PasswordForgot} exact></Route>

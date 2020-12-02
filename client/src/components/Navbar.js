@@ -206,7 +206,7 @@ function Navbar() {
 		<>
 			<nav className="navbar" style={isOpen ? { zIndex: 4 } : null}>
 				<Link to="/" className="navbar-logo">
-					<span className='navbar-logo-text'>Pollstr</span> <i className="navbar-logo__icon fas fa-volleyball-ball" />
+					<span className='navbar-logo-text navbar-logo-text--gradient'>Pollstr</span> <i className="navbar-logo__icon navbar-logo__icon--gradient fas fa-volleyball-ball" />
 				</Link>
 				<div className={click ? "navbar-expand active" : "navbar-expand"} onClick={handleClick}>
 					<span className="navbar-expand__icon" />

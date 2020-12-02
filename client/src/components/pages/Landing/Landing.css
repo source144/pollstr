@@ -1,0 +1,80 @@
+.landing-centered-container {
+  min-height: calc(100vh - var(--nav-height));
+  overflow: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-header {
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.landing-header .landing-header--primary {
+  font-family: "billabongregular", "Billabong";
+  font-size: 95px;
+}
+/* .landing-header .landing-header--primary-animated {
+  background: var(--gradient-primary--1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+} */
+
+.landing-header .landing-header--secondary {
+  margin-top: -34px;
+  font-size: 20px;
+  font-style: italic;
+}
+
+.landing-menu {
+  padding: 0;
+  overflow: hidden;
+  min-width: 225px;
+  max-width: 225px;
+}
+
+.landing-menu * {
+  /* Disable text selection */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+
+  /* No Drag */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+.landing-menu ul li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+.landing-menu ul li:hover {
+  cursor: pointer;
+  background: var(--color-primary-light);
+  color: pink;
+}
+.landing-menu ul li:hover a {
+  letter-spacing: 2px;
+}
+.landing-menu ul li a {
+  transition: color 0.3s, letter-spacing 0.3s;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.landing-menu ul li a,
+.landing-menu ul li a:hover {
+  color: #000;
+  text-decoration: none;
+}

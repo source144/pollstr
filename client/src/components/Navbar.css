@@ -47,9 +47,22 @@
 }
 
 .navbar-logo__icon {
+  background: var(--gradient-primary--1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.navbar-logo__icon {
   margin-left: 6px;
   font-size: 3rem;
 }
+
+/* .navbar-logo .navbar-logo-text--gradient {
+  background: var(--gradient-primary--1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+} */
 
 .navbar-logo:hover .navbar-logo-text {
   font-family: "billabongregular", "Billabong";
