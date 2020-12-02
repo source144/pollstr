@@ -113,14 +113,12 @@
     ); */
 }
 
-@keyframes gradient_animation_1 {
-  0%,
-  100% {
-    background-position: 0 0;
+@keyframes gradient_rotation {
+  from {
+    transform: rotate(0deg);
   }
-
-  50% {
-    background-position: 100% 0;
+  to {
+	  transform: rotate(360deg);
   }
 }
 

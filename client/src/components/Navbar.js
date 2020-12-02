@@ -188,15 +188,16 @@ function Navbar() {
 		return (
 			<>
 				<li className={["nav-item", activeNavClass('/profile')].join(' ')}>
-					<Link to='/profile' className='nav-link' onClick={closeMobileMenu}>
+					{/* <Link to='/profile' className='nav-link' onClick={closeMobileMenu}> */}
+					<Link className='nav-link' onClick={closeMobileMenu}>
 						{DISPLAY_NAME} <i className='fas fa-caret-down' />
 					</Link>
 					{/* {dropdown && <Dropdown /> /* TODO: dropdown with item props*/}
 				</li>
 				<li className="nav-item" onClick={() => !global_loading ? dispatch(authLogout()) : undefined}>
-					<Link to='/profile' className='nav-link'>
+					<Link className='nav-link'>
 						Sign Out
-				</Link>
+					</Link>
 				</li>
 			</>
 		)

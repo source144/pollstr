@@ -47,15 +47,18 @@
 }
 
 .navbar-logo__icon {
+  margin-left: 6px;
+  font-size: 3rem;
+}
+.navbar-logo__icon--gradient {
   background: var(--gradient-primary--1);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+
+  /* animation: gradient_rotation 1s infinite; */
 }
-.navbar-logo__icon {
-  margin-left: 6px;
-  font-size: 3rem;
-}
+
 
 /* .navbar-logo .navbar-logo-text--gradient {
   background: var(--gradient-primary--1);
