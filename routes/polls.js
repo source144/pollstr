@@ -33,7 +33,13 @@ const withUserId = (req, res, next) => {
  *        - BearerAuth: []
  *      produces:
  *        - application/json
- * 
+ *      parameters:
+ *        - in: query
+ *          name: search
+ *          description: Search Query
+ *          schema:
+ *            type: string
+ *
  *      responses:
  *        200:
  *          description: Fetch Successful. Returns Polls created/owned by User
@@ -66,14 +72,26 @@ router.get('/', withUserId, (req, res) => {
 	// TODO : Matches tags?
 	// TODO : Matches search query (title/description/options?)?
 
+	let searchQuery;
+	if (req.query && req.query.search && typeof req.query.search === 'string') {
+		searchQuery = [
+			{ title: { $regex: req.query.search, $options: 'i' } },
+			{ description: { $regex: req.query.search, $options: 'i' } },
+			{ tags: { $regex: req.query.search, $options: 'i' } },
+			{ "options.title": { $regex: req.query.search, $options: 'i' } },
+		]
+	}
+
 	if (req.user && req.user.id) {
-		Poll.find({ _creator: req.user.id }, null, { sort: { createDate: -1 } }, function (err, polls) {
+		const query = searchQuery ? { _creator: req.user.id, $or: [...searchQuery] } : { _creator: req.user.id };
+		Poll.find(query, null, { sort: { createDate: -1 } }, function (err, polls) {
 			if (err) return res.status(500).send({ err, message: err.message });
 			return res.status(200).send(polls);
 		})
 	}
 	else {
-		Poll.find({ _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash }, null,
+		const query = searchQuery ? { _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash, $or: [...searchQuery] } : { _visitorId: req.visitorId ? req.visitorId : req.fingerprint.hash };
+		Poll.find(query, null,
 			{ sort: { createDate: -1 } }, function (err, polls) {
 				if (err) return res.status(500).send({ err, message: err.message });
 				return res.status(200).send(polls);

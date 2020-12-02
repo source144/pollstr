@@ -27,21 +27,21 @@ export const flushPolls = () => ({ type: FLUSH_POLLS })
 const getPollsRequest = () => ({ type: GET_POLLS_REQUEST })
 const getPollsSuccess = polls => ({ type: GET_POLLS_SUCCESS, polls })
 const getPollsFailure = error => ({ type: GET_POLLS_FAILURE, error })
-export const getPolls = () => {
+export const getPolls = (search = "") => {
 	return (dispatch) => {
 		dispatch(getPollsRequest());
-		axios.get('polls/')
+		axios.get('polls/', search ? { params: { search } } : undefined)
 			.then(response => {
 				const polls = response.data;
 				dispatch(getPollsSuccess(polls));
 
 				// Listen to this polls' updates
-				polls.forEach(poll => {
-					socket.emit('join', `${poll.id}`);
-					socket.on(`update_${poll.id}`, updatedPoll => {
-						dispatch(updatePoll(poll.id, updatedPoll));
-					});
-				})
+				// polls.forEach(poll => {
+				// 	socket.emit('join', `${poll.id}`);
+				// 	socket.on(`update_${poll.id}`, updatedPoll => {
+				// 		dispatch(updatePoll(poll.id, updatedPoll));
+				// 	});
+				// })
 			})
 			.catch(error => {
 				const errorData = error.response ? error.response.data : {};

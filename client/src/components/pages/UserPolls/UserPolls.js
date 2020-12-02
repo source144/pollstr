@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getPolls, flushPolls, deletePoll, editPoll, editPollPasscode } from '../../../store/actions/managePollsActions';
@@ -24,11 +24,38 @@ export default () => {
 	const dispatch = useDispatch();
 	const { polls, loading: polls_loading, error: polls_error } = useSelector(state => state.polls);
 	const { auth, global_loading: auth_loading, fingerprint } = useSelector(state => state.auth);
+	const { searchQuery, setSearchQuery } = useState("");
+	const searchForm = useRef(null);
 	const hasAuth = !_.isEmpty(auth);
 
 	// Prevent API calls until authenticated/identified
 	const _prevent_fetch_ = auth_loading || (!fingerprint && !hasAuth)
 
+	let noResults;
+	if (!_prevent_fetch_ && !polls_loading) {
+		if (searchQuery)
+			noResults =
+				<>
+
+				</>
+		else
+			noResults =
+				<>
+
+				</>
+	}
+
+	const submitSearch = e => {
+		e.preventDefault();
+
+		const form = searchForm.current;
+		const query = form['query'].value;
+
+		if (_prevent_fetch_ || !query)
+			return;
+
+		dispatch(getPolls(query));
+	}
 
 	useEffect(() => {
 		if (!_prevent_fetch_) {
@@ -49,25 +76,19 @@ export default () => {
 
 	return (
 		<div className="content-fullscreen">
+			<div className="content-horizontal-center pt-4">
+				<form className="form-form-wrapper polls-header" onSubmit={submitSearch} ref={searchForm}>
+					<div className="my-polls__search-input">
+						<input
+							name="query"
+							className="form-item__input form-item__input--small"
+							type="text"
+							placeholder="Filter Polls" />
+						<button type="submit" className='form-item__input-icon my-polls__search-btn'><i className="my-polls__search-btn--icon fas fa-search"></i></button>
+					</div>
+				</form>
+			</div>
 			{!_prevent_fetch_ && !polls_loading && Array.isArray(polls) ? <>
-				<div className="content-horizontal-center pt-4">
-					<header className="form-form-wrapper polls-header">
-						<h1>Your Polls</h1>
-						<div className="my-polls__search">
-							<div className="my-polls__search-input">
-								<input
-									className="form-item__input form-item__input--small"
-									type="text"
-									placeholder="Filter Polls" />
-								<span className='form-item__input-icon'><i className="fas fa-search"></i></span>
-							</div>
-							<div className="my-polls__search-filters">
-								<label htmlFor="guests">Guests</label>
-								<input name="guests" type="checkbox" />
-							</div>
-						</div>
-					</header>
-				</div>
 				<div className="content-horizontal-center mt-6 user-polls">
 					{
 						!polls_error ?

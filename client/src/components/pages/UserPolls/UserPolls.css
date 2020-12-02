@@ -6,6 +6,10 @@
   align-items: center;
 }
 
+.my-polls__search-input {
+  width: 100%;
+}
+
 .content-fullscreen {
   min-height: calc(100vh - var(--nav-height));
 }
@@ -18,6 +22,31 @@
 .polls-header {
   max-width: 375px;
   min-width: 375px;
+}
+
+.my-polls__search-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+
+  transition: all 0.1s;
+  cursor: pointer;
+}
+
+.my-polls__search-btn--icon {
+  padding: 4px 0;
+  background: var(--gradient-primary--1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.my-polls__search-btn:active {
+  transform: translateY(1px);
+}
+.my-polls__search-btn--icon:focus,
+.my-polls__search-btn--icon:active {
+  outline: none;
+  border: none;
 }
 
 @media screen and (min-width: 961px) {
