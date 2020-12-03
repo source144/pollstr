@@ -5,6 +5,7 @@ import { authLogout } from '../../../store/actions/authActions';
 import _ from 'lodash';
 
 import "./Landing.css"
+import { setWebTitle } from '../../../utils';
 
 const Landing = () => {
 	const { auth, global_loading } = useSelector(state => state.auth)
@@ -23,6 +24,8 @@ const Landing = () => {
 		<li onClick={() => history.push("/signup")}><Link>Sign Up</Link></li>
 	</>
 	const authButtons = hasAuth ? userOptions : guestOptions;
+
+	useEffect(() => { setWebTitle(); }, []);
 
 	return (
 		<div className="landing-centered-container">
