@@ -228,12 +228,10 @@
   .nav-menu {
     position: absolute;
     margin: 0;
-    /* top: 0; */
+    left: -100%;
     top: var(--nav-height);
     /* transform: translateY(calc(-100% - 2px)); */
     /* -webkit-transform: translateY(calc(-100% - 2px)); */
-    transform: translate3d(-100%, 0, 0);
-    -webkit-transform: translate3d(-100%, 0, 0);
     transition: all 0.2s;
     -webkit-transition: all 0.2s;
     width: 100vw;
@@ -249,10 +247,8 @@
   }
 
   .nav-menu.active {
-    transform: translateY(var(--nav-height));
-    -webkit-transform: translateY(var(--nav-height));
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    -webkit-transform: translate3d(100%, 0, 0);
   }
 
   .nav-item {
