@@ -181,7 +181,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 												defaultValue={tags.join(' ')}
 												className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 												type="text"
-												placeholder="(e.g. #Food #Health)"
+												placeholder="e.g. #Food #Health"
 												name="tags"
 												formNoValidate
 												onChange={(e) => { setTags(e.target.value) }} />
