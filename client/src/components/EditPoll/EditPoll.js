@@ -94,7 +94,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 								<label htmlFor="tags">Tags</label>
 								<div className='form-item-wrapper'>
 									<input
-										defaultValue={tags}
+										defaultValue={tags.join(' ')}
 										className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 										type="text"
 										placeholder="e.g. #Food #Health"
@@ -178,7 +178,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 										<label htmlFor="tags">Tags</label>
 										<div className='form-item-wrapper'>
 											<input
-												defaultValue={tags}
+												defaultValue={tags.join(' ')}
 												className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 												type="text"
 												placeholder="(e.g. #Food #Health)"
