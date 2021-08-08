@@ -44,6 +44,7 @@ const transform_one = poll => {
 		...poll,
 		// tags: _.union([(poll.autoTags || []), (poll.tags || [])]).filter(tag => tag.trim() != ''),
 		tags: _.union((poll.tags ? (typeof poll.tags === 'string' ? poll.tags.split(' ') : poll.tags) : []), (poll.autoTags || [])),
+		specifiedTags: poll.tags,
 		options: poll.options.map(option => ({
 			...option,
 			percent: poll.total_votes > 0 ? parseInt((option.votes / poll.total_votes) * 100) : 0,
