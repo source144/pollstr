@@ -21,13 +21,13 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 	const isLoggedIn = !_.isEmpty(auth);
 
 	const [submitted, setSubmitted] = useState(false);
-	const [tags, setTags] = useState(poll.specifiedTags ? (typeof poll.specifiedTags === 'string' ? poll.specifiedTags : poll.specifiedTags.join(' ')) : '');
+	const [tags, setTags] = useState(poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '');
 	const [resultsHidden, setResultsHidden] = useState(poll.hideResults);
 	const [allowGuests, setAllowGuests] = useState(!poll.usersOnly);
 	const [publicPoll, setPublicPoll] = useState(poll.public);
 	const [expireDate, setExpireDate] = useState(poll.timeToLive > 0 ? moment.unix(moment(poll.createDate).unix() + poll.timeToLive).toDate() : undefined)
 
-	const unchanged_tags = tags == poll.specifiedTags ? (typeof poll.specifiedTags === 'string' ? poll.specifiedTags : poll.specifiedTags.join(' ')) : '';
+	const unchanged_tags = tags == poll.tags ? (typeof poll.tags === 'string' ? poll.tags : poll.tags.join(' ')) : '';
 	const unchanged_resultsHidden = resultsHidden == poll.hideResults
 	const unchanged_allowGuests = allowGuests == !poll.usersOnly
 	const unchanged_publicPoll = publicPoll == poll.public
@@ -94,7 +94,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 								<label htmlFor="tags">Tags</label>
 								<div className='form-item-wrapper'>
 									<input
-										defaultValue={tags.join(' ')}
+										defaultValue={tags}
 										className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 										type="text"
 										placeholder="e.g. #Food #Health"
@@ -178,7 +178,7 @@ export default ({ poll, loading = false, error = undefined, onSubmit = undefined
 										<label htmlFor="tags">Tags</label>
 										<div className='form-item-wrapper'>
 											<input
-												defaultValue={tags.join(' ')}
+												defaultValue={tags}
 												className={`form-item__input ${!!errors.tags ? 'form-item__input--err' : ''}`}
 												type="text"
 												placeholder="e.g. #Food #Health"
