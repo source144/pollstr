@@ -3,8 +3,7 @@ const { Verification, PasswordReset } = require('../models/Verification');
 const { Fingerprint } = require('../models/Fingerprint');
 const { errorObject } = require('../shared/util');
 const express = require('express');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const _ = require('lodash');
@@ -279,24 +278,23 @@ router.post('/signup', (req, res) => {
 		verification.save(function (err) {
 			if (err) { abort(); return res.status(500).send(err); }
 			const FULL_NAME = user.fullName();
-      const confirmationLink = `https://${DOMAIN}/verify/${verification._id}-${verification.token}`;
+			const confirmationLink = `https://${DOMAIN}/verify/${verification._id}-${verification.token}`;
 
-      // Send Mail (updated sendgrid 2023)
-      const msg = {
-        to: user.email,
+			// Send the email
+			var transporter = nodemailer.createTransport({ host: 'smtp.sendgrid.net', port: 465, secure: true, auth: { user: 'apikey', pass: process.env.SENDGRID_PASSWORD } });
+			var mailOptions = {
 				from: NO_REPLY_EMAIL,
+				to: user.email,
 				subject: 'Confirm your Pollstr account',
-        text: `${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\n${confirmationLink}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`,
-        html: `<h1>Welcome to Pollstr!</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!</h3><br /><br /><p>To complete your registration, please verify your email with the following <a href="${confirmationLink}">link</a><br /><a href="${confirmationLink}">${confirmationLink}</a></p><br /><p>On behalf of the Pollstr team, thank you for joining us.</br><em>Pollstr | Voting Intuitively</em></p>`,
-      }
-      sgMail
-        .send(msg)
-        .then(() => {
-          if (NODE_ENV === 'production') return res.status(201).send(verification);
-          else if (NODE_ENV === 'development') return res.status(201).send(verification);
-          return res.status(201).send(user);
-        })
-        .catch((err) => { abort(); return res.status(500).send(err); });
+				text: `${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttps://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`,
+				html: `<h1>Welcome to Pollstr!</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!</h3><br /><br /><p>To complete your registration, please verify your email with the following <a href="${confirmationLink}">link</a><br /><a href="${confirmationLink}">${confirmationLink}</a></p><br /><p>On behalf of the Pollstr team, thank you for joining us.</br><em>Pollstr | Voting Intuitively</em></p>`,
+			};
+			transporter.sendMail(mailOptions, function (err) {
+				if (err) { abort(); return res.status(500).send(err); }
+				if (NODE_ENV === 'production') return res.status(201).send(verification);
+				else if (NODE_ENV === 'development') return res.status(201).send(verification);
+				else return res.status(201).send(user);
+			});
 		});
 	});
 });
@@ -508,24 +506,24 @@ router.post('/verify/resend', (req, res) => {
 			verification.save(function (err) {
 				if (err) return res.status(500).send(err);
 				const FULL_NAME = user.fullName();
+				const confirmationLink = `https://${DOMAIN}/verify/${verification._id}-${verification.token}`;
 
-        // Send Mail (updated sendgrid 2023)
-        const msg = {
-          to: user.email,
+				// Send the email
+        var transporter = nodemailer.createTransport({ host: 'smtp.sendgrid.net', port: 465, secure: true, auth: { user: 'apikey', pass: process.env.SENDGRID_PASSWORD } });
+        var mailOptions = {
           from: NO_REPLY_EMAIL,
+          to: user.email,
           subject: 'Confirm your Pollstr account',
-          text: `${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\n${confirmationLink}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`,
+          text: `${['Hello', FULL_NAME].join(' ').trim()}, welcome to Pollstr!\n\nTo complete your registration, please verify your email with the following link:\nhttp://${DOMAIN}/verify/${verification._id}-${verification.token}\n\nOn behalf of the Pollstr team, thank you for joining us.\nPollstr | Voting Intuitively`,
           html: `<h1>Welcome to Pollstr!</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}, Welcome to Pollstr!</h3><br /><br /><p>To complete your registration, please verify your email with the following <a href="${confirmationLink}">link</a><br /><a href="${confirmationLink}">${confirmationLink}</a></p><br /><p>On behalf of the Pollstr team, thank you for joining us.</br><em>Pollstr | Voting Intuitively</em></p>`,
-        }
-        sgMail
-          .send(msg)
-          .then(() => {
-            if (NODE_ENV === 'production') return res.status(201).send(verification);
-            else if (NODE_ENV === 'development') return res.status(201).send(verification);
-            return res.status(201).send(user);
-          })
-          .catch((err) => { abort(); return res.status(500).send(err); });
+        };
+        transporter.sendMail(mailOptions, function (err) {
+          if (err) return res.status(500).send(err);
+          if (NODE_ENV === 'production') return res.status(201).send(verification);
+          else if (NODE_ENV === 'development') return res.status(201).send(verification);
+          else return res.status(201).send(user);
         });
+			});
 		});
 	});
 });
@@ -636,22 +634,21 @@ router.post('/password/forgot', (req, res) => {
 				const FULL_NAME = user.fullName();
         const resetLink = `https://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}`;
 
-        // Send Mail (updated sendgrid 2023)
-        const msg = {
-          to: user.email,
-          from: NO_REPLY_EMAIL,
-          subject: 'Reset your Pollstr account password',
-					text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\n${resetLink}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`,
+				// Send the email
+        var transporter = nodemailer.createTransport({ host: 'smtp.sendgrid.net', port: 465, secure: true, auth: { user: 'apikey', pass: process.env.SENDGRID_PASSWORD } });
+				var mailOptions = {
+					from: NO_REPLY_EMAIL,
+					to: req.body.email,
+					subject: 'Reset your Pollstr account password',
+					text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`,
           html: `<h1>Pollstr Password Reset</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}</h3><p>A reset password request has been received by the system.<br />nIf you did not submit the request, please ignore this message.<br />nOtherwise, use the following link to <a href="${resetLink}">reset your password:</a></p><p><a href="${resetLink}">${resetLink}</a></p><p>nThank you, the Pollstr team.<br /><em>Pollstr | Voting Intuitively</em></p>`,
-        }
-        sgMail
-          .send(msg)
-          .then(() => {
-            if (NODE_ENV === 'production') return res.status(201).send(verification);
-            else if (NODE_ENV === 'development') return res.status(201).send(verification);
-            return res.status(201).send(user);
-          })
-          .catch((err) => { return res.status(500).send(err); });
+				};
+				transporter.sendMail(mailOptions, function (err) {
+					if (err) return res.status(500).send(err);
+					if (NODE_ENV === 'production') return res.status(201).send(passwordReset);
+					else if (NODE_ENV === 'development') return res.status(201).send(passwordReset);
+					else return res.status(201).send(user);
+				});
 			});
 		});
 
