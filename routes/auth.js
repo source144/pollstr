@@ -641,7 +641,7 @@ router.post('/password/forgot', (req, res) => {
 					to: req.body.email,
 					subject: 'Reset your Pollstr account password',
 					text: `${['Hello', FULL_NAME].join(' ').trim()},\n\nA reset password request has been received by the system.\n\nIf you did not submit the request, please ignore this message.\nOtherwise, use the following link to reset your password:\nhttps://${DOMAIN}/password/reset/${passwordReset._id}-${passwordReset.token}\n\nThank you, the Pollstr team.\nPollstr | Voting Intuitively`,
-          html: `<h1>Pollstr Password Reset</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}</h3><p>A reset password request has been received by the system.<br />nIf you did not submit the request, please ignore this message.<br />nOtherwise, use the following link to <a href="${resetLink}">reset your password:</a></p><p><a href="${resetLink}">${resetLink}</a></p><p>nThank you, the Pollstr team.<br /><em>Pollstr | Voting Intuitively</em></p>`,
+          html: `<h1>Pollstr Password Reset</h1><h3>${['Hello', FULL_NAME].join(' ').trim()}</h3><p>A reset password request has been received by the system.<br />If you did not submit the request, please ignore this message.<br />Otherwise, use the following link to <a href="${resetLink}">reset your password:</a></p><p><a href="${resetLink}">${resetLink}</a></p><p>Thank you, the Pollstr team.<br /><em>Pollstr | Voting Intuitively</em></p>`,
 				};
 				transporter.sendMail(mailOptions, function (err) {
 					if (err) return res.status(500).send(err);
