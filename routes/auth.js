@@ -651,7 +651,7 @@ router.post('/password/forgot', (req, res) => {
             else if (NODE_ENV === 'development') return res.status(201).send(verification);
             return res.status(201).send(user);
           })
-          .catch((err) => { abort(); return res.status(500).send(err); });
+          .catch((err) => { return res.status(500).send(err); });
 			});
 		});
 
